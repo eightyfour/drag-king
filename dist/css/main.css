@@ -1,0 +1,13 @@
+body{
+    background: whitesmoke;
+}
+.dropzone{
+    margin-top: 20rem;
+    border: 2px dashed DeepSkyBlue;
+    text-align: center;
+    height: 20rem;
+    line-height: 20rem;
+    background: #ffffff;
+    font-style: italic;
+    color: #333333;
+}
