@@ -1,0 +1,1 @@
+document.getElementById('hello').appendChild(document.createTextNode('welcome'));
