@@ -14,5 +14,11 @@
   "license": "BSD-2-Clause",
   "bugs": {
     "url": "https://github.com/alextrastero/drag-king/issues"
+  },
+  "dependencies": {
+    "express": "^5.0.0-alpha.1",
+    "finalhandler": "*",
+    "serve-index": "*",
+    "serve-static": "*"
   }
 }
