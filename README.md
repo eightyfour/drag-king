@@ -10,4 +10,4 @@ cd drag-king
 npm install
 node app.js
 
-Navigate to http://localhost:8000 to see the action.
+Navigate to [http://localhost:8000](http://localhost:8000) to see the action.
