@@ -1,4 +1,18 @@
 {
   "name": "drag-king",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "description": "Drag and drop to upload to server",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/alextrastero/drag-king.git"
+  },
+  "author": "aode & phen",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/alextrastero/drag-king/issues"
+  }
 }
