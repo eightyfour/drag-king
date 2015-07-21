@@ -4,7 +4,13 @@
   "description": "Drag and drop to upload to server",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "config" : {
+    "port" : 8000,
+    "bundle" : "dist/main.gen.js",
+    "outfile" : ["src/js/upload.js"]
   },
   "repository": {
     "type": "git",
@@ -16,6 +22,9 @@
     "url": "https://github.com/alextrastero/drag-king/issues"
   },
   "dependencies": {
+    "watchify" : "x",
+    "browserify" : "x",
+    "canny" : "git://github.com/eightyfour/canny.git",
     "express": "^5.0.0-alpha.1",
     "finalhandler": "*",
     "serve-index": "*",
