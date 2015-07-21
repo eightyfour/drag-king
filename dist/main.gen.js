@@ -1,1 +1,188 @@
-alert('browserify not executed');
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/*global */
+/*jslint browser: true*/
+/**
+ * TODO
+ * If canny knows his own URL than canny could load none registered modules afterwords from his own
+ * modules folder (can also build as configurable extension adapted to the body).
+ * E.g.: canny-mod="moduleLoader" canny-var={'cannyPath':URL_FROM_CANNY, 'unknownMods':LOAD_FROM_OTHER_URL}
+ *
+ *
+ * canny-var is deprecated: please use just the module name instead like:
+ * E.g.: canny-mod="mod1 mod2" canny-mod1={'foo':'123456', 'bar':'654321'} canny-mod2="mod2Property"
+ *
+ * ---------------------------------------------------------------------------- eightyfour
+ */
+(function (global) {
+    "use strict";
+    var canny = (function () {
+        var readyQueue = [],
+            readyQueueInit = false,
+            moduleQueue = [], // save modules to call the ready method once
+            callMethQueue = function (queue) {
+                (function reduce() {
+                    var fc = queue.pop();
+                    if (fc) {
+                        fc();
+                        reduce();
+                    } else {
+                        queue = [];
+                    }
+                }());
+            },
+            parseNode = function (node, name, cb) {
+                var that = this, gdModuleChildren = [].slice.call(node.querySelectorAll('[' + name + '-mod]')), prepareReadyQueue = {};
+
+                gdModuleChildren.forEach(function (node) {
+                    var attribute = node.getAttribute(name + '-mod'), attr, viewPart, attributes, cannyVar;
+
+                    attributes = attribute.split(' ');
+
+                    attributes.forEach(function (eachAttr) {
+                        if (that[eachAttr]) {
+                            if (node.getAttribute(name + '-mod')) {
+                                if (node.getAttribute(name + '-' + eachAttr)) {
+                                    cannyVar = node.getAttribute(name + '-' + eachAttr);
+                                } else {
+                                    cannyVar = node.getAttribute(name + '-var');
+                                }
+                                if (cannyVar) {
+                                    attr = cannyVar.split("\'").join('\"');
+                                    if (/:/.test(attr)) {
+                                        // could be a JSON
+                                        try {
+                                            viewPart = JSON.parse(attr);
+                                        } catch (ex) {
+                                            console.error("canny can't parse passed JSON for module: " + eachAttr, node);
+                                        }
+                                    } else {
+                                        viewPart = attr;
+                                    }
+                                }
+                            }
+                            // has module a ready function than save it for calling
+                            if (that[eachAttr].hasOwnProperty('ready')) {
+                                // TODO or call it immediately?
+                                prepareReadyQueue[eachAttr] = that[eachAttr].ready;
+                            }
+                            if (that.hasOwnProperty(eachAttr)) {
+                                that[eachAttr].add(node, viewPart);
+                            }
+                        } else {
+                            console.warn('canny parse: module with name ´' + eachAttr + '´ is not registered');
+                        }
+                    });
+                });
+                // add ready callback to moduleQueue
+                Object.keys(prepareReadyQueue).forEach(function (name) {
+                    moduleQueue.push(prepareReadyQueue[name]);
+                });
+                cb && cb();
+            };
+
+        document.addEventListener('DOMContentLoaded', function cannyDomLoad() {
+            document.removeEventListener('DOMContentLoaded', cannyDomLoad);
+
+            parseNode.apply(canny, [document, 'canny']);
+
+            callMethQueue(moduleQueue);
+            // call registered ready functions
+            readyQueueInit = true;
+            callMethQueue(readyQueue);
+        }, false);
+
+        return {
+            add : function (name, module) {
+                var moduleApi = module;
+                if (!this.hasOwnProperty(name)) {
+                    if (typeof module === 'function') {
+                        moduleApi = module(this); // initialize the module with the actual canny instance
+                    }
+                    this[name] = moduleApi;
+                } else {
+                    console.error('canny: Try to register module with name ' + name + ' twice');
+                }
+            },
+            ready : function (fc) {
+                if (!readyQueueInit) {
+                    readyQueue.push(fc);
+                } else {
+                    fc();
+                }
+            },
+            cannyParse : function (node, name, cb) {
+                // TODO needs a callback
+                if (typeof name === 'function') {
+                    cb = name;
+                    name = "canny";
+                }
+                parseNode.apply(this || canny, [node, name || 'canny', function () {
+                    callMethQueue(moduleQueue);
+                    cb && cb();
+                }]);
+            }
+        };
+    }());
+    // export as module or bind to global
+    if (typeof module !== 'undefined' && module.hasOwnProperty('exports')) { module.exports = canny; } else {global.canny = canny; }
+}(this));
+
+},{}],2:[function(require,module,exports){
+/**
+ *
+ * @returns {{add: Function, ready: Function}}
+ */
+module.exports = function () {
+
+    var brain = {
+        button : {
+            init : function (node) {
+                node.addEventListener('click', function () {
+                    var file = brain.fileInput.getFile();
+                    console.log('upload:file', file);
+                    if (file) {
+
+                    } else {
+                        console.log('c-upload: not file choosen');
+                    }
+                });
+            }
+
+        },
+        fileInput : (function () {
+            var choosenFile;
+            return {
+                getFile: function () {
+                    return choosenFile;
+                },
+                init: function (node) {
+                    node.addEventListener('change', function () {
+                        var file = node.value;
+                        if (file) {
+                            choosenFile = file;
+                        }
+                        if (choosenFile) {
+                           node.setAttribute('value', choosenFile);
+                        }
+                    });
+                }
+            }
+        }())
+    };
+
+    return {
+        add : function (node, attr) {
+            if (brain.hasOwnProperty(attr)) {
+                brain[attr].init(node);
+            }
+        },
+        ready : function () {
+            console.log('upload:ready');
+        }
+    }
+};
+},{}],3:[function(require,module,exports){
+var canny = require('canny');
+// main js will be generated from browserify to one
+canny.add('upload', require('./c-upload.js'));
+},{"./c-upload.js":2,"canny":1}]},{},[3,2]);
