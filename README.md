@@ -8,6 +8,6 @@ Drag into box to upload
 git clone https://github.com/alextrastero/drag-king.git
 cd drag-king
 npm install
-node app.js
+npm start
 
 Navigate to [http://localhost:8000](http://localhost:8000) to see the action.
