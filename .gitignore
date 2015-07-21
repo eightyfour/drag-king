@@ -34,3 +34,5 @@ node_modules
 
 #ignore application folders
 dist/main.gen.js
+
+files/*

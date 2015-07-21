@@ -9,8 +9,10 @@ var opts = {
         distName: __dirname + '/dist/',
         port : process.env.npm_package_config_port
     },
+    fs = require('fs'),
     watchifyTask = require('./watchifyTask.js'),
     express = require('express'),
+    busboy = require('connect-busboy'),
     serveIndex = require('serve-index'),
     app,
     finalhandler = require('finalhandler'),
@@ -22,8 +24,9 @@ if (process.env.npm_package_config_port !== undefined) {
     watchifyTask();
 
     app = express();
+    app.use(busboy());
 
-    app.get('/*',  function (req, res) {
+    app.get('/files/*',  function (req, res) {
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -31,6 +34,44 @@ if (process.env.npm_package_config_port !== undefined) {
             }
             index(req, res, done);
         });
+    });
+    app.get('/dist/*',  function (req, res) {
+        var done = finalhandler(req, res);
+        serve(req, res, function onNext(err) {
+            if (err) {
+                return done(err);
+            }
+            index(req, res, done);
+        });
+    });
+
+    app.get('/',  function (req, res) {
+        var done = finalhandler(req, res);
+        serve(req, res, function onNext(err) {
+            if (err) {
+                return done(err);
+            }
+            index(req, res, done);
+        });
+    });
+
+     app.post('/uploadFile',  function (req, res) {
+        //var done = finalhandler(req, res);
+         console.log('REQUEST2:');
+
+         var fstream;
+         req.pipe(req.busboy);
+         req.busboy.on('file', function (fieldname, file, filename) {
+             console.log("Uploading: " + filename);
+
+             //Path where image will be uploaded
+             fstream = fs.createWriteStream(__dirname + '/files/' + filename);
+             file.pipe(fstream);
+             fstream.on('close', function () {
+                 console.log("Upload Finished of " + filename);
+                 res.status(400).send('All is fine');        //where to go next
+             });
+         });
     });
 
     app.listen(opts.port, function () {
