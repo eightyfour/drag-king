@@ -27,3 +27,9 @@ build/Release
 node_modules
 
 .DS_Store
+
+#ignore intellij
+.idea
+
+#ignore application folders
+dist/*
