@@ -1,0 +1,1 @@
+alert('browserify not executed');

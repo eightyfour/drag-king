@@ -35,20 +35,24 @@ module.exports = function () {
     (function (output, srcs) {
         var b = browserify(),
             w = watchify(b);
+        if (output !== undefined && srcs.length > 0) {
 
-        srcs.forEach(function (file) {
-            w.add(__dirname + '/' + file);
-        });
+            srcs.forEach(function (file) {
+                w.add(__dirname + '/' + file);
+            });
 
-        w.on('log', function (msg) {
-            console.log('watchify log:', msg);
-        });
-        // is called if file has changed
-        w.on('update', function (ids) {
-            console.log('watchify compile:', ids);
+            w.on('log', function (msg) {
+                console.log('watchify log:', msg);
+            });
+            // is called if file has changed
+            w.on('update', function (ids) {
+                console.log('watchify compile:', ids);
+                w.bundle().pipe(fs.createWriteStream(__dirname + '/' + output));
+            });
+            // generate initial once
             w.bundle().pipe(fs.createWriteStream(__dirname + '/' + output));
-        });
-        // generate initial once
-        w.bundle().pipe(fs.createWriteStream(__dirname + '/' + output));
+        } else {
+            console.error('watchifyTask: incorrect attributes', output, srcs);
+        }
     }(process.env.npm_package_config_bundle, getEnvList("npm_package_config_outfile")));
 }

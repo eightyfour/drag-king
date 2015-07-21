@@ -18,21 +18,26 @@ var opts = {
     serve = serveStatic(opts.dirName),
     index = serveIndex(opts.dirName, {'icons': true});
 
+if (process.env.npm_package_config_port !== undefined) {
+    watchifyTask();
 
-watchifyTask();
+    app = express();
 
-app = express();
-
-app.get('/*',  function (req, res) {
-    var done = finalhandler(req, res);
-    serve(req, res, function onNext(err) {
-        if (err) {
-            return done(err);
-        }
-        index(req, res, done);
+    app.get('/*',  function (req, res) {
+        var done = finalhandler(req, res);
+        serve(req, res, function onNext(err) {
+            if (err) {
+                return done(err);
+            }
+            index(req, res, done);
+        });
     });
-});
 
-app.listen(opts.port, function () {
-    console.log('server started on port %d',  opts.port);
-});
+    app.listen(opts.port, function () {
+        console.log('server started on port %d',  opts.port);
+    });
+} else {
+   console.log('Server not started! - Please check the config or use "npm start" to start the server.');
+}
+
+
