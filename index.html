@@ -1,18 +1,28 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>Drag King - Drag and Drop to Upload to Server</title>
+    <link rel="stylesheet" href="/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/dist/css/main.css">
 </head>
 <body>
+    <div class="container">
+        <div id="dropzone" class="dropzone">
+            Drag and drop your file to begin uploading
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <h2 id="hello">your are: </h2>
+                <a href="files">watch files</a>
+                <button canny-mod="upload" canny-var="button">upload file</button>
+                <input canny-mod="upload" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
+            </div>
+        </div>
+    </div>
 
-<a href="files">watch files</a>
 
-<button canny-mod="upload" canny-var="button">upload file</button>
 
-<input canny-mod="upload" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
-
-<script src="/dist/main.gen.js"></script>
-
+    <script src="/dist/main.gen.js"></script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+body{
+    background: whitesmoke;
+}
+.container{
+    max-width: 60rem;
+}
+.dropzone{
+    margin-top: 20rem;
+    border: 2px dashed #999;
+    border-radius: 1em;
+    text-align: center;
+    height: 20rem;
+    font-style: italic;
+    color: #999;
+    font-size: 2rem;
+    background: url('../img/upload-cloud.svg') no-repeat center 8rem;
+    background-size: 10rem;
+    padding: 4rem 1rem;
+}
