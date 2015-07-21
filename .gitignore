@@ -26,10 +26,11 @@ build/Release
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
 
+# Mac files
 .DS_Store
 
 #ignore intellij
 .idea
 
 #ignore application folders
-dist/*
+dist/main.gen.js

@@ -10,7 +10,7 @@
   "config" : {
     "port" : 8000,
     "bundle" : "dist/main.gen.js",
-    "outfile" : ["src/js/upload.js"]
+    "outfile" : ["src/js/main.js","src/js/c-upload.js"]
   },
   "repository": {
     "type": "git",
