@@ -8,16 +8,16 @@
 </head>
 <body>
     <div class="container">
-        <div id="dropzone" class="dropzone">
-            Drag and drop your file to begin uploading
+
+
+
+        <div class="row">
+            <input canny-mod="upload" id="dropzone" class="dropzone" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
         </div>
         <div class="row">
-            <div class="col-xs-12">
-                <h2 id="hello">your are: </h2>
-                <a href="files">watch files</a>
-                <button canny-mod="upload" canny-var="button">upload file</button>
-                <input canny-mod="upload" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
-            </div>
+            <h2 id="hello">your are: </h2>
+            <a href="files">watch files</a>
+            <button canny-mod="upload" canny-var="button">upload file</button>
         </div>
     </div>
 
