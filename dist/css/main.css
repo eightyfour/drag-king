@@ -3,34 +3,39 @@ body{
 }
 .container{
     max-width: 60rem;
+    font-style: italic;
 }
 .dropzone{
-    margin-top: 20rem;
-    border: 2px dashed #999;
-    text-align: center;
-    height: 20rem;
-    font-style: italic;
-    color: #999;
-    border-radius: 1em;
-    font-size: 2rem;
-    padding: 4rem 1rem;
-    position: relative;
+    visibility: hidden;
 }
-.dropzone:after{
-    content: 'Drag and drop your file to begin uploading';
+.dropzone-label {
     text-align: center;
+    font-size: 2rem;
+    margin: 20rem 0 2rem;
+    border: 2px dashed currentColor;
     padding: 4rem 1rem;
     border-radius: 1em;
+    height: 20rem;
     display: block;
-    position: absolute;
-    width: 100%;
-    height: 100%;
+    color: #666666;
     background: whitesmoke url('../img/upload-cloud.svg') no-repeat center 8rem;
     background-size: 10rem;
-    top: 0;
-    left: 0;
-    /*display: none;*/
 }
-.dropzone.over:after{
-    background-color: #000;
+.dropzone-label.over{
+    color: #1d97c3;
+}
+.dropzone-label.file-dropped{
+    background-image: none;
+    line-height: 20rem;
+    padding: 0;
+}
+.upload-button{
+    width: 100%;
+    border-radius: 1rem;
+    border: none;
+    font-weight: bold;
+    background: linear-gradient(#999, #666);
+    color: white;
+    height: 5rem;
+    line-height: 5rem;
 }
