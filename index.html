@@ -12,8 +12,10 @@
 
 
         <div class="row">
-            <input canny-mod="upload" id="dropzone" class="dropzone" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
-            <label for="dropzone" id="dropzone-label" class="dropzone-label">Drag and drop your file to begin uploading</label>
+            <div class="dropzone-box">
+                <label for="dropzone" id="dropzone-label" class="dropzone-label">Drag and drop your file to begin uploading</label>
+                <input canny-mod="upload" id="dropzone-input" multiple="" directory class="dropzone-input" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
+            </div>
             <button canny-mod="upload" class="upload-button" canny-var="button">Upload File</button>
         </div>
         <div class="row">

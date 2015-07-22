@@ -1,51 +1,34 @@
 (function(){
 
-    var uploadBox = document.getElementById('dropzone'),
+    var uploadInput = document.getElementById('dropzone-input'),
         uploadLabel = document.getElementById('dropzone-label'),
         uploadButton = document.querySelector('.upload-button'),
         overClass = 'over',
         droppedClass = 'file-dropped',
         alreadyOver = false;
 
-
     // First thing, hide the upload button
     uploadButton.style.display = 'none';
 
-
     function fileHandler(evt){
-        evt.preventDefault();
-        var eventType = evt.type.toString(); //UGLY
-        if( events.hasOwnProperty(eventType) ){
-            events[eventType](evt);
+        if( events.hasOwnProperty(evt.type) ){
+            events[evt.type](evt);
         }
     }
 
     function triggerDropFile(files){
-        var newLabel = '',
-            icon,
-            fr,
-            fileToUpload,
-            button;
+        var i;
+        uploadLabel.innerHTML = '';
         // Edit label to show file name and icon (optional)
-        files.forEach(function(file){
-            if(file.hasOwnProperty('type')){
-                icon = fileTypes[file.type] || '';
-                // TODO implement mini preview
-                newLabel += file.name + '<br><span class="'+icon+'"></span>';
-                fileToUpload = file; // TODO currently only supports 1 file
+        for (i = 0; i < files.length; i++) {
+            if(files[i].hasOwnProperty('type')){
+                uploadLabel.appendChild(document.createTextNode(files[i].name));
+                uploadLabel.appendChild(document.createElement('br'));
             }
-        });
+        };
         // Show upload button and change dropzone label
         uploadButton.style.display = 'block';
         uploadLabel.classList.add(droppedClass);
-        uploadLabel.innerHTML = newLabel;
-
-        // Pass file to original input for upload
-        console.debug(fileToUpload);
-    }
-
-    var fileTypes = {
-        'image/jpeg': 'image'
     }
 
     var events = {
@@ -60,16 +43,13 @@
             alreadyOver = false;
         },
         drop: function(evt){
-            var filesList = Object.keys(evt.dataTransfer.files).map(function(key){
-                return evt.dataTransfer.files[key];
-            });
-            triggerDropFile(filesList);
+            triggerDropFile(evt.dataTransfer.files);
             this.dragleave();
         }
     }
 
-    uploadLabel.addEventListener("dragover", fileHandler, false);
-    uploadLabel.addEventListener("dragleave", fileHandler, false);
-    uploadLabel.addEventListener("drop", fileHandler, false);
+    uploadInput.addEventListener("dragover", fileHandler, false);
+    uploadInput.addEventListener("dragleave", fileHandler, false);
+    uploadInput.addEventListener("drop", fileHandler, false);
 
 })()

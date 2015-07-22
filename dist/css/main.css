@@ -5,13 +5,22 @@ body{
     max-width: 60rem;
     font-style: italic;
 }
-.dropzone{
-    visibility: hidden;
+.dropzone-box {
+    position: relative;
+    margin: 20rem 0 2rem;
+    overflow: hidden;
+}
+.dropzone-input{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
 }
 .dropzone-label {
     text-align: center;
     font-size: 2rem;
-    margin: 20rem 0 2rem;
     border: 2px dashed currentColor;
     padding: 4rem 1rem;
     border-radius: 1em;
@@ -26,8 +35,7 @@ body{
 }
 .dropzone-label.file-dropped{
     background-image: none;
-    line-height: 20rem;
-    padding: 0;
+    padding: 7rem;
 }
 .upload-button{
     width: 100%;
