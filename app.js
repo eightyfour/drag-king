@@ -26,7 +26,7 @@ if (process.env.npm_package_config_port !== undefined) {
     app = express();
     app.use(busboy());
 
-    app.get('/files/*',  function (req, res) {
+    app.get('/files*',  function (req, res) {
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -35,7 +35,7 @@ if (process.env.npm_package_config_port !== undefined) {
             index(req, res, done);
         });
     });
-    app.get('/dist/*',  function (req, res) {
+    app.get('/dist*',  function (req, res) {
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -68,8 +68,7 @@ if (process.env.npm_package_config_port !== undefined) {
              fstream = fs.createWriteStream(__dirname + '/files/' + filename);
              file.pipe(fstream);
              fstream.on('close', function () {
-                 console.log("Upload Finished of " + filename);
-                 res.status(400).send('All is fine');        //where to go next
+                 res.status(200).send({filename : filename});
              });
          });
     });

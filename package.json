@@ -30,7 +30,6 @@
     "connect-busboy": "0.0.2",
     "express": "^5.0.0-alpha.1",
     "finalhandler": "*",
-    "jquery-browserify": "x",
     "serve-index": "*",
     "serve-static": "*",
     "watchify": "x"
