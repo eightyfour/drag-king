@@ -1,9 +1,18 @@
 body{
-    background: whitesmoke;
+    background-color: #D7D7D7;
 }
 .container{
-    max-width: 60rem;
+    background: whitesmoke;
+    width: 100%;
     font-style: italic;
+    padding-bottom: 10em;
+}
+.container > * {
+    max-width: 60rem;
+    margin: auto;
+}
+.gallery{
+    flex:1 100%;
 }
 .dropzone-box {
     position: relative;
@@ -17,18 +26,25 @@ body{
     width: 100%;
     height: 100%;
     opacity: 0;
+    z-index: 2;
 }
 .dropzone-label {
+    position: relative;
     text-align: center;
     font-size: 2rem;
-    border: 2px dashed currentColor;
     padding: 4rem 1rem;
-    border-radius: 1em;
     height: 20rem;
     display: block;
     color: #666666;
-    background: whitesmoke url('../img/upload-cloud.svg') no-repeat center 8rem;
+    z-index: 2;
+}
+.dropzone-icon{
+    position: absolute;
+    background: whitesmoke url('../img/upload-cloud.svg') no-repeat center 9rem;
     background-size: 10rem;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
 }
 .dropzone-label.over{
     color: #1d97c3;
@@ -47,20 +63,94 @@ body{
     height: 5rem;
     line-height: 5rem;
 }
-.gallery {
+.uploadPostView {
     /*border: 1px solid tan;*/
 }
-.gallery .container {
+.uploadPostView .container {
 
 }
-.gallery .container.copied {
+.uploadPostView .container.copied {
     position: relative;
 }
-.gallery .container.copied:before {
+.uploadPostView .container.copied:before {
     content: attr(data);
     display: block;
     width: 200px;
     height: 200px;
     position: absolute;
     top: 0;
+}
+
+.gallery{
+    display: inline-block;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 1em;
+    box-shadow: 0 -4px 3px 0px rgba(150,150,150,0.8),0 1px 1px 0px rgba(250,250,250,0.8) inset;
+}
+.gallery div{
+    position: relative;
+    float: left;
+    margin: 1em;
+    padding: 0.5em;
+}
+.gallery div img{
+    /* The img tag is just a hack to get easier the correct image dimension for the wrapper div */
+    height: 100px;
+    visibility: hidden;
+}
+.gallery div .img{
+    display: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    box-shadow: 0 0 4px 1px rgba(100,100,100,0.7);
+    border: 1px solid #fff;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+}
+.gallery div .copyClipNode,
+.gallery .deleteBtn{
+    position: absolute;
+    width: 3em;
+    height: 3em;
+    /*background-color: turquoise;*/
+    z-index: 10;
+}
+.gallery .deleteBtn{
+    opacity: 0;
+    top: -2.5em;
+    right: -2.5em;
+    cursor: no-drop;
+}
+.gallery div:hover .deleteBtn{
+    opacity: 1;
+}
+.gallery .gallery-image-wrap{
+    background-color: rgba(100,100,100,0.3);
+    border: 1px dashed  rgba(100,100,100,0.3);
+    width: 9em;
+    height: 8em;
+}
+.gallery .c-loaded.gallery-image-wrap{
+    background-color: transparent;
+    width: auto;
+    height: auto;
+    border: none;
+}
+.gallery .c-loaded.gallery-image-wrap .img{
+    display: block;
+}
+.gallery div .copyClipNode{
+    top: -1.5em;
+    left: -1.5em;
+    width: 80%;
+    height: 114%;
+    cursor: copy;
+    /*background-color: tomato;*/
 }

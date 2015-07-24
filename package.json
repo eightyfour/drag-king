@@ -14,6 +14,7 @@
       "src/js/main.js",
       "src/js/uploadBox.js",
       "src/js/c-upload.js",
+      "src/js/c-uploadPostView.js",
       "src/js/c-gallery.js"
     ]
   },
