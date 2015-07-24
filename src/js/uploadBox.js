@@ -2,13 +2,9 @@
 
     var uploadInput = document.getElementById('dropzone-input'),
         uploadLabel = document.getElementById('dropzone-label'),
-        uploadButton = document.querySelector('.upload-button'),
         overClass = 'over',
         droppedClass = 'file-dropped',
         alreadyOver = false;
-
-    // First thing, hide the upload button
-    uploadButton.style.display = 'none';
 
     function fileHandler(evt){
         if( events.hasOwnProperty(evt.type) ){
@@ -26,8 +22,6 @@
                 uploadLabel.appendChild(document.createElement('br'));
             }
         };
-        // Show upload button and change dropzone label
-        uploadButton.style.display = 'block';
         uploadLabel.classList.add(droppedClass);
     }
 

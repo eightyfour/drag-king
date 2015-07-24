@@ -1,5 +1,11 @@
 var canny = require('canny');
-// main js will be generated from browserify to one
+require('./uploadBox.js');
 canny.add('upload', require('./c-upload.js'));
 
-var uploadBox = require('./uploadBox.js');
+canny.upload.onFileSend(function (obj) {
+    if (obj === false) {
+        console.log('upload failure!');
+    } else {
+       alert(obj);
+    }
+});
