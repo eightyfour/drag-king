@@ -47,3 +47,20 @@ body{
     height: 5rem;
     line-height: 5rem;
 }
+.gallery {
+    /*border: 1px solid tan;*/
+}
+.gallery .container {
+
+}
+.gallery .container.copied {
+    position: relative;
+}
+.gallery .container.copied:before {
+    content: attr(data);
+    display: block;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 0;
+}
