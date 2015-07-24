@@ -7,10 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node app.js"
   },
-  "config" : {
-    "port" : 8000,
-    "bundle" : "dist/main.gen.js",
-    "outfile" : ["src/js/main.js","src/js/c-upload.js"]
+  "config": {
+    "port": 8000,
+    "bundle": "dist/main.gen.js",
+    "outfile": [
+      "src/js/main.js",
+      "src/js/uploadBox.js",
+      "src/js/c-upload.js"
+    ]
   },
   "repository": {
     "type": "git",
@@ -22,12 +26,13 @@
     "url": "https://github.com/alextrastero/drag-king/issues"
   },
   "dependencies": {
-    "watchify" : "x",
-    "browserify" : "x",
-    "canny" : "git://github.com/eightyfour/canny.git",
+    "browserify": "x",
+    "canny": "git://github.com/eightyfour/canny.git",
+    "connect-busboy": "0.0.2",
     "express": "^5.0.0-alpha.1",
     "finalhandler": "*",
     "serve-index": "*",
-    "serve-static": "*"
+    "serve-static": "*",
+    "watchify": "x"
   }
 }
