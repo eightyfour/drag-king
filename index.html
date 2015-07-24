@@ -8,21 +8,24 @@
 </head>
 <body>
     <div class="container">
-        <div id="dropzone" class="dropzone">
-            Drag and drop your file to begin uploading
+
+
+
+        <div class="row">
+            <div class="dropzone-box">
+                <label for="dropzone" id="dropzone-label" class="dropzone-label">Drag and drop your file to begin uploading</label>
+                <input canny-mod="upload" id="dropzone-input" multiple="" directory class="dropzone-input" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
+            </div>
         </div>
         <div class="row">
-            <div class="col-xs-12">
-                <h2 id="hello">your are: </h2>
-                <a href="files">watch files</a>
-                <button id="uploadButton" canny-mod="upload" canny-var="button">upload file</button>
-                <input id="uploadInput" canny-mod="upload" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
-            </div>
+            <div class="gallery" canny-mod="gallery"></div>
         </div>
     </div>
 
 
 
     <script src="/dist/main.gen.js"></script>
+    <script src="/dist/zeroClipboard/ZeroClipboard.Core.min.js"></script>
+    <script src="/dist/zeroClipboard/ZeroClipboard.min.js"></script>
 </body>
 </html>

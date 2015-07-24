@@ -10,4 +10,4 @@ cd drag-king
 npm install
 npm start
 
-Navigate to [http://localhost:8000](http://localhost:8000) to see the action.
+Navigate to http://YOUR_IP:8000 to see the action.

@@ -3,17 +3,64 @@ body{
 }
 .container{
     max-width: 60rem;
-}
-.dropzone{
-    margin-top: 20rem;
-    border: 2px dashed #999;
-    border-radius: 1em;
-    text-align: center;
-    height: 20rem;
     font-style: italic;
-    color: #999;
+}
+.dropzone-box {
+    position: relative;
+    margin: 20rem 0 2rem;
+    overflow: hidden;
+}
+.dropzone-input{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+}
+.dropzone-label {
+    text-align: center;
     font-size: 2rem;
-    background: url('../img/upload-cloud.svg') no-repeat center 8rem;
-    background-size: 10rem;
+    border: 2px dashed currentColor;
     padding: 4rem 1rem;
+    border-radius: 1em;
+    height: 20rem;
+    display: block;
+    color: #666666;
+    background: whitesmoke url('../img/upload-cloud.svg') no-repeat center 8rem;
+    background-size: 10rem;
+}
+.dropzone-label.over{
+    color: #1d97c3;
+}
+.dropzone-label.file-dropped{
+    background-image: none;
+    padding: 7rem;
+}
+.upload-button{
+    width: 100%;
+    border-radius: 1rem;
+    border: none;
+    font-weight: bold;
+    background: linear-gradient(#999, #666);
+    color: white;
+    height: 5rem;
+    line-height: 5rem;
+}
+.gallery {
+    /*border: 1px solid tan;*/
+}
+.gallery .container {
+
+}
+.gallery .container.copied {
+    position: relative;
+}
+.gallery .container.copied:before {
+    content: attr(data);
+    display: block;
+    width: 200px;
+    height: 200px;
+    position: absolute;
+    top: 0;
 }

@@ -68,7 +68,7 @@ if (process.env.npm_package_config_port !== undefined) {
              fstream = fs.createWriteStream(__dirname + '/files/' + filename);
              file.pipe(fstream);
              fstream.on('close', function () {
-                 res.status(200).send({filename : filename});
+                 res.status(200).send({file : '/files/' + filename, type: 'image/jpg'});
              });
          });
     });

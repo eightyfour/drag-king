@@ -12,7 +12,9 @@
     "bundle": "dist/main.gen.js",
     "outfile": [
       "src/js/main.js",
-      "src/js/c-upload.js"
+      "src/js/uploadBox.js",
+      "src/js/c-upload.js",
+      "src/js/c-gallery.js"
     ]
   },
   "repository": {
