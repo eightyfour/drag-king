@@ -18,6 +18,14 @@ function setupZeroClipboard(imageNode, url){
     });
 }
 
+function getRandomColor() {
+    function c() {
+        return Math.floor(Math.random()*256).toString(10)
+    }
+    console.log('c-gallery:getRandomColor', "rgba("+c()+","+c()+","+c()+", 0.2)");
+    return "rgba("+c()+","+c()+","+c()+", 0.2)";
+}
+
 var node;
 module.exports = function () {
 
@@ -30,10 +38,11 @@ module.exports = function () {
 
 
         container.className = 'gallery-image-wrap';
-//        myImage.height="100";
+        container.style.backgroundColor = getRandomColor();
         myImage.src = path;
         myImage.addEventListener('load', function () {
             container.classList.add('c-loaded');
+            container.style.backgroundColor = 'transparent';
         });
         imgNode.style.backgroundImage = "url(" + path + ")";
         imgNode.className = 'img';
