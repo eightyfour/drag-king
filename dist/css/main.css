@@ -1,25 +1,25 @@
-body{
+.dk {
     background-color: #D7D7D7;
 }
-.container{
+.dk .container{
     background: whitesmoke;
     width: 100%;
     font-style: italic;
     padding-bottom: 10em;
 }
-.container > * {
+.dk .container > * {
     max-width: 60rem;
     margin: auto;
 }
-.gallery{
+.dk .gallery{
     flex:1 100%;
 }
-.dropzone-box {
+.dk .dropzone-box {
     position: relative;
     margin: 20rem 0 2rem;
     overflow: hidden;
 }
-.dropzone-input{
+.dk .dropzone-input{
     position: absolute;
     top: 0;
     right: 0;
@@ -28,7 +28,7 @@ body{
     opacity: 0;
     z-index: 2;
 }
-.dropzone-label {
+.dk .dropzone-label {
     position: relative;
     text-align: center;
     font-size: 2rem;
@@ -38,7 +38,7 @@ body{
     color: #666666;
     z-index: 2;
 }
-.dropzone-icon{
+.dk .dropzone-icon{
     position: absolute;
     background: whitesmoke url('../img/upload-cloud.svg') no-repeat center 9rem;
     background-size: 10rem;
@@ -46,14 +46,14 @@ body{
     width: 100%;
     z-index: 1;
 }
-.dropzone-label.over{
+.dk .dropzone-label.over{
     color: #1d97c3;
 }
-.dropzone-label.file-dropped{
+.dk .dropzone-label.file-dropped{
     background-image: none;
     padding: 7rem;
 }
-.upload-button{
+.dk .upload-button{
     width: 100%;
     border-radius: 1rem;
     border: none;
@@ -63,16 +63,16 @@ body{
     height: 5rem;
     line-height: 5rem;
 }
-.uploadPostView {
+.dk .uploadPostView {
     /*border: 1px solid tan;*/
 }
-.uploadPostView .container {
+.dk .uploadPostView .container {
 
 }
-.uploadPostView .container.copied {
+.dk .uploadPostView .container.copied {
     position: relative;
 }
-.uploadPostView .container.copied:before {
+.dk .uploadPostView .container.copied:before {
     content: attr(data);
     display: block;
     width: 200px;
@@ -81,25 +81,25 @@ body{
     top: 0;
 }
 
-.gallery{
+.dk .gallery{
     display: inline-block;
     box-sizing: border-box;
     width: 100%;
     padding: 1em;
     box-shadow: 0 -4px 3px 0px rgba(150,150,150,0.8),0 1px 1px 0px rgba(250,250,250,0.8) inset;
 }
-.gallery div{
+.dk .gallery div{
     position: relative;
     float: left;
     margin: 1em;
     padding: 0.5em;
 }
-.gallery div img{
+.dk .gallery div img{
     /* The img tag is just a hack to get easier the correct image dimension for the wrapper div */
     height: 100px;
     visibility: hidden;
 }
-.gallery div .img{
+.dk .gallery div .img{
     display: none;
     width: 100%;
     height: 100%;
@@ -114,39 +114,42 @@ body{
     margin: 0;
     padding: 0;
 }
-.gallery div .copyClipNode,
-.gallery .deleteBtn{
+.dk .gallery div .copyClipNode,
+.dk .gallery .deleteBtn{
     position: absolute;
-    width: 3em;
-    height: 3em;
+    width: 2em;
+    height: 2em;
+    cursor: pointer;
     /*background-color: turquoise;*/
     z-index: 10;
 }
-.gallery .deleteBtn{
+.dk .gallery .deleteBtn{
     opacity: 0;
-    top: -2.5em;
-    right: -2.5em;
-    cursor: no-drop;
+    top: -2em;
+    right: -2em;
+    border-radius: 50%;
+    background: transparent url('../img/close.png') no-repeat;
+    background-size: cover;
 }
-.gallery div:hover .deleteBtn{
+.dk .gallery div .deleteBtn:hover{
     opacity: 1;
 }
-.gallery .gallery-image-wrap{
+.dk .gallery .gallery-image-wrap{
     background-color: rgba(100,100,100,0.3);
     border: 1px dashed  rgba(100,100,100,0.3);
     width: 9em;
     height: 8em;
 }
-.gallery .c-loaded.gallery-image-wrap{
+.dk .gallery .c-loaded.gallery-image-wrap{
     background-color: transparent;
     width: auto;
     height: auto;
     border: none;
 }
-.gallery .c-loaded.gallery-image-wrap .img{
+.dk .gallery .c-loaded.gallery-image-wrap .img{
     display: block;
 }
-.gallery div .copyClipNode{
+.dk .gallery div .copyClipNode{
     top: -1.5em;
     left: -1.5em;
     width: 80%;
