@@ -34,7 +34,7 @@ if (process.env.npm_package_config_port !== undefined) {
             index(req, res, done);
         });
     });
-    app.get('/dist*',  function (req, res) {
+    app.get('/[dist|bower_components]*',  function (req, res) {
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
