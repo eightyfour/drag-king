@@ -2,7 +2,7 @@ var canny = require('canny');
 require('./uploadBox.js');
 canny.add('upload', require('./c-upload.js'));
 canny.add('gallery', require('./c-gallery.js'));
-canny.add('uploadPostView', require('./c-uploadPostView.js'));
+//canny.add('uploadPostView', require('./c-uploadPostView.js'));
 
 canny.upload.onFileSend(function (obj) {
     if (obj === false) {
