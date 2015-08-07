@@ -34,7 +34,7 @@ if (process.env.npm_package_config_port !== undefined) {
             index(req, res, done);
         });
     });
-    app.get('/dist*',  function (req, res) {
+    app.get('/[dist|bower_components]*',  function (req, res) {
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -86,14 +86,25 @@ if (process.env.npm_package_config_port !== undefined) {
      */
     app.get('/getFiles',  function (req, res) {
         fs.readdir(__dirname + '/files/', function (err, files) {
-            var fileList = [];
+            var fileList = [],
+                length = files.length;
             if (err === null) {
                 files.forEach(function (file) {
-                    fileList.push('/files/' + file);
+                    fs.stat(__dirname + '/files/' + file, function (err, stats) {
+                        if (stats.isFile()) {
+                            fileList.push('/files/' + file);
+                        } else if (stats.isDirectory()){
+                            // filter out directories - if we need directories we should ask separately for it
+                            console.log('Found a directory named:', file);
+                        }
+                        length--;
+                        if (length <= 0) {
+                            res.status(200).send(fileList);
+                        }
+                    });
                 });
-                res.status(200).send(fileList);
             }
-        })
+        });
     });
 
     /**

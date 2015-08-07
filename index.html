@@ -6,23 +6,21 @@
     <link rel="stylesheet" href="/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/dist/css/main.css">
     <link rel="stylesheet" href="/dist/css/marching-ants.css">
+    <link rel="stylesheet" href="/bower_components/octicons/octicons/octicons.css">
 </head>
 <body class="dk">
 
     <div class="container">
 
-
-
         <div class="row">
-            <div class="dropzone-box">
+            <div id="dropzone-box" class="dropzone-box">
                 <div class="dropzone-icon"></div>
                 <label for="dropzone" id="dropzone-label" class="marching-ants marching headline dropzone-label">Drag and drop your file to begin uploading</label>
+                <ul id="fileNamePreview" class="fileNamePreview"></ul>
                 <input canny-mod="upload" id="dropzone-input" multiple="" directory class="dropzone-input" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
             </div>
         </div>
-        <div class="row">
-            <div class="uploadPostView" canny-mod="uploadPostView"></div>
-        </div>
+
     </div>
 
     <div class="gallery" canny-mod="gallery"></div>
