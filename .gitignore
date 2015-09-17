@@ -35,4 +35,5 @@ node_modules
 #ignore application folders
 dist/main.gen.js
 
+bower_components
 files/*
