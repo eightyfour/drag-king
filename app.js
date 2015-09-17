@@ -26,15 +26,7 @@ if (process.env.npm_package_config_port !== undefined) {
     app.use(busboy());
 
     app.get('/files*',  function (req, res) {
-        var done = finalhandler(req, res);
-        serve(req, res, function onNext(err) {
-            if (err) {
-                return done(err);
-            }
-            index(req, res, done);
-        });
-    });
-    app.get('/[dist|bower_components]*',  function (req, res) {
+        console.log('app:files*');
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -46,6 +38,7 @@ if (process.env.npm_package_config_port !== undefined) {
 
     app.get('/',  function (req, res) {
         var done = finalhandler(req, res);
+        console.log('app:/');
         serve(req, res, function onNext(err) {
             if (err) {
                 return done(err);
@@ -85,6 +78,7 @@ if (process.env.npm_package_config_port !== undefined) {
      * get all available files
      */
     app.get('/getFiles',  function (req, res) {
+        console.log('app:getFiles');
         fs.readdir(__dirname + '/files/', function (err, files) {
             var fileList = [],
                 length = files.length;
@@ -110,9 +104,9 @@ if (process.env.npm_package_config_port !== undefined) {
     /**
      * delete a file
      */
-    app.get('/deleteFile',  function (req, res) {
+    app.get('/deleteFile', function (req, res) {
         var fileName;
-        console.log('app:',req.query);
+        console.log('app:deleteFile',req.query);
         if (req.query.hasOwnProperty('filename')) {
             fileName = req.query.filename.split('/');
             fs.unlink(__dirname + '/files/' + fileName[fileName.length -1], function () {
@@ -121,6 +115,17 @@ if (process.env.npm_package_config_port !== undefined) {
         } else {
             res.status(200).send(false);
         }
+    });
+
+    app.get('/[dist|bower_components]*',  function (req, res) {
+        console.log('app:/[dist|bower_components]*');
+        var done = finalhandler(req, res);
+        serve(req, res, function onNext(err) {
+            if (err) {
+                return done(err);
+            }
+            index(req, res, done);
+        });
     });
 
     app.listen(opts.port, function () {
