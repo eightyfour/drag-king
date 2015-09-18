@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "browserify": "x",
-    "canny": "canny",
+    "canny": "0.0.10",
     "connect-busboy": "0.0.2",
     "express": "^4.0.0",
     "finalhandler": "*",
