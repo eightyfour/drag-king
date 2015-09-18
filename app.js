@@ -38,7 +38,6 @@ if (process.env.npm_package_config_port !== undefined) {
 
     app.get('/',  function (req, res) {
         var done = finalhandler(req, res);
-        console.log('app:/');
         serve(req, res, function onNext(err) {
             if (err) {
                 return done(err);
@@ -51,7 +50,6 @@ if (process.env.npm_package_config_port !== undefined) {
          var fstream;
          req.pipe(req.busboy);
          req.busboy.on('file', function (fieldname, file, filename) {
-             console.log("Uploading: " + filename);
 
              function writeFile() {
                  fstream = fs.createWriteStream(__dirname + '/files/' + filename);
@@ -78,7 +76,6 @@ if (process.env.npm_package_config_port !== undefined) {
      * get all available files
      */
     app.get('/getFiles',  function (req, res) {
-        console.log('app:getFiles');
         fs.readdir(__dirname + '/files/', function (err, files) {
             var fileList = [],
                 length = files.length;
@@ -106,7 +103,6 @@ if (process.env.npm_package_config_port !== undefined) {
      */
     app.get('/deleteFile', function (req, res) {
         var fileName;
-        console.log('app:deleteFile',req.query);
         if (req.query.hasOwnProperty('filename')) {
             fileName = req.query.filename.split('/');
             fs.unlink(__dirname + '/files/' + fileName[fileName.length -1], function () {
