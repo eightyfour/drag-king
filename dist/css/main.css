@@ -16,7 +16,7 @@
 }
 .dk .dropzone-box {
     position: relative;
-    margin: 20rem 0 2rem;
+    margin: 15rem 0 2rem;
     height: 15em;
 }
 .dk .dropzone-box .fileNamePreview{
@@ -165,4 +165,9 @@
     height: 114%;
     cursor: copy;
     /*background-color: tomato;*/
+}
+
+/* overwrite bootstrap */
+.dk .breadcrumb{
+    margin-bottom: 0;
 }

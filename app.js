@@ -28,6 +28,9 @@ function formatFolder(folder) {
     if (folder === undefined || folder.length === 0) {
         return '/';
     }
+    // replace all spaces with underscores
+    folder = folder.split(' ').join('_');
+
     if (folder[folder.length] !== '/') {
         folder += '/';
     }
@@ -43,8 +46,7 @@ if (process.env.npm_package_config_port !== undefined) {
     app = express();
     app.use(busboy());
 
-    app.get('/[dist|bower_components]*',  function (req, res, next) {
-        console.log('app:/[dist|bower_components]*');
+    app.get(['/bower_components/*', '/dist/*'],  function (req, res) {
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -65,7 +67,10 @@ if (process.env.npm_package_config_port !== undefined) {
         });
     });
 
-    app.get(/^((?!(\/static|\/dist|\/bower_components)).)*$/,  function (req, res) {
+    /**
+     * send always index except for folder dist and bower_components
+     */
+    app.get(/^((?!(\/dist|\/bower_components)).)*$/,  function (req, res) {
         res.sendFile(__dirname + '/index.html');
     });
 
@@ -77,24 +82,21 @@ if (process.env.npm_package_config_port !== undefined) {
     function createFolder(rootFolder, folder, cb) {
         var folders = [],
             actualFolder = "";
-        // remove empty items  like ''
+        // create array
         folder.split('/').forEach(function (f) {
+            // remove empty strings like ''
             if (f !== '') {
                 folders.push(f);
             }
         });
-        console.log('createFolder:', folders);
+
         (function create(idx) {
             if (idx < folders.length) {
                 actualFolder += '/' + folders[idx];
-                console.log('createFolder:actualFolder', actualFolder);
-
                 fs.exists(rootFolder + actualFolder, function (exists) {
                     if (exists) {
                         create(idx + 1);
                     } else {
-                        console.log('createFolder: new folder', rootFolder + actualFolder);
-
                         fs.mkdir(rootFolder + actualFolder, function () {
                             create(idx + 1);
                         });
@@ -110,13 +112,15 @@ if (process.env.npm_package_config_port !== undefined) {
 
          req.pipe(req.busboy);
          req.busboy.on('file', function (fieldname, file, filename) {
+             // repalce all spaces with underscores
+             var fName = filename.split(' ').join('_');
 
              function writeFile() {
-                 console.log('app:writeFile' + __dirname + '/files' + folder + filename);
-                 fstream = fs.createWriteStream(__dirname + '/files' + folder + filename);
+                 console.log('app:writeFile' + __dirname + '/files' + folder + fName);
+                 fstream = fs.createWriteStream(__dirname + '/files' + folder + fName);
                  file.pipe(fstream);
                  fstream.on('close', function () {
-                     res.status(200).send({file: '/files' + folder + filename, type: 'image/jpg'});
+                     res.status(200).send({file: '/files' + folder + fName, type: 'image/jpg'});
                  });
              }
              console.log('uploadFile', '/files' + folder);
