@@ -9,7 +9,7 @@ module.exports = function () {
         template;
 
     function createFolderNavigation() {
-        var paths = location.pathname.split('/'),
+        var paths = [],
             folderLink = '/',
             child, i, folder;
 
@@ -28,7 +28,13 @@ module.exports = function () {
             return li;
         }
 
-        for (i = 1; i < paths.length; i++) {
+        location.pathname.split('/').forEach(function(folder) {
+            if (folder !== '') {
+                paths.push(folder);
+            }
+        });
+
+        for (i = 0; i < paths.length; i++) {
             folder = paths[i];
             folderLink += folder + '/';
             if (i < paths.length - 1) {

@@ -172,6 +172,34 @@ if (process.env.npm_package_config_port !== undefined) {
      */
     app.post('/getFolders',  function (req, res) {
        // get a list of all folders
+        var folder = '';
+
+        req.on("data", function(chunk){
+            folder += chunk.toString();
+        });
+
+        req.on("end",function(){
+            folder = formatFolder(folder);
+            fs.readdir(__dirname + '/files' + folder, function (err, files) {
+                var fileList = [],
+                    length;
+
+                if (err === null) {
+                    length = files.length;
+                    files.forEach(function (file) {
+                        fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
+                            if (stats.isDirectory()) {
+                                fileList.push(file);
+                            }
+                            length--;
+                            if (length <= 0) {
+                                res.status(200).send(fileList);
+                            }
+                        });
+                    });
+                }
+            });
+        });
     });
 
     /**
