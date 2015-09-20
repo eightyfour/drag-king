@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>ups</title>
+
+    <style>
+        html, body {
+            height: 100%;
+            font-family: monospace;
+            color: #868686;
+        }
+        body {
+            margin: 0;
+        }
+        main {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            display: -webkit-box;
+            display: -moz-box;
+            display: -ms-flexbox;
+            display: -webkit-flex;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        section {
+            padding: 0 2em 15%;
+        }
+        a {
+            margin-top:10%;
+            display: block;
+        }
+        a {color: #868686;}
+        a:hover {color: #565656;}
+        a:before {
+            content: '>';
+            display: inline-block;
+            margin-right: 0.5em;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <section>
+            <h2>Nope...</h2>
+            <p>Looks like that <strong id="js-fileName"></strong> is not available on this sever.</p>
+            <a id="js-folderLink" href="javascript:void(0)">See folder</a>
+        </section>
+    </main>
+
+    <script>
+        (function () {
+            'use strict';
+            var node = document.getElementById('js-fileName'),
+                thisFolder = document.getElementById('js-folderLink');
+            node.appendChild(document.createTextNode(location.pathname));
+
+            thisFolder.addEventListener('click', function () {
+                var folders = location.pathname.split('/');
+                location.href = folders.slice(0, folders.length - 1).join('/')
+            });
+        }());
+    </script>
+</body>
+</html>

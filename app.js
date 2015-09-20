@@ -68,10 +68,27 @@ if (process.env.npm_package_config_port !== undefined) {
     });
 
     /**
-     * send always index except for folder dist and bower_components
+     * match except for folder dist and bower_components
+     *
+     * If the URL has a dot inside it expect to send a files. Otherwise it sends the index.
      */
     app.get(/^((?!(\/dist|\/bower_components)).)*$/,  function (req, res) {
-        res.sendFile(__dirname + '/index.html');
+        if (/\./.test(req.originalUrl)) {
+            // contains a . - looks like a file request so check the files system
+            fs.exists(__dirname + '/files' + req.originalUrl, function (exists) {
+                if (exists) {
+                    res.sendFile(__dirname + '/files' + req.originalUrl);
+                } else {
+                    // no file found - send 404 file
+                    res.sendFile(__dirname + '/404.html');
+                }
+            });
+
+        } else {
+            // send index
+            res.sendFile(__dirname + '/index.html');
+
+        }
     });
 
     /**
