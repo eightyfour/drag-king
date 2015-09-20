@@ -1,8 +1,10 @@
 .dk {
     background-color: #D7D7D7;
 }
-.dk .container{
+.dk .container, nav{
     background: whitesmoke;
+}
+.dk .container{
     width: 100%;
     font-style: italic;
     padding-bottom: 10em;
@@ -16,7 +18,7 @@
 }
 .dk .dropzone-box {
     position: relative;
-    margin: 20rem 0 2rem;
+    margin: 15rem 0 2rem;
     height: 15em;
 }
 .dk .dropzone-box .fileNamePreview{
@@ -165,4 +167,66 @@
     height: 114%;
     cursor: copy;
     /*background-color: tomato;*/
+}
+
+.dk .folders {
+    color: #777;
+    float: left;
+    margin: 0;
+    padding: 8px 15px;
+}
+.dk .folders li{
+    padding-left: 1.3em;
+    font-size: 0.9em;
+    position: relative;
+    margin-right: 1.5em;
+    cursor: pointer;
+}
+.dk .folders li:before{
+    position: absolute;
+    left: -0.1em;
+    top: -.2em;
+    font-size: 1.3em;
+}
+.dk .newFolderinput{
+    width: 10em;
+    float: left;
+}
+
+/* overwrite bootstrap */
+.dk .breadcrumb{
+    float:left;
+    margin-bottom: 0;
+}
+
+.hidden-input{
+    padding: 8px 15px;
+}
+.hidden-input .section-inner{
+
+}
+.hidden-input .section-inner label{
+    cursor: pointer;
+}
+.hidden-input .section-inner input{
+    width:0;
+    box-sizing: border-box;
+    border:none;
+    background-color: #f7f7f7;
+    outline: 0 none;
+    -webkit-box-shadow: inset 1px 1px 3px 0px #e5e5e5;
+    -moz-box-shadow: inset 1px 1px 3px 0px #e5e5e5;
+    box-shadow: inset 1px 1px 3px 0px #e5e5e5;
+    padding: 2px 0;
+    margin-left: 0.3em;
+}
+.hidden-input .section-inner input:focus{
+    transition: width 700ms, background-color 1200ms 1s;
+    padding: 1px 5px;
+    width:15em;
+    border: 1px solid #c0c0c0;
+}
+.hidden-input .section-inner input.error{
+    background-color: #ff686b;
+    transition: background-color 500ms;
 }

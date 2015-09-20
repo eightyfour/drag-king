@@ -60,7 +60,7 @@ module.exports = function () {
         // register click listener for the remove duel request
         removeBtn.addEventListener('click', function () {
            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/deleteFile?filename=" + path, true);
+            xhr.open("POST", "/deleteFile?filename=" + path, true);
             xhr.onload = function (e) {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -99,7 +99,7 @@ module.exports = function () {
         addImage : addImage,
         ready : function () {
             var xhr = new XMLHttpRequest();
-            xhr.open("GET", "/getFiles", true);
+            xhr.open("POST", "/getFiles", true);
             xhr.onload = function (e) {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -112,7 +112,7 @@ module.exports = function () {
             xhr.onerror = function (e) {
                 console.error(xhr.statusText);
             };
-            xhr.send(null);
+            xhr.send(location.pathname);
         }
     }
 };

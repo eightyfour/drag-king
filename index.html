@@ -9,24 +9,41 @@
     <link rel="stylesheet" href="/bower_components/octicons/octicons/octicons.css">
 </head>
 <body class="dk">
+<nav>
+    <ol class="breadcrumb" canny-mod="folderNav">
+        <li><a href="/">Home</a></li>
+    </ol>
 
-    <div class="container">
+    <ol class="folders" canny-mod="listFolders">
+    </ol>
 
-        <div class="row">
-            <div id="dropzone-box" class="dropzone-box">
-                <div class="dropzone-icon"></div>
-                <label for="dropzone" id="dropzone-label" class="marching-ants marching headline dropzone-label">Drag and drop your file to begin uploading</label>
-                <ul id="fileNamePreview" class="fileNamePreview"></ul>
-                <input canny-mod="upload" id="dropzone-input" multiple="" directory class="dropzone-input" canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
-            </div>
+    <div class="hidden-input">
+        <div class="section-inner">
+            <label for="section-field" class="section-plus octicon octicon-plus"></label>
+            <input canny-mod="newFolder" tabindex="1" id="section-field" class="section-field" type="text" placeholder="New folder" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
         </div>
+    </div>
+</nav>
 
+<div class="container">
+
+    <div class="row">
+        <div id="dropzone-box" class="dropzone-box">
+            <div class="dropzone-icon"></div>
+            <label for="dropzone" id="dropzone-label" class="marching-ants marching headline dropzone-label">Drag and
+                drop your file to begin uploading</label>
+            <ul id="fileNamePreview" class="fileNamePreview"></ul>
+            <input canny-mod="upload" id="dropzone-input" multiple="" directory class="dropzone-input"
+                   canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
+        </div>
     </div>
 
-    <div class="gallery" canny-mod="gallery"></div>
+</div>
+
+<div class="gallery" canny-mod="gallery"></div>
 
 
-    <script src="/dist/main.gen.js"></script>
-    <script src="/dist/zeroClipboard/ZeroClipboard.min.js"></script>
+<script src="/dist/main.gen.js"></script>
+<script src="/dist/zeroClipboard/ZeroClipboard.min.js"></script>
 </body>
 </html>

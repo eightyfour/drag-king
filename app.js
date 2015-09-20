@@ -19,32 +19,45 @@ var opts = {
     serve = serveStatic(opts.dirName),
     index = serveIndex(opts.dirName, {'icons': true});
 
+/**
+ * add a / at the begining or end
+ * @param folder
+ * @returns {*}
+ */
+function formatFolder(folder) {
+    if (folder === undefined || folder.length === 0) {
+        return '/';
+    }
+    // replace all spaces with underscores
+    folder = folder.split(' ').join('_');
+
+    if (folder[folder.length] !== '/') {
+        folder += '/';
+    }
+    if (folder[0] !== '/') {
+        folder = '/' + folder;
+    }
+    return folder;
+}
+
 if (process.env.npm_package_config_port !== undefined) {
     watchifyTask();
 
     app = express();
     app.use(busboy());
 
+    app.get(['/bower_components/*', '/dist/*'],  function (req, res) {
+        var done = finalhandler(req, res);
+        serve(req, res, function onNext(err) {
+            if (err) {
+                return done(err);
+            }
+            index(req, res, done);
+        });
+    });
+
     app.get('/files*',  function (req, res) {
-        var done = finalhandler(req, res);
-        serve(req, res, function onNext(err) {
-            if (err) {
-                return done(err);
-            }
-            index(req, res, done);
-        });
-    });
-    app.get('/[dist|bower_components]*',  function (req, res) {
-        var done = finalhandler(req, res);
-        serve(req, res, function onNext(err) {
-            if (err) {
-                return done(err);
-            }
-            index(req, res, done);
-        });
-    });
-
-    app.get('/',  function (req, res) {
+        console.log('app:files*');
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -54,74 +67,161 @@ if (process.env.npm_package_config_port !== undefined) {
         });
     });
 
+    /**
+     * send always index except for folder dist and bower_components
+     */
+    app.get(/^((?!(\/dist|\/bower_components)).)*$/,  function (req, res) {
+        res.sendFile(__dirname + '/index.html');
+    });
+
+    /**
+     * check if folder exists - otherwise create one
+     * @param folder
+     * @param cb
+     */
+    function createFolder(rootFolder, folder, cb) {
+        var folders = [],
+            actualFolder = "";
+        // create array
+        folder.split('/').forEach(function (f) {
+            // remove empty strings like ''
+            if (f !== '') {
+                folders.push(f);
+            }
+        });
+
+        (function create(idx) {
+            if (idx < folders.length) {
+                actualFolder += '/' + folders[idx];
+                fs.exists(rootFolder + actualFolder, function (exists) {
+                    if (exists) {
+                        create(idx + 1);
+                    } else {
+                        fs.mkdir(rootFolder + actualFolder, function () {
+                            create(idx + 1);
+                        });
+                    }
+                });
+            } else {
+                cb();
+            }
+        }(0));
+    }
      app.post('/uploadFile',  function (req, res) {
-         var fstream;
+         var fstream, folder = formatFolder(req.query.folder);
+
          req.pipe(req.busboy);
          req.busboy.on('file', function (fieldname, file, filename) {
-             console.log("Uploading: " + filename);
+             // repalce all spaces with underscores
+             var fName = filename.split(' ').join('_');
 
              function writeFile() {
-                 fstream = fs.createWriteStream(__dirname + '/files/' + filename);
+                 console.log('app:writeFile' + __dirname + '/files' + folder + fName);
+                 fstream = fs.createWriteStream(__dirname + '/files' + folder + fName);
                  file.pipe(fstream);
                  fstream.on('close', function () {
-                     res.status(200).send({file : '/files/' + filename, type: 'image/jpg'});
+                     res.status(200).send({file: '/files' + folder + fName, type: 'image/jpg'});
                  });
              }
-
-             // check if folder exists - otherwise create one
-             fs.exists(__dirname + '/files/', function (exists) {
-                 if (exists) {
-                     writeFile();
-                 } else {
-                      fs.mkdir(__dirname + '/files/', function () {
-                          writeFile();
-                      })
-                 }
-             });
+             console.log('uploadFile', '/files' + folder);
+             createFolder(__dirname, '/files' + folder, writeFile);
          });
     });
 
     /**
      * get all available files
      */
-    app.get('/getFiles',  function (req, res) {
-        fs.readdir(__dirname + '/files/', function (err, files) {
-            var fileList = [],
-                length = files.length;
-            if (err === null) {
-                files.forEach(function (file) {
-                    fs.stat(__dirname + '/files/' + file, function (err, stats) {
-                        if (stats.isFile()) {
-                            fileList.push('/files/' + file);
-                        } else if (stats.isDirectory()){
-                            // filter out directories - if we need directories we should ask separately for it
-                            console.log('Found a directory named:', file);
-                        }
-                        length--;
-                        if (length <= 0) {
-                            res.status(200).send(fileList);
-                        }
+    app.post('/getFiles',  function (req, res) {
+        var folder = '';
+
+        req.on("data", function(chunk){
+            folder += chunk.toString();
+            console.log('app:getFiles folder', folder);
+        });
+
+        req.on("end",function(){
+            folder = formatFolder(folder);
+            fs.readdir(__dirname + '/files' + folder, function (err, files) {
+
+                var fileList = [],
+                    length;
+
+                if (err === null) {
+                    length = files.length;
+                    files.forEach(function (file) {
+                        fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
+                            if (stats.isFile()) {
+                                fileList.push('/files' + folder + file);
+                            } else if (stats.isDirectory()){
+                                // filter out directories - if we need directories we should ask separately for it
+                                console.log('Found a directory named:', file);
+                            }
+                            length--;
+                            if (length <= 0) {
+                                res.status(200).send(fileList);
+                            }
+                        });
                     });
-                });
-            }
+                }
+            });
+        });
+    });
+
+    /**
+     * get all available files
+     */
+    app.post('/getFolders',  function (req, res) {
+       // get a list of all folders
+        var folder = '';
+
+        req.on("data", function(chunk){
+            folder += chunk.toString();
+        });
+
+        req.on("end",function(){
+            folder = formatFolder(folder);
+            fs.readdir(__dirname + '/files' + folder, function (err, files) {
+                var fileList = [],
+                    length;
+
+                if (err === null) {
+                    length = files.length;
+                    files.forEach(function (file) {
+                        fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
+                            if (stats.isDirectory()) {
+                                fileList.push(file);
+                            }
+                            length--;
+                            if (length <= 0) {
+                                res.status(200).send(fileList);
+                            }
+                        });
+                    });
+                }
+            });
         });
     });
 
     /**
      * delete a file
      */
-    app.get('/deleteFile',  function (req, res) {
+    app.post('/deleteFile', function (req, res) {
         var fileName;
-        console.log('app:',req.query);
         if (req.query.hasOwnProperty('filename')) {
-            fileName = req.query.filename.split('/');
-            fs.unlink(__dirname + '/files/' + fileName[fileName.length -1], function () {
+            console.log('app:deleteFile', req.query.filename);
+            fileName = req.query.filename;
+            if (fileName[0] !== '/') {
+                fileName = '/' + fileName;
+            }
+            fs.unlink(__dirname + fileName, function () {
                 res.status(200).send(req.query.filename);
             });
         } else {
             res.status(200).send(false);
         }
     });
+
+
 
     app.listen(opts.port, function () {
         console.log('server started on port %d',  opts.port);

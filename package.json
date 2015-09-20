@@ -29,9 +29,9 @@
   },
   "dependencies": {
     "browserify": "x",
-    "canny": "git://github.com/eightyfour/canny.git",
+    "canny": "0.0.10",
     "connect-busboy": "0.0.2",
-    "express": "^5.0.0-alpha.1",
+    "express": "^4.0.0",
     "finalhandler": "*",
     "serve-index": "*",
     "serve-static": "*",

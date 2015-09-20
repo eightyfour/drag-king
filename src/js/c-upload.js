@@ -3,7 +3,7 @@
  * @param file
  */
 function sendFile(file, cb) {
-    var uri = "/uploadFile",
+    var uri = "/uploadFile?folder=" + location.pathname,
         xhr = new XMLHttpRequest(),
         fd = new FormData();
 
