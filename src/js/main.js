@@ -5,6 +5,7 @@ canny.add('gallery', require('./c-gallery.js'));
 canny.add('folderNav', require('./c-folderNav.js'));
 canny.add('listFolders', require('./c-listFolders.js'));
 canny.add('newFolder', require('./c-newFolder.js'));
+canny.add('slider', require('./c-slider.js'));
 //canny.add('uploadPostView', require('./c-uploadPostView.js'));
 
 canny.upload.onFileSend(function (obj) {
