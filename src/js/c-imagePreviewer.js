@@ -1,5 +1,13 @@
+/**
+ * TODO:
+ * * update slider if new files are added
+ * * update slider if file was deleted
+ *
+ * @type {exports}
+ */
 var trade = require('./trade.js'),
     slider = require('./c-slider.js'),
+    actualFiles = [],
     brain = {
         main : {
             init : function (node) {
@@ -20,14 +28,12 @@ var trade = require('./trade.js'),
                     slider.initializeSlider('imagePreview');
                 })
             }
+        },
+        bgImage : {
+            init : function (node) {
+                this.node = node;
+            }
         }
-//        bgImage : {
-//            init : function (node) {
-//                node.addEventListener('click', function () {
-//                    brain.main.node.classList.add('c-show');
-//                })
-//            }
-//        }
     };
 
 trade.on({
@@ -37,7 +43,13 @@ trade.on({
      */
     getFiles : function (files) {
         var children = [];
+        // TODO filter only images
         files.forEach(function (file) {
+            if(/image\/.*/.test(file.type)){
+                actualFiles.push(file.file);
+            }
+        });
+        actualFiles.forEach(function (file) {
            var wrap = document.createElement('div'),
                img = new Image();
             img.src = file;
@@ -45,6 +57,8 @@ trade.on({
             wrap.appendChild(img);
             children.push(wrap);
         });
+        // expect it starts with index 0
+        brain.bgImage.node.style.backgroundImage = 'url(' + actualFiles[0] + ')';
         slider.addItems('imagePreview', children);
     }
 })
@@ -56,5 +70,10 @@ module.exports = {
         if (brain.hasOwnProperty(attr)) {
             brain[attr].init(node)
         }
+    },
+    ready : function () {
+        slider.onSlideChangeListener('imagePreview', function (idx) {
+           brain.bgImage.node.style.backgroundImage = 'url(' + actualFiles[idx] + ')';
+        });
     }
 }

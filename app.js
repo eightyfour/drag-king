@@ -137,6 +137,7 @@ if (process.env.npm_package_config_port !== undefined) {
                  fstream = fs.createWriteStream(__dirname + '/files' + folder + fName);
                  file.pipe(fstream);
                  fstream.on('close', function () {
+                     // TODO add correct type
                      res.status(200).send({file: '/files' + folder + fName, type: 'image/jpg'});
                  });
              }
@@ -168,7 +169,8 @@ if (process.env.npm_package_config_port !== undefined) {
                     files.forEach(function (file) {
                         fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
                             if (stats.isFile()) {
-                                fileList.push('/files' + folder + file);
+                                // TODO add correct type
+                                fileList.push({file: '/files' + folder + file, type: 'image/jpg'});
                             } else if (stats.isDirectory()){
                                 // filter out directories - if we need directories we should ask separately for it
                                 console.log('Found a directory named:', file);

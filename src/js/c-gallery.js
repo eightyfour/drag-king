@@ -70,8 +70,10 @@ module.exports = (function () {
 
     trade.on({
         getFiles : function (data) {
-            data.forEach(function (path) {
-                appendImage(path);
+            data.forEach(function (file) {
+                if(/image\/.*/.test(file.type)) {
+                    appendImage(file.file);
+                }
             });
         },
         fileSend : function (file) {
