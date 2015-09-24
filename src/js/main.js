@@ -1,4 +1,5 @@
-var canny = require('canny');
+var canny = require('canny'),
+    trade = require('./trade.js');
 require('./uploadBox.js');
 canny.add('upload', require('./c-upload.js'));
 canny.add('gallery', require('./c-gallery.js'));
@@ -19,4 +20,17 @@ canny.upload.onFileSend(function (obj) {
             canny.gallery.addImage(parsedObj.file);
         }
     }
+});
+
+trade.on({
+    getFiles : function (files) {
+        console.log('main:new files was loaded', files);
+    },
+    deleteFile : function (file) {
+        console.log('main:files was deleted', file);
+    }
+});
+
+canny.ready(function () {
+    trade.doCall('getFiles')(location.pathname);
 });

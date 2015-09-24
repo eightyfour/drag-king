@@ -1,8 +1,9 @@
+var trade = require('./trade.js');
+
 /**
  *
  * @returns {{add: Function, ready: Function}}
  */
-
 function setupZeroClipboard(imageNode, url){
     var fullUrl = location.origin + url;
     var client = new ZeroClipboard(imageNode);
@@ -27,7 +28,7 @@ function getRandomColor() {
 }
 
 var node;
-module.exports = function () {
+module.exports = (function () {
 
     function appendImage(path) {
         var container = document.createElement('div'),
@@ -59,21 +60,9 @@ module.exports = function () {
 
         // register click listener for the remove duel request
         removeBtn.addEventListener('click', function () {
-           var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/deleteFile?filename=" + path, true);
-            xhr.onload = function (e) {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        container.remove();
-                    } else {
-                        console.error(xhr.statusText);
-                    }
-                }
-            };
-            xhr.onerror = function (e) {
-                console.error(xhr.statusText);
-            };
-            xhr.send(null);
+          trade.doCall('deleteFile')(path, function () {
+              container.remove();
+          })
         });
 
         setupZeroClipboard(clipNode, path);
@@ -89,6 +78,13 @@ module.exports = function () {
                 appendImage(imagePath);
             }
     }
+
+    trade.on({
+        getFiles : function (data) {
+            addImage(data);
+        }
+    });
+
     return {
         add : function (elem, attr) {
             node = elem;
@@ -98,24 +94,10 @@ module.exports = function () {
          */
         addImage : addImage,
         ready : function () {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/getFiles", true);
-            xhr.onload = function (e) {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        addImage(JSON.parse(xhr.responseText));
-                    } else {
-                        console.error(xhr.statusText);
-                    }
-                }
-            };
-            xhr.onerror = function (e) {
-                console.error(xhr.statusText);
-            };
-            xhr.send(location.pathname);
+
         }
     }
-};
+}());
 
 
 
