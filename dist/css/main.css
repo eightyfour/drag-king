@@ -93,6 +93,7 @@
 }
 
 .dk .gallery{
+    position: relative;
     display: inline-block;
     box-sizing: border-box;
     width: 100%;
@@ -139,8 +140,6 @@
     top: -2em;
     right: -2em;
     border-radius: 50%;
-    background: transparent url('../img/close.png') no-repeat;
-    background-size: cover;
 }
 .dk .gallery div .deleteBtn:hover{
     opacity: 1;
@@ -168,7 +167,55 @@
     cursor: copy;
     /*background-color: tomato;*/
 }
-
+.dk .gallery nav {
+    width: 100%;
+    position: absolute;
+    text-align: center;
+    top: -2.8em;
+    left: 0;
+    height: 3em;
+    background-color: transparent;
+}
+.dk .gallery nav ul{
+    padding: 0;
+}
+.dk .gallery nav li{
+    position: relative;
+    display: inline-block;
+    font-size: 3em;
+    cursor: pointer;
+    width: 2em;
+    text-align: center;
+}
+.dk .gallery nav li span:before{
+    text-shadow: 0px 0px 3px #ffffff;
+}
+.dk .gallery nav li:hover span:before{
+    text-shadow: 0px 0px 3px #ff7a00;
+}
+.dk .gallery nav li span{
+    position: relative;
+    z-index: 1;
+    font-size: 1em;
+    color: #6B6B6B;
+}
+.dk .gallery nav li:before,.dk .gallery nav li:after{
+    box-shadow: -2px -4px 3px 0px rgba(150,150,150,0.5),1px 1px 1px 0px rgba(250,250,250,0.8) inset, 2px -4px 3px 0px rgba(150,150,150,0.5);
+    position: absolute;
+    top:0;
+    display: block;
+    content: ' ';
+    left: 0;
+    width: 1em;
+    height: 1em;
+    border-radius: 100% 0 0 0;
+    background-color: #D7D7D7;
+}
+.dk .gallery nav li:after{
+    box-shadow: 1px -4px 3px 0px rgba(150,150,150,0.8),-1px 1px 1px 0px rgba(250,250,250,0.8) inset;
+    left: 1em;
+    border-radius: 0 100% 0 0;
+}
 .dk .folders {
     color: #777;
     float: left;
@@ -232,6 +279,7 @@
 }
 
 .image-preview {
+    display: none;
     position: fixed;
     z-index: 100;
     width: 100%;
@@ -240,7 +288,11 @@
     left: 0;
     background-color: rgba(100, 97, 97, 0.49);
 }
+.image-preview.c-show{
+    display: block;
+}
 .image-preview-box{
+    position: relative;
     height: 100%;
     padding: 0;
     margin: 0;
@@ -251,6 +303,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+.image-preview-box-close{
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    z-index: 10;
+    color: white;
+    width: 6em;
+    height: 6em;
+    cursor: pointer;
+    text-align: right;
+}
+.image-preview-box-close:before {
+    font-size: 3em;
 }
 .image-preview-box-content{
     padding: 6%;

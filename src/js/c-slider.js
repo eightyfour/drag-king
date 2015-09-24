@@ -1,7 +1,12 @@
-/*global canny, console, parseInt */
-/*jslint browser: true */
-// implementation
-
+/**
+ *  slider copied from draft project - still a lot of things to do
+ *
+ *  TODO:
+ *   * does not work correctly with less then 3 images
+ *   * slider swipe has bad behavior
+ *   * addItems can called more then one to add items flexible
+ *   * needs also a remove item method
+ */
 var slider =  (function () {
     "use strict";
 
@@ -338,9 +343,19 @@ var slider =  (function () {
         this.resize = function () {
             sliderType.resize();
         };
+        this.addItems = function (items) {
+            var wrap = sliderNode.children[0];
+            items.forEach(function (node) {
+                node.classList.add('c-item');
+                wrap.appendChild(node);
+            })
+        }
     }
 
     return {
+        addItems : function (id, items) {
+            slidersMap[id].addItems(items);
+        },
         /**
          * We need multiple instances from the slider. Each slider should be identifier via a id.
          * @param elem

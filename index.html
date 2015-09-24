@@ -40,42 +40,37 @@
 
 </div>
 
-<div class="gallery" canny-mod="gallery"></div>
+<div class="gallery" canny-mod="gallery">
+    <nav>
+        <ul>
+            <li title="full screen" canny-mod="imagePreviewer" canny-var="show"><span class="octicon octicon-telescope"></span></li>
+        </ul>
+    </nav>
+</div>
 
-<!--<div class="image-preview" canny-mod="imagePreview" canny-var="main">-->
-    <!--<div class="image-preview-box"  canny-mod="imagePreview" canny-var="close">-->
+<div class="image-preview" canny-mod="imagePreviewer" canny-var="main">
+    <div class="image-preview-box">
+        <div class="image-preview-box-close octicon octicon-x"  canny-mod="imagePreviewer" canny-var="close"></div>
 
-            <!--<div class="c-slider c-prev-btn octicon octicon-arrow-left ts3" canny-mod="slider" canny-slider="{'id':'overlaySlider','type':'prev'}"></div>-->
 
-            <!--&lt;!&ndash;<div canny-mod="imagePreview" canny-var="bgImage" class="image-preview-box-content-background"></div>&ndash;&gt;-->
-            <!--&lt;!&ndash;<img canny-mod="imagePreview" canny-var="img" class="image-preview-box-content-picture" src="/duc_gendarmenmarkt.jpg" alt=""/>&ndash;&gt;-->
-        <!--<div canny-mod="imagePreview" canny-var="bgImage" class="image-preview-box-content-background"></div>-->
+        <div class="c-slider c-prev-btn octicon octicon-chevron-left ts3" canny-mod="slider" canny-slider="{'id':'imagePreview','type':'prev'}"></div>
 
-        <!--<div class="c-slider c-main" canny-mod="slider" canny-slider="{'id':'overlaySlider','autoInit':'true'}">-->
-                <!--<div class="c-wrap">-->
-                    <!--<div class="c-item img_1">-->
-                        <!--<img canny-mod="imagePreview" canny-var="img" class="image-preview-box-content-picture" src="/duc_gendarmenmarkt.jpg" alt="" />-->
-                    <!--</div>-->
-                    <!--<div class="c-item img_2">-->
-                        <!--<img canny-mod="imagePreview" canny-var="img" class="image-preview-box-content-picture" src="/duc_gendarmentmarkt2.jpg" alt=""/>-->
-                    <!--</div>-->
-                    <!--<div class="c-item img_3">-->
-                        <!--<img canny-mod="imagePreview" canny-var="img" class="image-preview-box-content-picture" src="/140602_MP_016.jpg" alt=""/>-->
-                    <!--</div>-->
-                    <!--<div class="c-item img_4">-->
-                        <!--<img canny-mod="imagePreview" canny-var="img" class="image-preview-box-content-picture" src="/duc_gendarmenmarkt.jpg" alt=""/>-->
-                    <!--</div>-->
-                <!--</div>-->
-            <!--</div>-->
+            <!--<div canny-mod="imagePreview" canny-var="bgImage" class="image-preview-box-content-background"></div>-->
+            <!--<img class="image-preview-box-content-picture" src="/duc_gendarmenmarkt.jpg" alt=""/>-->
+        <div canny-mod="imagePreviewer" canny-var="bgImage" class="image-preview-box-content-background"></div>
 
-            <!--<div class="c-slider c-next-btn octicon octicon-arrow-right ts3" canny-mod="slider" canny-slider="{'id':'overlaySlider','type':'next'}"></div>-->
+        <div class="c-slider c-main" canny-mod="slider" canny-slider="{'id':'imagePreview','autoInit':'false'}">
+            <div class="c-wrap"></div>
+        </div>
 
-            <!--&lt;!&ndash; pagination &ndash;&gt;-->
-            <!--<div class="c-slider c-paginationProgressWrap">-->
-                <!--<div class="c-paginationProgress" canny-mod="slider" canny-slider="{'id':'overlaySlider','type':'paginationProgress'}"></div>-->
-            <!--</div>-->
-    <!--</div>-->
-<!--</div>-->
+        <div class="c-slider c-next-btn octicon octicon-chevron-right ts3" canny-mod="slider" canny-slider="{'id':'imagePreview','type':'next'}"></div>
+
+        <!-- pagination -->
+        <div class="c-slider c-paginationProgressWrap">
+            <div class="c-paginationProgress" canny-mod="slider" canny-slider="{'id':'imagePreview','type':'paginationProgress'}"></div>
+        </div>
+    </div>
+</div>
 
 
 <script src="/dist/main.gen.js"></script>

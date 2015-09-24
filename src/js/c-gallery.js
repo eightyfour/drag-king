@@ -47,7 +47,7 @@ module.exports = (function () {
         });
         imgNode.style.backgroundImage = "url(" + path + ")";
         imgNode.className = 'img';
-        removeBtn.className = 'deleteBtn';
+        removeBtn.className = 'deleteBtn octicon octicon-trashcan';
         clipNode.className = 'copyClipNode';
         container.appendChild(imgNode);
         imgNode.appendChild(removeBtn);
