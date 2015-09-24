@@ -68,20 +68,17 @@ module.exports = (function () {
         setupZeroClipboard(clipNode, path);
     }
 
-    function addImage(imagePath){
-         // array is a object :)
-            if (typeof imagePath === 'object') {
-               imagePath.forEach(function (path) {
-                   appendImage(path);
-               });
-            } else {
-                appendImage(imagePath);
-            }
-    }
-
     trade.on({
         getFiles : function (data) {
-            addImage(data);
+            data.forEach(function (path) {
+                appendImage(path);
+            });
+        },
+        fileSend : function (file) {
+            // only interest in images
+            if(/image\/.*/.test(file.type)){
+                appendImage([file.file]);
+            }
         }
     });
 
@@ -89,10 +86,6 @@ module.exports = (function () {
         add : function (elem, attr) {
             node = elem;
         },
-        /**
-         * pass and array of images paths or an single path as string
-         */
-        addImage : addImage,
         ready : function () {
 
         }

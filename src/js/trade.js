@@ -6,6 +6,30 @@ function callEventsQueue(queue) {
     });
 }
 
+/**
+ * Call this for each file - will call a call back with the server answer
+ * @param file
+ */
+function sendFile(file, directCallback) {
+    var uri = "/uploadFile?folder=" + location.pathname,
+        xhr = new XMLHttpRequest(),
+        fd = new FormData();
+
+    xhr.open("POST", uri, true);
+    xhr.onreadystatechange = function() {
+        var data;
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            // Handle response.
+            data = JSON.parse(xhr.responseText);
+            directCallback && directCallback(data); // handle response.
+            callEventsQueue(events.fileSend, data);
+        }
+    };
+    fd.append('myFile', file);
+    // Initiate a multipart/form-data upload
+    xhr.send(fd);
+}
+
 function deleteFile(path, directCallback) {
     var xhr = new XMLHttpRequest();
     xhr.open("POST", "/deleteFile?filename=" + path, true);
@@ -45,10 +69,12 @@ function getFiles(pathName) {
 
 var events = {
         getFiles : [],
-        deleteFile : []
+        deleteFile : [],
+        fileSend : []
     },
     doCalls = {
         getFiles : getFiles,
+        sendFile : sendFile,
         deleteFile : deleteFile
     };
 

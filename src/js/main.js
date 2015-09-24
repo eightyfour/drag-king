@@ -9,19 +9,6 @@ canny.add('newFolder', require('./c-newFolder.js'));
 canny.add('slider', require('./c-slider.js'));
 //canny.add('uploadPostView', require('./c-uploadPostView.js'));
 
-canny.upload.onFileSend(function (obj) {
-    if (obj === false) {
-        console.log('upload failure!');
-    } else {
-        //TODO needs a regExp image/XXXX
-        var parsedObj = JSON.parse(obj);
-        if(/image\/.*/.test(parsedObj.type)){
-//            canny.uploadPostView.addImage(parsedObj.file);
-            canny.gallery.addImage(parsedObj.file);
-        }
-    }
-});
-
 trade.on({
     getFiles : function (files) {
         console.log('main:new files was loaded', files);
@@ -32,5 +19,6 @@ trade.on({
 });
 
 canny.ready(function () {
+    // load initial files
     trade.doCall('getFiles')(location.pathname);
 });
