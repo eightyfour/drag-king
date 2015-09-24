@@ -387,6 +387,11 @@ var slider =  (function () {
             }, 10);
 
         },
+        /**
+         * callback will be called with actual index
+         * @param slideId
+         * @param cb
+         */
         onSlideChangeListener : function (slideId, cb) {
             if (slidersMap[slideId]) {
                 slidersMap[slideId].onSlideChangeListener(cb);

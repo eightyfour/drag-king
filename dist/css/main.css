@@ -288,6 +288,9 @@
     left: 0;
     background-color: rgba(100, 97, 97, 0.49);
 }
+.image-preview .octicon:before {
+    text-shadow: 0 0 10px #333;
+}
 .image-preview.c-show{
     display: block;
 }
@@ -332,10 +335,15 @@
     width: 100%;
     -webkit-filter:blur(10px);
     filter:blur(10px);
-    background-image: url('/duc_gendarmenmarkt.jpg');
+    /*background-image: url('/duc_gendarmenmarkt.jpg');*/
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+    -webkit-transition: background-image 400ms;
+    -moz-transition: background-image 400ms;
+    -ms-transition: background-image 400ms;
+    -o-transition: background-image 400ms;
+    transition: background-image 400ms;
 }
 .image-preview-box-content-picture{
     position: relative;
