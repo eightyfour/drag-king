@@ -8,7 +8,7 @@ canny.add('listFolders', require('./c-listFolders.js'));
 canny.add('newFolder', require('./c-newFolder.js'));
 canny.add('slider', require('./c-slider.js'));
 canny.add('imagePreviewer', require('./c-imagePreviewer.js'));
-//canny.add('uploadPostView', require('./c-uploadPostView.js'));
+canny.add('fileDownLoaderFormat', require('./c-fileDownLoaderFormat.js'));
 
 trade.on({
     getFiles : function (files) {
