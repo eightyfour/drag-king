@@ -73,11 +73,11 @@ if (opts.port !== undefined) {
      * If the URL has a dot inside it expect to send a files. Otherwise it sends the index.
      */
     app.get(/^((?!^(\/dist|\/bower_components)).)*$/,  function (req, res) {
-        if (/\./.test(req.originalUrl)) {
+        if (/\./.test(req.path)) {
             // contains a . - looks like a file request so check the files system
-            fs.exists(__dirname + '/files' + req.originalUrl, function (exists) {
+            fs.exists(__dirname + '/files' + req.path, function (exists) {
                 if (exists) {
-                    res.sendFile(__dirname + '/files' + req.originalUrl);
+                    res.sendFile(__dirname + '/files' + req.path);
                 } else {
                     // no file found - send 404 file
                     res.sendFile(__dirname + '/404.html');
