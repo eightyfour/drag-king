@@ -6,7 +6,7 @@
 var opts = {
         dirName: __dirname + '/',
         distName: __dirname + '/dist/',
-        port : process.env.npm_package_config_port
+        port : process.env.npm_package_config_port || 8000
     },
     fs = require('fs'),
     watchifyTask = require('./watchifyTask.js'),
@@ -40,7 +40,7 @@ function formatFolder(folder) {
     return folder;
 }
 
-if (process.env.npm_package_config_port !== undefined) {
+if (opts.port !== undefined) {
     watchifyTask();
 
     app = express();
@@ -72,7 +72,7 @@ if (process.env.npm_package_config_port !== undefined) {
      *
      * If the URL has a dot inside it expect to send a files. Otherwise it sends the index.
      */
-    app.get(/^((?!(\/dist|\/bower_components)).)*$/,  function (req, res) {
+    app.get(/^((?!^(\/dist|\/bower_components)).)*$/,  function (req, res) {
         if (/\./.test(req.originalUrl)) {
             // contains a . - looks like a file request so check the files system
             fs.exists(__dirname + '/files' + req.originalUrl, function (exists) {
