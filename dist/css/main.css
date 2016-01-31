@@ -172,23 +172,26 @@
     height: auto;
     border: none;
 }
-.dk .gallery .gallery-file-wrap .open-btn{
+.dk .gallery .open-btn{
     width: 100%;
     height: 100%;
     cursor: pointer;
     top: 0;
-    position: absolute;
+    position: relative;
     color: #333;
 }
-.dk .gallery .gallery-file-wrap .open-btn:before{
+.dk .gallery .gallery-image-wrap .open-btn:before{
+    display: none;
+}
+.dk .gallery .open-btn:before{
     position: absolute;
     top:40%;
     left:40%;
 }
-.dk .gallery .gallery-file-wrap .open-btn:hover{
+.dk .gallery .open-btn:hover{
     background-color: lightblue;
 }
-.dk .gallery .gallery-file-wrap .open-btn:active{
+.dk .gallery .open-btn:active{
     background-color: cornflowerblue;
 }
 .dk .gallery .gallery-file-wrap .file-icon{
