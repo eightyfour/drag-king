@@ -43,7 +43,6 @@ module.exports = (function () {
               container.remove();
           })
         });
-//        setupZeroClipboard(clipNode, path);
         return container;
     }
 
@@ -51,22 +50,30 @@ module.exports = (function () {
         var container = document.createElement('div'),
             icon = document.createElement('span'),
             removeBtn = document.createElement('div'),
+            openButton = document.createElement('a'),
             textNode = document.createTextNode(file.name);
 
 
         container.className = 'gallery-file-wrap';
+        openButton.className = 'open-btn octicon octicon-file-symlink-file';
         container.style.backgroundColor = getRandomColor();
 
         icon.className = "file-icon octicon octicon-file-text";
 
         removeBtn.className = 'deleteBtn octicon octicon-trashcan';
         icon.appendChild(textNode);
-        container.appendChild(icon);
+        openButton.appendChild(icon);
         container.appendChild(removeBtn);
+        container.appendChild(openButton);
 
         removeBtn.setAttribute('title', 'remove this file');
 
         // register click listener for the remove duel request
+        openButton.setAttribute('href', 'http://' + location.host + file.file);
+        openButton.setAttribute('target', '_blank');
+        openButton.setAttribute('title', 'Open in new tab');
+
+
         removeBtn.addEventListener('click', function () {
             trade.doCall('deleteFile')(file.file, function () {
                 container.remove();
