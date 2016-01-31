@@ -128,17 +128,31 @@
 .dk .gallery div .copyClipNode,
 .dk .gallery .deleteBtn{
     position: absolute;
-    width: 2em;
-    height: 2em;
     cursor: pointer;
-    /*background-color: turquoise;*/
     z-index: 10;
+    color: rgba(100,100,100,.2);
+
 }
-.dk .gallery .deleteBtn{
+.dk .gallery .controlPanel{
     opacity: 0;
-    top: -2em;
-    right: -2em;
-    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    z-index: -1;
+    height: 1.5em;
+}
+.dk .gallery .controlPanel:hover .deleteBtn{
+    color: rgba(100,100,100,1);
+}
+.dk .gallery .controlPanel .deleteBtn:hover{
+    text-shadow: 0 0 3px #ff7a00;
+}
+.dk .gallery > div:hover .controlPanel{
+    opacity: 1;
+    top: -1.5em;
+    z-index: 1;
+    transition: all 200ms;
 }
 .dk .gallery div .deleteBtn:hover{
     opacity: 1;
@@ -161,10 +175,6 @@
 
 .dk .gallery .gallery-file-wrap{
     position: relative;
-    background-color: rgba(100,100,100,0.3);
-    border: 1px dashed  rgba(100,100,100,0.3);
-    width: 9em;
-    height: 8em;
 }
 .dk .gallery .c-loaded.gallery-file-wrap{
     background-color: transparent;
@@ -176,7 +186,7 @@
     width: 100%;
     height: 100%;
     cursor: pointer;
-    top: 0;
+    display: block;
     position: relative;
     color: #333;
 }
@@ -188,17 +198,23 @@
     top:40%;
     left:40%;
 }
-.dk .gallery .open-btn:hover{
-    background-color: lightblue;
+.dk .gallery .gallery-image-wrap .open-btn:hover{
+    opacity: 0.3;
+}
+.dk .gallery .gallery-image-wrap .open-btn:active{
+    opacity: 0.6;
 }
 .dk .gallery .open-btn:active{
-    background-color: cornflowerblue;
+    color: cornflowerblue;
+}
+.dk .gallery .open-btn:hover{
+    color: darkblue;
+}
+.dk .gallery .gallery-file-wrap .open-btn:active{
+    color: darkslateblue;
 }
 .dk .gallery .gallery-file-wrap .file-icon{
     display: inline-block;
-}
-.dk .gallery .gallery-file-wrap .deleteBtn{
-    position: absolute;
 }
 .dk .gallery .gallery-file-wrap .file-icon:before{
     padding-right: 5px;

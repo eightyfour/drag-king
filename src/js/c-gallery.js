@@ -14,7 +14,8 @@ module.exports = (function () {
     function getOpenLink(file) {
         var openButton = document.createElement('a');
 
-        openButton.className = 'open-btn octicon octicon-file-symlink-file';
+//        openButton.className = 'open-btn octicon octicon-file-symlink-file';
+        openButton.className = 'open-btn';
         openButton.setAttribute('href', 'http://' + location.host + file.file);
         openButton.setAttribute('target', '_blank');
         openButton.setAttribute('title', 'Open in new tab');
@@ -26,6 +27,7 @@ module.exports = (function () {
             imgNode = document.createElement('div'),
             openButton = getOpenLink(file),
             removeBtn = document.createElement('div'),
+            controlPanel = document.createElement('div'),
             myImage = new Image();
 
 
@@ -39,8 +41,10 @@ module.exports = (function () {
         imgNode.style.backgroundImage = "url(" + file.file + ")";
         imgNode.className = 'img';
         removeBtn.className = 'deleteBtn octicon octicon-trashcan';
+        controlPanel.className = 'controlPanel';
         container.appendChild(imgNode);
-        imgNode.appendChild(removeBtn);
+        controlPanel.appendChild(removeBtn);
+        imgNode.appendChild(controlPanel);
         openButton.appendChild(myImage);
         container.appendChild(openButton);
 
@@ -59,19 +63,22 @@ module.exports = (function () {
         var container = document.createElement('div'),
             icon = document.createElement('span'),
             removeBtn = document.createElement('div'),
+            controlPanel = document.createElement('div'),
             openButton = getOpenLink(file),
             textNode = document.createTextNode(file.name);
 
 
         container.className = 'gallery-file-wrap';
-        container.style.backgroundColor = getRandomColor();
+//        container.style.backgroundColor = getRandomColor();
 
         icon.className = "file-icon octicon octicon-file-text";
 
         removeBtn.className = 'deleteBtn octicon octicon-trashcan';
+        controlPanel.className = 'controlPanel';
         icon.appendChild(textNode);
         openButton.appendChild(icon);
-        container.appendChild(removeBtn);
+        controlPanel.appendChild(removeBtn);
+        container.appendChild(controlPanel);
         container.appendChild(openButton);
 
         removeBtn.setAttribute('title', 'remove this file');
