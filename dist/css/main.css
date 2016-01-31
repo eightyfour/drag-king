@@ -159,6 +159,27 @@
 .dk .gallery .c-loaded.gallery-image-wrap .img{
     display: block;
 }
+.dk .gallery .gallery-file-wrap .file-icon{
+    display: inline-block;
+}
+.dk .gallery .gallery-file-wrap .file-icon:before{
+    padding-right: 5px;
+}
+.dk .gallery .gallery-file-wrap{
+    background-color: rgba(100,100,100,0.3);
+    border: 1px dashed  rgba(100,100,100,0.3);
+    width: 9em;
+    height: 8em;
+}
+.dk .gallery .c-loaded.gallery-file-wrap{
+    background-color: transparent;
+    width: auto;
+    height: auto;
+    border: none;
+}
+.dk .gallery .c-loaded.gallery-file-wrap .img{
+    display: block;
+}
 .dk .gallery div .copyClipNode{
     top: -1.5em;
     left: -1.5em;

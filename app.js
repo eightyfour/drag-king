@@ -17,7 +17,8 @@ var opts = {
     finalhandler = require('finalhandler'),
     serveStatic = require('serve-static'),
     serve = serveStatic(opts.dirName),
-    index = serveIndex(opts.dirName, {'icons': true});
+    index = serveIndex(opts.dirName, {'icons': true}),
+    acceptedImageExtensions = ['jpeg','jpg','png','gif'];
 
 /**
  * add a / at the begining or end
@@ -170,7 +171,12 @@ if (opts.port !== undefined) {
                         fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
                             if (stats.isFile()) {
                                 // TODO add correct type
-                                fileList.push({file: '/files' + folder + file, type: 'image/jpg'});
+                                var extension = file.split('.')[1];
+                                if (acceptedImageExtensions.indexOf(extension) !== -1) {
+                                    fileList.push({file: '/files' + folder + file, name: file, type: 'image/jpg'});
+                                } else {
+                                    fileList.push({file: '/files' + folder + file, name: file, type: extension});
+                                }
                             } else if (stats.isDirectory()){
                                 // filter out directories - if we need directories we should ask separately for it
                                 console.log('Found a directory named:', file);

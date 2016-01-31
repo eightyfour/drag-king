@@ -1,24 +1,5 @@
 var trade = require('./trade.js');
 
-/**
- *
- * @returns {{add: Function, ready: Function}}
- */
-function setupZeroClipboard(imageNode, url){
-    var fullUrl = location.origin + url;
-    var client = new ZeroClipboard(imageNode);
-    client.on('ready', function(event){
-        client.on( 'copy', function(event) {
-            event.clipboardData.setData('text/plain', fullUrl);
-        });
-        client.on('aftercopy', function(event){
-            imageNode.parentNode.classList.add('copied');
-            imageNode.parentNode.setAttribute('data', url);
-            console.debug('You just copied', fullUrl);
-        })
-    });
-}
-
 function getRandomColor() {
     function c() {
         return Math.floor(Math.random()*256).toString(10)
@@ -53,10 +34,9 @@ module.exports = (function () {
         imgNode.appendChild(removeBtn);
         imgNode.appendChild(clipNode);
         container.appendChild(myImage);
-        node.appendChild(container);
 
         removeBtn.setAttribute('title', 'remove this image');
-        clipNode.setAttribute('title', 'Click to copy to clip board');
+//        clipNode.setAttribute('title', 'Click to copy to clip board');
 
         // register click listener for the remove duel request
         removeBtn.addEventListener('click', function () {
@@ -64,22 +44,52 @@ module.exports = (function () {
               container.remove();
           })
         });
+//        setupZeroClipboard(clipNode, path);
+        return container;
+    }
 
-        setupZeroClipboard(clipNode, path);
+    function appendFile(file) {
+        var container = document.createElement('div'),
+            icon = document.createElement('span'),
+            removeBtn = document.createElement('div'),
+            textNode = document.createTextNode(file.name);
+
+
+        container.className = 'gallery-file-wrap';
+        container.style.backgroundColor = getRandomColor();
+
+        icon.className = "file-icon octicon octicon-file-text";
+
+        removeBtn.className = 'deleteBtn octicon octicon-trashcan';
+        icon.appendChild(textNode);
+        container.appendChild(icon);
+
+        removeBtn.setAttribute('title', 'remove this image');
+
+        // register click listener for the remove duel request
+        removeBtn.addEventListener('click', function () {
+            trade.doCall('deleteFile')(path, function () {
+                container.remove();
+            })
+        });
+
+        return container;
     }
 
     trade.on({
         getFiles : function (data) {
             data.forEach(function (file) {
                 if(/image\/.*/.test(file.type)) {
-                    appendImage(file.file);
+                    node.appendChild(appendImage(file.file));
+                } else {
+                    node.appendChild(appendFile(file));
                 }
             });
         },
         fileSend : function (file) {
             // only interest in images
             if(/image\/.*/.test(file.type)){
-                appendImage([file.file]);
+                node.appendChild(appendImage([file.file]));
             }
         }
     });
