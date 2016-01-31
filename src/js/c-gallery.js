@@ -36,7 +36,6 @@ module.exports = (function () {
         container.appendChild(myImage);
 
         removeBtn.setAttribute('title', 'remove this image');
-//        clipNode.setAttribute('title', 'Click to copy to clip board');
 
         // register click listener for the remove duel request
         removeBtn.addEventListener('click', function () {
@@ -63,12 +62,13 @@ module.exports = (function () {
         removeBtn.className = 'deleteBtn octicon octicon-trashcan';
         icon.appendChild(textNode);
         container.appendChild(icon);
+        container.appendChild(removeBtn);
 
-        removeBtn.setAttribute('title', 'remove this image');
+        removeBtn.setAttribute('title', 'remove this file');
 
         // register click listener for the remove duel request
         removeBtn.addEventListener('click', function () {
-            trade.doCall('deleteFile')(path, function () {
+            trade.doCall('deleteFile')(file.file, function () {
                 container.remove();
             })
         });
@@ -90,6 +90,8 @@ module.exports = (function () {
             // only interest in images
             if(/image\/.*/.test(file.type)){
                 node.appendChild(appendImage([file.file]));
+            } else {
+                node.appendChild(appendFile(file));
             }
         }
     });

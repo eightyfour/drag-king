@@ -139,7 +139,12 @@ if (opts.port !== undefined) {
                  file.pipe(fstream);
                  fstream.on('close', function () {
                      // TODO add correct type
-                     res.status(200).send({file: '/files' + folder + fName, type: 'image/jpg'});
+                     var extension = fName.split('.')[1];
+                     if (acceptedImageExtensions.indexOf(extension) !== -1) {
+                         res.status(200).send({file: '/files' + folder + fName, name : fName, type: 'image/jpg'});
+                     } else {
+                         res.status(200).send({file: '/files' + folder + fName, name : fName, type: extension});
+                     }
                  });
              }
              console.log('uploadFile', '/files' + folder);
