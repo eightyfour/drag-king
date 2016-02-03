@@ -1,22 +1,4 @@
-/**
- *
- * @returns {{add: Function, ready: Function}}
- */
-
-function setupZeroClipboard(imageNode, url){
-    var fullUrl = location.origin + url;
-    var client = new ZeroClipboard(imageNode);
-    client.on('ready', function(event){
-        client.on( 'copy', function(event) {
-            event.clipboardData.setData('text/plain', fullUrl);
-        });
-        client.on('aftercopy', function(event){
-            imageNode.parentNode.classList.add('copied');
-            imageNode.parentNode.setAttribute('data', url);
-            console.debug('You just copied', fullUrl);
-        })
-    });
-}
+var trade = require('./trade.js');
 
 function getRandomColor() {
     function c() {
@@ -27,95 +9,119 @@ function getRandomColor() {
 }
 
 var node;
-module.exports = function () {
+module.exports = (function () {
 
-    function appendImage(path) {
+    function getOpenLink(file) {
+        var openButton = document.createElement('a');
+
+//        openButton.className = 'open-btn octicon octicon-file-symlink-file';
+        openButton.className = 'open-btn';
+        openButton.setAttribute('href', 'http://' + location.host + file.file);
+        openButton.setAttribute('target', '_blank');
+        openButton.setAttribute('title', 'Open in new tab');
+        return openButton;
+    }
+
+    function appendImage(file) {
         var container = document.createElement('div'),
             imgNode = document.createElement('div'),
-            clipNode = document.createElement('div'),
+            openButton = getOpenLink(file),
             removeBtn = document.createElement('div'),
+            controlPanel = document.createElement('div'),
             myImage = new Image();
 
 
         container.className = 'gallery-image-wrap';
         container.style.backgroundColor = getRandomColor();
-        myImage.src = path;
+        myImage.src = file.file;
         myImage.addEventListener('load', function () {
             container.classList.add('c-loaded');
             container.style.backgroundColor = 'transparent';
         });
-        imgNode.style.backgroundImage = "url(" + path + ")";
+        imgNode.style.backgroundImage = "url(" + file.file + ")";
         imgNode.className = 'img';
-        removeBtn.className = 'deleteBtn';
-        clipNode.className = 'copyClipNode';
+        removeBtn.className = 'deleteBtn octicon octicon-trashcan';
+        controlPanel.className = 'controlPanel';
         container.appendChild(imgNode);
-        imgNode.appendChild(removeBtn);
-        imgNode.appendChild(clipNode);
-        container.appendChild(myImage);
-        node.appendChild(container);
+        controlPanel.appendChild(removeBtn);
+        imgNode.appendChild(controlPanel);
+        openButton.appendChild(myImage);
+        container.appendChild(openButton);
 
         removeBtn.setAttribute('title', 'remove this image');
-        clipNode.setAttribute('title', 'Click to copy to clip board');
 
         // register click listener for the remove duel request
         removeBtn.addEventListener('click', function () {
-           var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/deleteFile?filename=" + path, true);
-            xhr.onload = function (e) {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        container.remove();
-                    } else {
-                        console.error(xhr.statusText);
-                    }
-                }
-            };
-            xhr.onerror = function (e) {
-                console.error(xhr.statusText);
-            };
-            xhr.send(null);
+          trade.doCall('deleteFile')(file.file, function () {
+              container.remove();
+          })
+        });
+        return container;
+    }
+
+    function appendFile(file) {
+        var container = document.createElement('div'),
+            icon = document.createElement('span'),
+            removeBtn = document.createElement('div'),
+            controlPanel = document.createElement('div'),
+            openButton = getOpenLink(file),
+            textNode = document.createTextNode(file.name);
+
+
+        container.className = 'gallery-file-wrap';
+//        container.style.backgroundColor = getRandomColor();
+
+        icon.className = "file-icon octicon octicon-file-text";
+
+        removeBtn.className = 'deleteBtn octicon octicon-trashcan';
+        controlPanel.className = 'controlPanel';
+        icon.appendChild(textNode);
+        openButton.appendChild(icon);
+        controlPanel.appendChild(removeBtn);
+        container.appendChild(controlPanel);
+        container.appendChild(openButton);
+
+        removeBtn.setAttribute('title', 'remove this file');
+
+        // register click listener for the remove duel request
+        removeBtn.addEventListener('click', function () {
+            trade.doCall('deleteFile')(file.file, function () {
+                container.remove();
+            })
         });
 
-        setupZeroClipboard(clipNode, path);
+        return container;
     }
 
-    function addImage(imagePath){
-         // array is a object :)
-            if (typeof imagePath === 'object') {
-               imagePath.forEach(function (path) {
-                   appendImage(path);
-               });
+    trade.on({
+        getFiles : function (data) {
+            data.forEach(function (file) {
+                if(/image\/.*/.test(file.type)) {
+                    node.appendChild(appendImage(file));
+                } else {
+                    node.appendChild(appendFile(file));
+                }
+            });
+        },
+        fileSend : function (file) {
+            // only interest in images
+            if(/image\/.*/.test(file.type)){
+                node.appendChild(appendImage([file]));
             } else {
-                appendImage(imagePath);
+                node.appendChild(appendFile(file));
             }
-    }
+        }
+    });
+
     return {
         add : function (elem, attr) {
             node = elem;
         },
-        /**
-         * pass and array of images paths or an single path as string
-         */
-        addImage : addImage,
         ready : function () {
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", "/getFiles", true);
-            xhr.onload = function (e) {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        addImage(JSON.parse(xhr.responseText));
-                    } else {
-                        console.error(xhr.statusText);
-                    }
-                }
-            };
-            xhr.onerror = function (e) {
-                console.error(xhr.statusText);
-            };
-            xhr.send(location.pathname);
+
         }
     }
-};
+}());
 
 
 

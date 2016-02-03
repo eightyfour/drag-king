@@ -6,7 +6,7 @@
 var opts = {
         dirName: __dirname + '/',
         distName: __dirname + '/dist/',
-        port : process.env.npm_package_config_port
+        port : process.env.npm_package_config_port || 8000
     },
     fs = require('fs'),
     watchifyTask = require('./watchifyTask.js'),
@@ -17,7 +17,8 @@ var opts = {
     finalhandler = require('finalhandler'),
     serveStatic = require('serve-static'),
     serve = serveStatic(opts.dirName),
-    index = serveIndex(opts.dirName, {'icons': true});
+    index = serveIndex(opts.dirName, {'icons': true}),
+    acceptedImageExtensions = ['jpeg','jpg','png','gif'];
 
 /**
  * add a / at the begining or end
@@ -40,7 +41,7 @@ function formatFolder(folder) {
     return folder;
 }
 
-if (process.env.npm_package_config_port !== undefined) {
+if (opts.port !== undefined) {
     watchifyTask();
 
     app = express();
@@ -68,10 +69,27 @@ if (process.env.npm_package_config_port !== undefined) {
     });
 
     /**
-     * send always index except for folder dist and bower_components
+     * match except for folder dist and bower_components
+     *
+     * If the URL has a dot inside it expect to send a files. Otherwise it sends the index.
      */
-    app.get(/^((?!(\/dist|\/bower_components)).)*$/,  function (req, res) {
-        res.sendFile(__dirname + '/index.html');
+    app.get(/^((?!^(\/dist|\/bower_components)).)*$/,  function (req, res) {
+        if (/\./.test(req.path)) {
+            // contains a . - looks like a file request so check the files system
+            fs.exists(__dirname + '/files' + req.path, function (exists) {
+                if (exists) {
+                    res.sendFile(__dirname + '/files' + req.path);
+                } else {
+                    // no file found - send 404 file
+                    res.sendFile(__dirname + '/404.html');
+                }
+            });
+
+        } else {
+            // send index
+            res.sendFile(__dirname + '/index.html');
+
+        }
     });
 
     /**
@@ -120,7 +138,13 @@ if (process.env.npm_package_config_port !== undefined) {
                  fstream = fs.createWriteStream(__dirname + '/files' + folder + fName);
                  file.pipe(fstream);
                  fstream.on('close', function () {
-                     res.status(200).send({file: '/files' + folder + fName, type: 'image/jpg'});
+                     // TODO add correct type
+                     var extension = fName.split('.')[1];
+                     if (acceptedImageExtensions.indexOf(extension) !== -1) {
+                         res.status(200).send({file: '/files' + folder + fName, name : fName, type: 'image/jpg'});
+                     } else {
+                         res.status(200).send({file: '/files' + folder + fName, name : fName, type: extension});
+                     }
                  });
              }
              console.log('uploadFile', '/files' + folder);
@@ -151,7 +175,13 @@ if (process.env.npm_package_config_port !== undefined) {
                     files.forEach(function (file) {
                         fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
                             if (stats.isFile()) {
-                                fileList.push('/files' + folder + file);
+                                // TODO add correct type
+                                var extension = file.split('.')[1];
+                                if (acceptedImageExtensions.indexOf(extension) !== -1) {
+                                    fileList.push({file: '/files' + folder + file, name: file, type: 'image/jpg'});
+                                } else {
+                                    fileList.push({file: '/files' + folder + file, name: file, type: extension});
+                                }
                             } else if (stats.isDirectory()){
                                 // filter out directories - if we need directories we should ask separately for it
                                 console.log('Found a directory named:', file);
