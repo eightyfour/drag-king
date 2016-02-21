@@ -1,3 +1,6 @@
+/**
+ *  Rename the files it also show normal files
+ */
 var trade = require('./trade.js');
 
 function getRandomColor() {
@@ -22,15 +25,14 @@ module.exports = (function () {
         return openButton;
     }
 
-    function appendImage(file) {
-        var container = document.createElement('div'),
-            imgNode = document.createElement('div'),
+    function appendImage(container, file) {
+        var imgNode = document.createElement('div'),
             openButton = getOpenLink(file),
             removeBtn = document.createElement('div'),
             controlPanel = document.createElement('div'),
             myImage = new Image();
 
-
+        container.setAttribute('id', file.file);
         container.className = 'gallery-image-wrap';
         container.style.backgroundColor = getRandomColor();
         myImage.src = file.file;
@@ -59,14 +61,14 @@ module.exports = (function () {
         return container;
     }
 
-    function appendFile(file) {
-        var container = document.createElement('div'),
-            icon = document.createElement('span'),
+    function appendFile(container, file) {
+        var icon = document.createElement('span'),
             removeBtn = document.createElement('div'),
             controlPanel = document.createElement('div'),
             openButton = getOpenLink(file),
             textNode = document.createTextNode(file.name);
 
+        container.setAttribute('id', file.file);
 
         container.className = 'gallery-file-wrap';
 //        container.style.backgroundColor = getRandomColor();
@@ -93,23 +95,36 @@ module.exports = (function () {
         return container;
     }
 
+    function createFile(div, file) {
+        var fileNode;
+        if(/image\/.*/.test(file.type)) {
+            fileNode = appendImage(div, file);
+        } else {
+            fileNode = appendFile(div, file);
+        }
+        return fileNode;
+    }
+
+    function addFile(file) {
+        var div = document.getElementById(file.file);
+        if (!div) {
+           div = document.createElement('div');
+           node.appendChild(createFile(div, file));
+        } else {
+            div.innerHTML = '';
+            div.classList.add('c-fileupdated');
+            createFile(div, file);
+        }
+    }
+
     trade.on({
         getFiles : function (data) {
             data.forEach(function (file) {
-                if(/image\/.*/.test(file.type)) {
-                    node.appendChild(appendImage(file));
-                } else {
-                    node.appendChild(appendFile(file));
-                }
+                addFile(file);
             });
         },
         fileSend : function (file) {
-            // only interest in images
-            if(/image\/.*/.test(file.type)){
-                node.appendChild(appendImage([file]));
-            } else {
-                node.appendChild(appendFile(file));
-            }
+            addFile(file);
         }
     });
 
