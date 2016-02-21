@@ -30,17 +30,18 @@ module.exports = (function () {
             openButton = getOpenLink(file),
             removeBtn = document.createElement('div'),
             controlPanel = document.createElement('div'),
-            myImage = new Image();
+            myImage = new Image(),
+            fileName = file.file + '?time=' + new Date() / 1000;
 
         container.setAttribute('id', file.file);
         container.className = 'gallery-image-wrap';
         container.style.backgroundColor = getRandomColor();
-        myImage.src = file.file;
+        myImage.src = fileName ;
         myImage.addEventListener('load', function () {
             container.classList.add('c-loaded');
             container.style.backgroundColor = 'transparent';
         });
-        imgNode.style.backgroundImage = "url(" + file.file + ")";
+        imgNode.style.backgroundImage = "url(" + fileName + ")";
         imgNode.className = 'img';
         removeBtn.className = 'deleteBtn octicon octicon-trashcan';
         controlPanel.className = 'controlPanel';
