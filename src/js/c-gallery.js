@@ -71,8 +71,7 @@ module.exports = (function () {
 
         container.setAttribute('id', file.file);
 
-        container.className = 'gallery-file-wrap';
-//        container.style.backgroundColor = getRandomColor();
+        container.classList.add('gallery-file-wrap');
 
         icon.className = "file-icon octicon octicon-file-text";
 
@@ -113,8 +112,13 @@ module.exports = (function () {
            node.appendChild(createFile(div, file));
         } else {
             div.innerHTML = '';
-            div.classList.add('c-fileupdated');
             createFile(div, file);
+            div.classList.add('c-fileupdated');
+            setTimeout(function () {
+                if (div) {
+                    div.classList.remove('c-fileupdated');
+                }
+            }, 4000)
         }
     }
 
