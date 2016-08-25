@@ -9,7 +9,6 @@ var opts = {
         port : process.env.npm_package_config_port || 8000
     },
     fs = require('fs'),
-    watchifyTask = require('./watchifyTask.js'),
     express = require('express'),
     busboy = require('connect-busboy'),
     serveIndex = require('serve-index'),
@@ -32,7 +31,7 @@ function formatFolder(folder) {
     // replace all spaces with underscores
     folder = folder.split(' ').join('_');
 
-    if (folder[folder.length] !== '/') {
+    if (folder.length > 1 && folder[folder.length] !== '/') {
         folder += '/';
     }
     if (folder[0] !== '/') {
@@ -42,7 +41,6 @@ function formatFolder(folder) {
 }
 
 if (opts.port !== undefined) {
-    watchifyTask();
 
     app = express();
     app.use(busboy());
@@ -177,10 +175,11 @@ if (opts.port !== undefined) {
                             if (stats.isFile()) {
                                 // TODO add correct type
                                 var extension = file.split('.')[1];
+
                                 if (acceptedImageExtensions.indexOf(extension) !== -1) {
-                                    fileList.push({file: '/files' + folder + file, name: file, type: 'image/jpg'});
+                                    fileList.push({file: folder + file, name: file, type: 'image/jpg'});
                                 } else {
-                                    fileList.push({file: '/files' + folder + file, name: file, type: extension});
+                                    fileList.push({file: folder + file, name: file, type: extension});
                                 }
                             } else if (stats.isDirectory()){
                                 // filter out directories - if we need directories we should ask separately for it
@@ -218,6 +217,10 @@ if (opts.port !== undefined) {
                     length = files.length;
                     files.forEach(function (file) {
                         fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
+                            if (err) {
+                                console.log("app:path not exists:", err);
+                                return;
+                            }
                             if (stats.isDirectory()) {
                                 fileList.push(file);
                             }
@@ -243,7 +246,7 @@ if (opts.port !== undefined) {
             if (fileName[0] !== '/') {
                 fileName = '/' + fileName;
             }
-            fs.unlink(__dirname + fileName, function () {
+            fs.unlink(__dirname + '/files' + fileName, function () {
                 res.status(200).send(req.query.filename);
             });
         } else {

@@ -3,9 +3,17 @@
   "version": "0.0.1",
   "description": "Drag and drop to upload to server",
   "main": "app.js",
+  "watch" : {
+    "js" : {
+      "patterns": ["src"],
+      "extensions": "js"
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node app.js"
+    "js" : "browserify src/js/main.js -o dist/main.gen.js",
+    "start": "node app.js",
+    "watch": "npm-watch"
   },
   "config": {
     "port": 8000,
@@ -30,7 +38,9 @@
     "express": "^4.0.0",
     "finalhandler": "*",
     "serve-index": "*",
-    "serve-static": "*",
-    "watchify": "x"
+    "serve-static": "*"
+  },
+  "devDependencies": {
+    "npm-watch": "^0.1.6"
   }
 }

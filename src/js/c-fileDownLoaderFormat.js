@@ -27,7 +27,7 @@ function getJSONAsArray() {
     files.forEach(function (name) {
         i++;
         frag.appendChild(document.createTextNode('\''));
-        frag.appendChild(document.createTextNode(host + name));
+        frag.appendChild(document.createTextNode('http://' + host + name));
         frag.appendChild(document.createTextNode('\''));
 
         if (i < files.length) {
@@ -39,6 +39,15 @@ function getJSONAsArray() {
     return frag;
 }
 
+function getWgetFormat() {
+    var retString = "wget -P src/images",
+        host = location.host;
+    files.forEach(function (name) {
+        retString += ' http://' + host + name;
+    });
+    return retString;
+}
+
 /**
  *
  * @returns {{add: Function, ready: Function}}
@@ -48,7 +57,7 @@ module.exports =  {
         if (attr === 'show') {
             elem.addEventListener('click', function () {
                 overlay.add(function (ov) {
-                    ov.getNode().appendChild(addNode(getJSONAsArray()));
+                    ov.getNode().appendChild(addNode(document.createTextNode(getWgetFormat())));
                     ov.show();
                     ov.onBackgroundClick(function () {
                         ov.hide();
