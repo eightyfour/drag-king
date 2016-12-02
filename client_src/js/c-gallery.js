@@ -2,7 +2,8 @@
  *  TODO Rename the files it also show normal files
  *  TODO use repeat to render the view elements
  */
-var trade = require('./trade');
+var trade = require('./trade'),
+    octicons = require('octicons');
 
 function getRandomColor() {
     function c() {
@@ -45,7 +46,8 @@ module.exports = (function () {
         });
         imgNode.style.backgroundImage = "url(" + fileName + ")";
         imgNode.className = 'img';
-        removeBtn.className = 'deleteBtn octicon octicon-trashcan';
+        removeBtn.className = 'deleteBtn';
+        removeBtn.innerHTML = octicons.trashcan.toSVG();
         controlPanel.className = 'controlPanel';
         container.appendChild(imgNode);
         controlPanel.appendChild(removeBtn);

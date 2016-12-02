@@ -1,18 +1,18 @@
 {
   "name": "drag-king",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Drag and drop to upload to server",
-  "main": "app.js",
+  "main": "mainu.js",
   "watch": {
     "js": {
       "patterns": [
-        "src"
+        "client_src"
       ],
       "extensions": "js"
     },
     "less": {
       "patterns": [
-        "src/less"
+        "client_src/less"
       ],
       "extensions": "less"
     }
@@ -20,21 +20,21 @@
   "scripts": {
     "prepublish": "npm-run-all images css js less",
     "preimages" : "mkdir -p dist/img",
-    "images" : "cp -rf src/images/* dist/img/.",
+    "images" : "cp -rf client_src/images/* dist/img/.",
     "precss" : "mkdir -p dist/css",
-    "css" : "cp -rf src/css/* dist/css/.",
+    "css" : "cp -rf client_src/css/* dist/css/.",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "js": "browserify src/js/main.js -o dist/main.gen.js",
+    "js": "browserify client_src/js/main.js -o dist/main.gen.js",
     "preless": "mkdir -p dist/css && cp node_modules/octicons/build/octicons.min.css dist/css/.",
-    "less": "lessc src/less/main.less dist/css/main.css",
-    "start": "node app.js",
+    "less": "lessc client_src/less/main.less dist/css/main.css",
+    "start": "node dragKing.js",
     "watch": "npm-watch"
   },
   "config": {
     "port": 8000,
     "bundle": "dist/main.gen.js",
     "outfile": [
-      "src/js/main.js"
+      "client_src/js/main.js"
     ]
   },
   "repository": {
