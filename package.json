@@ -20,9 +20,9 @@
   "scripts": {
     "prepublish": "npm-run-all images css js less",
     "preimages" : "mkdir -p dist/img",
-    "images" : "cp -rf src/images dist/img",
+    "images" : "cp -rf src/images/* dist/img/.",
     "precss" : "mkdir -p dist/css",
-    "css" : "cp -rf src/css dist/css",
+    "css" : "cp -rf src/css/* dist/css/.",
     "test": "echo \"Error: no test specified\" && exit 1",
     "js": "browserify src/js/main.js -o dist/main.gen.js",
     "preless": "mkdir -p dist/css && cp node_modules/octicons/build/octicons.min.css dist/css/.",
