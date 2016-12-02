@@ -33,7 +33,7 @@ node_modules
 .idea
 
 #ignore application folders
-dist/main.gen.js
+dist/
 
 bower_components
 files/*
