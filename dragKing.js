@@ -4,11 +4,9 @@ var app = require('./main')({
     }),
     port = process.env.npm_package_config_port || 8000;
 
-
 if (port !== undefined) {
-
-    app.listen(process.env.npm_package_config_port || 8000, function () {
-        console.log('server started on port %d', process.env.npm_package_config_port || 8000);
+    app.listen(port, function () {
+        console.log('server started on port %d', port);
     });
 } else {
     console.log('Server not started! - Please check the config or use "npm start" to start the server.');
