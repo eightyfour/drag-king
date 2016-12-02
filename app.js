@@ -5,6 +5,7 @@
  */
 var opts = {
         dirName: __dirname + '/',
+        fileStorageName: __dirname + '/files',
         distName: __dirname + '/dist/',
         port : process.env.npm_package_config_port || 8000
     },
@@ -74,18 +75,18 @@ if (opts.port !== undefined) {
     app.get(/^((?!^(\/dist|\/bower_components)).)*$/,  function (req, res) {
         if (/\./.test(req.path)) {
             // contains a . - looks like a file request so check the files system
-            fs.exists(__dirname + '/files' + req.path, function (exists) {
+            fs.exists(opts.fileStorageName + req.path, function (exists) {
                 if (exists) {
-                    res.sendFile(__dirname + '/files' + req.path);
+                    res.sendFile(opts.fileStorageName + req.path);
                 } else {
                     // no file found - send 404 file
-                    res.sendFile(__dirname + '/404.html');
+                    res.sendFile(opts.dirName + '404.html');
                 }
             });
 
         } else {
             // send index
-            res.sendFile(__dirname + '/index.html');
+            res.sendFile(opts.dirName + 'index.html');
 
         }
     });
@@ -132,21 +133,21 @@ if (opts.port !== undefined) {
              var fName = filename.split(' ').join('_');
 
              function writeFile() {
-                 console.log('app:writeFile' + __dirname + '/files' + folder + fName);
-                 fstream = fs.createWriteStream(__dirname + '/files' + folder + fName);
+                 console.log('app:writeFile' + opts.fileStorageName + folder + fName);
+                 fstream = fs.createWriteStream(opts.fileStorageName + folder + fName);
                  file.pipe(fstream);
                  fstream.on('close', function () {
                      // TODO add correct type
                      var extension = fName.split('.')[1];
                      if (acceptedImageExtensions.indexOf(extension) !== -1) {
-                         res.status(200).send({file: '/files' + folder + fName, name : fName, type: 'image/jpg'});
+                         res.status(200).send({file: folder + fName, name : fName, type: 'image/jpg'});
                      } else {
-                         res.status(200).send({file: '/files' + folder + fName, name : fName, type: extension});
+                         res.status(200).send({file: folder + fName, name : fName, type: extension});
                      }
                  });
              }
              console.log('uploadFile', '/files' + folder);
-             createFolder(__dirname, '/files' + folder, writeFile);
+             createFolder(opts.fileStorageName + folder, writeFile);
          });
     });
 
@@ -163,7 +164,7 @@ if (opts.port !== undefined) {
 
         req.on("end",function(){
             folder = formatFolder(folder);
-            fs.readdir(__dirname + '/files' + folder, function (err, files) {
+            fs.readdir(opts.fileStorageName + folder, function (err, files) {
 
                 var fileList = [],
                     length;
@@ -171,7 +172,7 @@ if (opts.port !== undefined) {
                 if (err === null) {
                     length = files.length;
                     files.forEach(function (file) {
-                        fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
+                        fs.stat(opts.fileStorageName + folder + file, function (err, stats) {
                             if (stats.isFile()) {
                                 // TODO add correct type
                                 var extension = file.split('.')[1];
@@ -197,7 +198,7 @@ if (opts.port !== undefined) {
     });
 
     /**
-     * get all available files
+     * get all available folders
      */
     app.post('/getFolders',  function (req, res) {
        // get a list of all folders
@@ -209,14 +210,14 @@ if (opts.port !== undefined) {
 
         req.on("end",function(){
             folder = formatFolder(folder);
-            fs.readdir(__dirname + '/files' + folder, function (err, files) {
+            fs.readdir(opts.fileStorageName + folder, function (err, files) {
                 var fileList = [],
                     length;
 
                 if (err === null) {
                     length = files.length;
                     files.forEach(function (file) {
-                        fs.stat(__dirname + '/files' + folder + file, function (err, stats) {
+                        fs.stat(opts.fileStorageName + folder + file, function (err, stats) {
                             if (err) {
                                 console.log("app:path not exists:", err);
                                 return;
@@ -246,7 +247,7 @@ if (opts.port !== undefined) {
             if (fileName[0] !== '/') {
                 fileName = '/' + fileName;
             }
-            fs.unlink(__dirname + '/files' + fileName, function () {
+            fs.unlink(opts.fileStorageName + fileName, function () {
                 res.status(200).send(req.query.filename);
             });
         } else {

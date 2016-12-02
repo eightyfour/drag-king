@@ -1,17 +1,32 @@
 {
   "name": "drag-king",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Drag and drop to upload to server",
   "main": "app.js",
-  "watch" : {
-    "js" : {
-      "patterns": ["src"],
+  "watch": {
+    "js": {
+      "patterns": [
+        "src"
+      ],
       "extensions": "js"
+    },
+    "less": {
+      "patterns": [
+        "src/less"
+      ],
+      "extensions": "less"
     }
   },
   "scripts": {
+    "prepublish": "npm-run-all images css js less",
+    "preimages" : "mkdir -p dist/img",
+    "images" : "cp -rf src/images dist/img",
+    "precss" : "mkdir -p dist/css",
+    "css" : "cp -rf src/css dist/css",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "js" : "browserify src/js/main.js -o dist/main.gen.js",
+    "js": "browserify src/js/main.js -o dist/main.gen.js",
+    "preless": "mkdir -p dist/css && cp node_modules/octicons/build/octicons.min.css dist/css/.",
+    "less": "lessc src/less/main.less dist/css/main.css",
     "start": "node app.js",
     "watch": "npm-watch"
   },
@@ -33,14 +48,17 @@
   },
   "dependencies": {
     "browserify": "x",
-    "canny": "0.0.10",
+    "canny": "github:eightyfour/canny",
     "connect-busboy": "0.0.2",
     "express": "^4.0.0",
     "finalhandler": "*",
+    "octicons": "^5.0.1",
     "serve-index": "*",
     "serve-static": "*"
   },
   "devDependencies": {
+    "less": "^2.7.1",
+    "npm-run-all": "^3.1.2",
     "npm-watch": "^0.1.6"
   }
 }

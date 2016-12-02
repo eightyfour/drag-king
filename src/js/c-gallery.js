@@ -1,7 +1,8 @@
 /**
- *  Rename the files it also show normal files
+ *  TODO Rename the files it also show normal files
+ *  TODO use repeat to render the view elements
  */
-var trade = require('./trade.js');
+var trade = require('./trade');
 
 function getRandomColor() {
     function c() {
@@ -19,6 +20,7 @@ module.exports = (function () {
 
 //        openButton.className = 'open-btn octicon octicon-file-symlink-file';
         openButton.className = 'open-btn';
+        // TODO the file name from server should not contains /files
         openButton.setAttribute('href', 'http://' + location.host + file.file);
         openButton.setAttribute('target', '_blank');
         openButton.setAttribute('title', 'Open in new tab');
@@ -53,7 +55,7 @@ module.exports = (function () {
 
         removeBtn.setAttribute('title', 'remove this image');
 
-        // register click listener for the remove duel request
+        // register click listener for the remove image request
         removeBtn.addEventListener('click', function () {
           trade.doCall('deleteFile')(file.file, function () {
               container.remove();
