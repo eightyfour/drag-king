@@ -1,7 +1,6 @@
 var app = require('./main')({
         dirName: __dirname + '/',
-        fileStorageName: __dirname + '/files',
-        distName: __dirname + '/dist/'
+        fileStorageName: __dirname + '/files'
     }),
     port = process.env.npm_package_config_port || 8000;
 

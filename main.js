@@ -22,7 +22,7 @@ function main(opts) {
     app = express();
     app.use(busboy());
 
-    app.get(['/bower_components/*', '/dist/*'], function (req, res) {
+    app.get(['/dist/*'], function (req, res) {
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -44,11 +44,11 @@ function main(opts) {
     });
 
     /**
-     * match except for folder dist and bower_components
+     * match except for folder dist
      *
      * If the URL has a dot inside it expect to send a files. Otherwise it sends the index.
      */
-    app.get(/^((?!^(\/dist|\/bower_components)).)*$/, function (req, res) {
+    app.get(/^((?!^(\/dist)).)*$/, function (req, res) {
         if (/\./.test(req.path)) {
             // contains a . - looks like a file request so check the files system
             fs.exists(opts.fileStorageName + req.path, function (exists) {
