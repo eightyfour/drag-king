@@ -315,8 +315,15 @@
   padding-left: 1.3em;
   font-size: 0.9em;
   position: relative;
-  margin-right: 1.5em;
   cursor: pointer;
+  display: inline-block;
+  list-style: none;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  svg{
+    margin-right:.3em;
+  }
+
 }
 .dk .folders li:before{
   position: absolute;
@@ -333,6 +340,14 @@
 .dk .breadcrumb{
   float:left;
   margin-bottom: 0;
+  &::before{
+    padding: 0 5px;
+    color: #ccc;
+    content: "/\00a0";
+  }
+  &:first-child::before{
+    display: none;
+  }
 }
 
 .hidden-input{

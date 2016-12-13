@@ -1,3 +1,4 @@
+var octicons = require('octicons');
 
 function doPost(url, data, done) {
     var xhr = new XMLHttpRequest();
@@ -31,8 +32,7 @@ module.exports = function () {
         }
         folders.forEach(function (folder) {
             var li = document.createElement('li');
-            li.classList.add('octicon');
-            li.classList.add('octicon-file-directory');
+            li.innerHTML = octicons['file-directory'].toSVG();
             li.appendChild(document.createTextNode(folder));
             li.addEventListener('click', function () {
                 location.href = path + folder;
