@@ -1,0 +1,212 @@
+.gallery{
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1em;
+  box-shadow: 0 -4px 3px 0px rgba(150,150,150,0.8),0 1px 1px 0px rgba(250,250,250,0.8) inset;
+}
+.gallery > div{
+  position: relative;
+  float: left;
+  margin: 1em;
+}
+.gallery div img{
+  /* The img tag is just a hack to get easier the correct image dimension for the wrapper div */
+  height: 100px;
+  visibility: hidden;
+}
+.gallery div .img{
+  display: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  box-shadow: 0 0 4px 1px rgba(100,100,100,0.7);
+  border: 1px solid #fff;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+}
+.gallery div .copyClipNode,
+.gallery .deleteBtn{
+  position: absolute;
+  cursor: pointer;
+  z-index: 10;
+  color: rgba(100,100,100,.2);
+
+}
+.gallery .controlPanel{
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  z-index: -1;
+  height: 1.5em;
+}
+.gallery .controlPanel:hover .deleteBtn{
+  color: rgba(100,100,100,1);
+}
+.gallery .controlPanel .deleteBtn:hover{
+  text-shadow: 0 0 3px #ff7a00;
+}
+.gallery > div:hover .controlPanel{
+  opacity: 1;
+  top: -1.5em;
+  z-index: 1;
+  transition: all 200ms;
+}
+.gallery div .deleteBtn:hover{
+  opacity: 1;
+}
+.gallery .gallery-image-wrap{
+  background-color: rgba(100,100,100,0.3);
+  border: 1px dashed  rgba(100,100,100,0.3);
+  width: 9em;
+  height: 8em;
+}
+.gallery .gallery-file-wrap.c-fileupdated,
+.gallery .gallery-image-wrap.c-fileupdated{
+  -webkit-animation: pulse 500ms ease-out;
+  animation: pulse 500ms ease-out;
+  -webkit-animation-iteration-count:5;
+  animation-iteration-count:5;
+  /*transition: all 500ms;*/
+}
+@-webkit-keyframes pulse {
+  0% { box-shadow: 0 0 3px 3px rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 3px 3px orange; }
+  100% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 3px 3px rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 3px 3px orange; }
+  100% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+}
+/*BG test*/
+@keyframes pulse-bg {
+  0% { background-color:  rgba(0,0,0,0)}
+  50% { background-color:  orange;}
+  100% { background-color:  rgba(0,0,0,0);}
+}
+
+.gallery .c-loaded.gallery-image-wrap{
+  background-color: transparent;
+  width: auto;
+  height: auto;
+  border: none;
+}
+.gallery .c-loaded.gallery-image-wrap .img{
+  display: block;
+}
+
+.gallery .gallery-file-wrap{
+  position: relative;
+}
+.gallery .c-loaded.gallery-file-wrap{
+  background-color: transparent;
+  width: auto;
+  height: auto;
+  border: none;
+}
+.gallery .open-btn{
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  display: block;
+  position: relative;
+  color: #333;
+}
+.gallery .gallery-image-wrap .open-btn:before{
+  display: none;
+}
+.gallery .open-btn:before{
+  position: absolute;
+  top:40%;
+  left:40%;
+}
+.gallery .gallery-image-wrap .open-btn:hover{
+  opacity: 0.3;
+}
+.gallery .gallery-image-wrap .open-btn:active{
+  opacity: 0.6;
+}
+.gallery .open-btn:active{
+  color: cornflowerblue;
+}
+.gallery .open-btn:hover{
+  color: darkblue;
+}
+.gallery .gallery-file-wrap .open-btn:active{
+  color: darkslateblue;
+}
+.gallery .gallery-file-wrap .file-icon{
+  display: inline-block;
+  svg{
+    margin-right:.3em;
+  }
+}
+.gallery .gallery-file-wrap .file-icon:before{
+  padding-right: 5px;
+}
+.gallery div .copyClipNode{
+  top: -1.5em;
+  left: -1.5em;
+  width: 80%;
+  height: 114%;
+  cursor: copy;
+  /*background-color: tomato;*/
+}
+.gallery nav {
+  width: 100%;
+  position: absolute;
+  text-align: center;
+  top: -2.8em;
+  left: 0;
+  height: 3em;
+  background-color: transparent;
+}
+.gallery nav ul{
+  padding: 0;
+}
+.gallery nav li{
+  position: relative;
+  display: inline-block;
+  font-size: 3em;
+  cursor: pointer;
+  width: 2em;
+  text-align: center;
+}
+.gallery nav li span:before{
+  text-shadow: 0px 0px 3px #ffffff;
+}
+.gallery nav li:hover span:before{
+  text-shadow: 0px 0px 3px #ff7a00;
+}
+.gallery nav li span{
+  position: relative;
+  z-index: 1;
+  font-size: 1em;
+  color: #6B6B6B;
+}
+.gallery nav li:before,.gallery nav li:after{
+  box-shadow: -2px -4px 3px 0px rgba(150,150,150,0.5),1px 1px 1px 0px rgba(250,250,250,0.8) inset, 2px -4px 3px 0px rgba(150,150,150,0.5);
+  position: absolute;
+  top:0;
+  display: block;
+  content: ' ';
+  left: 0;
+  width: 1em;
+  height: 1em;
+  border-radius: 100% 0 0 0;
+  background-color: #D7D7D7;
+}
+.gallery nav li:after{
+  box-shadow: 1px -4px 3px 0px rgba(150,150,150,0.8),-1px 1px 1px 0px rgba(250,250,250,0.8) inset;
+  left: 1em;
+  border-radius: 0 100% 0 0;
+}

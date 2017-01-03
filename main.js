@@ -58,8 +58,6 @@ function main(opts) {
                     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
                     res.sendFile(opts.fileStorageName + req.path);
                 } else {
-                    // no file found - send 404 file
-                    res.sendStatus(404);
                     res.sendFile(opts.dirName + '404.html');
                 }
             });
