@@ -34,12 +34,12 @@ module.exports = (function () {
             removeBtn = document.createElement('div'),
             controlPanel = document.createElement('div'),
             myImage = new Image(),
-            fileName = file.file + '?time=' + new Date() / 1000;
+            fileName = file.file; // + '?time=' + new Date() / 1000;
 
         container.setAttribute('id', file.file);
         container.className = 'gallery-image-wrap';
         container.style.backgroundColor = getRandomColor();
-        myImage.src = fileName ;
+        myImage.src = fileName + '?tmb';
         myImage.addEventListener('load', function () {
             container.classList.add('c-loaded');
             container.style.backgroundColor = 'transparent';

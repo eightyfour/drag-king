@@ -7,6 +7,7 @@ function main(opts) {
 
 
     var fs = require('fs'),
+        thumb = require('node-thumbnail').thumb,
         folderUtil = require('./lib/folderUtil'),
         express = require('express'),
         busboy = require('connect-busboy'),
@@ -53,9 +54,40 @@ function main(opts) {
             // contains a . - looks like a file request so check the files system
             fs.exists(opts.fileStorageName + req.path, function (exists) {
                 if (exists) {
-                    res.sendFile(opts.fileStorageName + req.path);
+                    if (/\?tmb/.test(req.url)) {
+                        var tmbName = (function () {
+                            var a = req.path.split('/'),
+                                name = 'tmb_' + a.pop();
+                            a.push(name);
+                            return a.join('/');
+                        }());
+                        console.log('main:tmbName', tmbName);
+                        fs.exists(opts.fileStorageName + tmbName, function (exists) {
+                            if (!exists) {
+                                thumb({
+                                    prefix: 'tmb_',
+                                    suffix: '',
+                                    width: '200',
+                                    source: opts.fileStorageName + req.path, // could be a filename: dest/path/image.jpg
+                                    concurrency: 4,
+                                    destination : opts.fileStorageName + (req.path.split('/').slice(0, -1).join('/')) // remove file name from path
+                                }).then(function() {
+                                    console.log('main:', opts.fileStorageName + tmbName);
+                                    res.sendFile(opts.fileStorageName + tmbName);
+                                }).catch(function (e) {
+                                    console.log('Error', e.toString());
+                                });
+                            } else {
+                                console.log('main:', opts.fileStorageName + tmbName);
+                                res.sendFile(opts.fileStorageName + tmbName);
+                            }
+                        });
+                    } else {
+                        res.sendFile(opts.fileStorageName + req.path);
+                    }
                 } else {
                     // no file found - send 404 file
+                    // TODO set correct status code - 404 page is not enough
                     res.sendFile(opts.dirName + '404.html');
                 }
             });
@@ -74,8 +106,9 @@ function main(opts) {
 
         req.pipe(req.busboy);
         req.busboy.on('file', function (fieldname, file, filename) {
-            // repalce all spaces with underscores
-            var fName = filename.split(' ').join('_');
+            // replace all spaces with underscores
+            // TODO it's not a good idea to rename file - because there are stupid people the put spaces in a file name
+            var fName = filename; //.split(' ').join('_');
 
             function writeFile() {
                 console.log('app:writeFile' + opts.fileStorageName + folder + fName);
@@ -116,6 +149,9 @@ function main(opts) {
                     length;
 
                 if (err === null) {
+                    files = files.filter(function (fileName) {
+                        return fileName.split('/').pop().startsWith('tmb_') ? undefined : fileName
+                    });
                     length = files.length;
                     files.forEach(function (file) {
                         fs.stat(opts.fileStorageName + folder + file, function (err, stats) {
