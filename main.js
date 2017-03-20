@@ -57,7 +57,7 @@ function main(opts) {
                     // not sure if it is good by default but - needs to be configurable
                     res.header("Access-Control-Allow-Origin", "*");
                     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-                    res.sendFile(opts.fileStorageName + req.path);
+
                     if (/\?tmb/.test(req.url)) {
                         var tmbName = (function () {
                             var a = req.path.split('/'),
