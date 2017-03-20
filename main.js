@@ -54,6 +54,10 @@ function main(opts) {
             // contains a . - looks like a file request so check the files system
             fs.exists(opts.fileStorageName + req.path, function (exists) {
                 if (exists) {
+                    // not sure if it is good by default but - needs to be configurable
+                    res.header("Access-Control-Allow-Origin", "*");
+                    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+                    res.sendFile(opts.fileStorageName + req.path);
                     if (/\?tmb/.test(req.url)) {
                         var tmbName = (function () {
                             var a = req.path.split('/'),
@@ -87,7 +91,6 @@ function main(opts) {
                     }
                 } else {
                     // no file found - send 404 file
-                    // TODO set correct status code - 404 page is not enough
                     res.sendFile(opts.dirName + '404.html');
                 }
             });

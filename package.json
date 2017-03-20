@@ -2,7 +2,7 @@
   "name": "drag-king",
   "version": "0.0.4",
   "description": "Drag and drop to upload to server",
-  "main": "mainu.js",
+  "main": "main.js",
   "watch": {
     "js": {
       "patterns": [
@@ -27,11 +27,12 @@
     "js": "browserify client_src/js/main.js -o dist/main.gen.js",
     "preless": "mkdir -p dist/css && cp node_modules/octicons/build/octicons.min.css dist/css/.",
     "less": "lessc client_src/less/main.less dist/css/main.css",
-    "start": "node dragKing.js",
+    "start": "forever start dragKing.js",
+    "startNode": "node dragKing.js",
     "watch": "npm-watch"
   },
   "config": {
-    "port": 8000,
+    "port": 80,
     "bundle": "dist/main.gen.js",
     "outfile": [
       "client_src/js/main.js"
@@ -55,7 +56,8 @@
     "node-thumbnail": "^0.8.1",
     "octicons": "^5.0.1",
     "serve-index": "*",
-    "serve-static": "*"
+    "serve-static": "*",
+    "string-to-color": "github:eightyfour/string-to-color"
   },
   "devDependencies": {
     "less": "^2.7.1",

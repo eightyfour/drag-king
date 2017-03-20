@@ -3,7 +3,8 @@
  *  TODO use repeat to render the view elements
  */
 var trade = require('./trade'),
-    octicons = require('octicons');
+    octicons = require('octicons'),
+    stringToColor = require('string-to-color');
 
 function getRandomColor() {
     function c() {
@@ -66,20 +67,37 @@ module.exports = (function () {
         return container;
     }
 
+    function getExtension(s) {
+        var spli = s.split('.');
+        if (spli[spli.length - 1]) {
+            return spli[spli.length - 1];
+        }
+        false;
+    }
+
     function appendFile(container, file) {
         var icon = document.createElement('span'),
             removeBtn = document.createElement('div'),
             controlPanel = document.createElement('div'),
             openButton = getOpenLink(file),
-            textNode = document.createTextNode(file.name);
+            textNode = document.createTextNode(file.name),
+            fileExtension = getExtension(file.name);
 
         container.setAttribute('id', file.file);
 
         container.classList.add('gallery-file-wrap');
 
-        icon.className = "file-icon octicon octicon-file-text";
+        icon.className = "file-icon";
+        icon.innerHTML = octicons['file-text'].toSVG();
 
-        removeBtn.className = 'deleteBtn octicon octicon-trashcan';
+        if (fileExtension) {
+            // color the icon dependence on the extension
+            icon.children[0].style.fill = stringToColor.toHex(fileExtension);
+        }
+
+        removeBtn.className = 'deleteBtn';
+        removeBtn.innerHTML = octicons.trashcan.toSVG();
+
         controlPanel.className = 'controlPanel';
         icon.appendChild(textNode);
         openButton.appendChild(icon);
