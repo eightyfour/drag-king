@@ -2,8 +2,13 @@
  * Simple HTTP Server
  *
  * Author: phen
+ *
+ * @param {Object} opts
+ * @param {Object} appLifeCycle - handle different life cycle phases for registering requests to the express app instance
+ * @param {function} appLifeCycle.phase1 - executed before the files listener is attached
+ * @returns {function}
  */
-function main(opts) {
+function main(opts, appLifeCycle) {
 
 
     var fs = require('fs'),
@@ -43,6 +48,8 @@ function main(opts) {
             index(req, res, done);
         });
     });
+
+    appLifeCycle && appLifeCycle.phase1 && appLifeCycle.phase1(app);
 
     /**
      * match except for folder dist
