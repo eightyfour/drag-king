@@ -45,7 +45,7 @@ module.exports = (function () {
             container.classList.add('c-loaded');
             container.style.backgroundColor = 'transparent';
         });
-        imgNode.style.backgroundImage = "url(" + fileName + ")";
+        imgNode.style.backgroundImage = "url(" + fileName + "?tmb)";
         imgNode.className = 'img';
         removeBtn.className = 'deleteBtn';
         removeBtn.innerHTML = octicons.trashcan.toSVG();
