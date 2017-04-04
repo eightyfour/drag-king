@@ -14,7 +14,10 @@ function getRandomColor() {
     return "rgba("+c()+","+c()+","+c()+", 0.2)";
 }
 
-var node;
+var node,
+    // can be configured from external to ignore some files from view
+    fileFilter;
+
 module.exports = (function () {
 
     function getOpenLink(file) {
@@ -144,18 +147,50 @@ module.exports = (function () {
         }
     }
 
+    /**
+     * calls the external file filter if exists
+     * @param files
+     * @returns {*}
+     */
+    function filterViewFiles(files) {
+        if (fileFilter) {
+            return files.filter(function (file) {
+                return fileFilter(file.file) !== undefined ? file : undefined;
+            });
+        }
+        return files;
+    }
+
     trade.on({
         getFiles : function (data) {
+            if (fileFilter) {
+                data = filterViewFiles(data);
+            }
             data.forEach(function (file) {
                 addFile(file);
             });
         },
         fileSend : function (file) {
+            if (fileFilter && fileFilter(file.file) === undefined) {
+                return;
+            }
             addFile(file);
         }
     });
 
     return {
+        /**
+         * can be configured from external to ignore some files from view
+         *
+         * @param {function} fFilter - filter for files which will not be shown in teh gallery (function returns file name or undefined to filter out)
+         */
+        fileFilter : function (fFilter) {
+            if (fileFilter === undefined) {
+                fileFilter = fFilter;
+            } else {
+                console.error('c-gallery:fileFilter can be only registered ones!');
+            }
+        },
         add : function (elem, attr) {
             node = elem;
         },

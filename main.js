@@ -6,6 +6,7 @@
  * @param {Object} opts
  * @param {Object} appLifeCycle - handle different life cycle phases for registering requests to the express app instance
  * @param {function} appLifeCycle.phase1 - executed before the files listener is attached
+ * @param {function} appLifeCycle.fileFilter - filter for files and folders which will not be send to client (return file name or undefined to filter out)
  * @returns {function}
  */
 function main(opts, appLifeCycle) {
@@ -162,6 +163,9 @@ function main(opts, appLifeCycle) {
                     files = files.filter(function (fileName) {
                         return fileName.split('/').pop().startsWith('tmb_') ? undefined : fileName
                     });
+                    if (appLifeCycle.fileFilter) {
+                        files = files.filter(appLifeCycle.fileFilter);
+                    }
                     length = files.length;
                     files.forEach(function (file) {
                         fs.stat(opts.fileStorageName + folder + file, function (err, stats) {
