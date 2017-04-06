@@ -13,18 +13,17 @@ function main(opts, appLifeCycle) {
 
 
     var fs = require('fs'),
-        thumb = require('node-thumbnail').thumb,
         folderUtil = require('./lib/folderUtil'),
         express = require('express'),
         busboy = require('connect-busboy'),
         serveIndex = require('serve-index'),
+        thumbNail = require('./lib/thumbNail')(opts.fileStorageName, 'tmb_'),
         app,
         finalhandler = require('finalhandler'),
         serveStatic = require('serve-static'),
         serve = serveStatic(opts.dirName),
         index = serveIndex(opts.dirName, {'icons': true}),
         acceptedImageExtensions = ['jpeg', 'jpg', 'png', 'gif'];
-
 
     app = express();
     app.use(busboy());
@@ -67,33 +66,15 @@ function main(opts, appLifeCycle) {
                     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
 
                     if (/\?tmb/.test(req.url)) {
-                        var tmbName = (function () {
-                            var a = req.path.split('/'),
-                                name = 'tmb_' + a.pop();
-                            a.push(name);
-                            return a.join('/');
-                        }());
-                        console.log('main:tmbName', tmbName);
-                        fs.exists(opts.fileStorageName + tmbName, function (exists) {
-                            if (!exists) {
-                                thumb({
-                                    prefix: 'tmb_',
-                                    suffix: '',
-                                    width: '200',
-                                    source: opts.fileStorageName + req.path, // could be a filename: dest/path/image.jpg
-                                    concurrency: 4,
-                                    destination : opts.fileStorageName + (req.path.split('/').slice(0, -1).join('/')) // remove file name from path
-                                }).then(function() {
-                                    console.log('main:', opts.fileStorageName + tmbName);
-                                    res.sendFile(opts.fileStorageName + tmbName);
-                                }).catch(function (e) {
-                                    console.log('Error', e.toString());
-                                });
+
+                        thumbNail.create(req.path, function (file) {
+                            if (file) {
+                                res.sendFile(file);
                             } else {
-                                console.log('main:', opts.fileStorageName + tmbName);
-                                res.sendFile(opts.fileStorageName + tmbName);
+                                res.sendFile(opts.fileStorageName + req.path);
                             }
                         });
+
                     } else {
                         res.sendFile(opts.fileStorageName + req.path);
                     }
@@ -118,7 +99,7 @@ function main(opts, appLifeCycle) {
         req.pipe(req.busboy);
         req.busboy.on('file', function (fieldname, file, filename) {
             // replace all spaces with underscores
-            // TODO it's not a good idea to rename file - because there are stupid people the put spaces in a file name
+            // TODO it's not a good idea to rename file - because there are people they put spaces in a file name
             var fName = filename; //.split(' ').join('_');
 
             function writeFile() {
@@ -163,7 +144,7 @@ function main(opts, appLifeCycle) {
                     files = files.filter(function (fileName) {
                         return fileName.split('/').pop().startsWith('tmb_') ? undefined : fileName
                     });
-                    if (appLifeCycle.fileFilter) {
+                    if (appLifeCycle && appLifeCycle.fileFilter) {
                         files = files.filter(appLifeCycle.fileFilter);
                     }
                     length = files.length;
@@ -246,6 +227,7 @@ function main(opts, appLifeCycle) {
             fs.unlink(opts.fileStorageName + fileName, function () {
                 res.status(200).send(req.query.filename);
             });
+            thumbNail.remove(fileName);
         } else {
             res.status(200).send(false);
         }
