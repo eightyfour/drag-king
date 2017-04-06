@@ -108,7 +108,7 @@ function main(opts, appLifeCycle) {
                 file.pipe(fstream);
                 fstream.on('close', function () {
                     // TODO add correct type
-                    var extension = fName.split('.')[1];
+                    var extension = fName.split('.').pop();
                     if (acceptedImageExtensions.indexOf(extension) !== -1) {
                         res.status(200).send({file: folder + fName, name: fName, type: 'image/jpg'});
                     } else {
@@ -152,7 +152,7 @@ function main(opts, appLifeCycle) {
                         fs.stat(opts.fileStorageName + folder + file, function (err, stats) {
                             if (stats.isFile()) {
                                 // TODO add correct type
-                                var extension = file.split('.')[1];
+                                var extension = file.split('.').pop();
 
                                 if (acceptedImageExtensions.indexOf(extension) !== -1) {
                                     fileList.push({file: folder + file, name: file, type: 'image/jpg'});
