@@ -78,7 +78,7 @@ function main(opts, appLifeCycle) {
                         });
 
                     } else {
-                        res.sendFile(opts.fileStorageName + req.path);
+                        res.sendFile(opts.fileStorageName + req.path, {dotfiles : 'allow'});
                     }
                 } else {
                     // no file found - send 404 file
