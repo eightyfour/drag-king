@@ -231,7 +231,7 @@ function main(opts, appLifeCycle) {
             }
             fs.unlink(opts.fileStorageName + fileName, function () {
                 appLifeCycle && appLifeCycle.onDeleteFile && appLifeCycle.onDeleteFile(req, {
-                    ootFolder : opts.fileStorageName,
+                    rootFolder : opts.fileStorageName,
                     fileName : fileName
                 });
                 res.status(200).send(req.query.filename);
