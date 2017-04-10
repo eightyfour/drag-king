@@ -1,6 +1,6 @@
 
 function callEventsQueue(queue) {
-    var args = [].slice.call(arguments, 1 ,arguments.length);
+    var args = [].slice.call(arguments, 1, arguments.length);
     queue.forEach(function(fc) {
         fc.apply(null, args);
     });
@@ -18,11 +18,11 @@ function sendFile(file, directCallback) {
     xhr.open("POST", uri, true);
     xhr.onreadystatechange = function() {
         var data;
-        if (xhr.readyState == 4 && xhr.status == 200) {
+        if (xhr.readyState == 4) {
             // Handle response.
-            data = JSON.parse(xhr.responseText);
-            directCallback && directCallback(data); // handle response.
-            callEventsQueue(events.fileSend, data);
+            data = xhr.status == 200 ? JSON.parse(xhr.responseText) : xhr.responseText;
+            directCallback && directCallback(xhr.status == 200 ? null : xhr, data); // handle response.
+            callEventsQueue(events.fileSend, xhr.status == 200 ? null : xhr, data);
         }
     };
     fd.append('myFile', file);
@@ -35,16 +35,9 @@ function deleteFile(path, directCallback) {
     xhr.open("POST", "/deleteFile?filename=" + path, true);
     xhr.onload = function (e) {
         if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                directCallback && directCallback();
-                callEventsQueue(events.deleteFile);
-            } else {
-                console.error(xhr.statusText);
-            }
+            directCallback && directCallback(xhr.status == 200 ? null : xhr, path);
+            callEventsQueue(events.deleteFile, xhr.status == 200 ? null : xhr, path);
         }
-    };
-    xhr.onerror = function (e) {
-        console.error(xhr.statusText);
     };
     xhr.send(null);
 }
