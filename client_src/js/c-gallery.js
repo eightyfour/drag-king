@@ -63,7 +63,10 @@ module.exports = (function () {
 
         // register click listener for the remove image request
         removeBtn.addEventListener('click', function () {
-          trade.doCall('deleteFile')(file.file, function () {
+          trade.doCall('deleteFile')(file.file, function (err, path) {
+              if (err) {
+                  return;
+              }
               container.remove();
           })
         });
@@ -112,7 +115,10 @@ module.exports = (function () {
 
         // register click listener for the remove duel request
         removeBtn.addEventListener('click', function () {
-            trade.doCall('deleteFile')(file.file, function () {
+            trade.doCall('deleteFile')(file.file, function (err) {
+                if (err) {
+                    return;
+                }
                 container.remove();
             })
         });
@@ -170,7 +176,10 @@ module.exports = (function () {
                 addFile(file);
             });
         },
-        fileSend : function (file) {
+        fileSend : function (err, file) {
+            if (err) {
+                return
+            }
             if (fileFilter && fileFilter(file.file) === undefined) {
                 return;
             }
