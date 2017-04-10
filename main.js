@@ -7,6 +7,8 @@
  * @param {Object} appLifeCycle - handle different life cycle phases for registering requests to the express app instance
  * @param {function} appLifeCycle.phase1 - executed before the files listener is attached
  * @param {function} appLifeCycle.fileFilter - filter for files and folders which will not be send to client (return file name or undefined to filter out)
+ * @param {function} appLifeCycle.onUploadFile - listener will be called if file is successfully saves on file system
+ * @param {function} appLifeCycle.onDeleteFile - listener will be called if file is successfully deleted from file system
  * @returns {function}
  */
 function main(opts, appLifeCycle) {
@@ -103,7 +105,7 @@ function main(opts, appLifeCycle) {
             var fName = filename; //.split(' ').join('_');
 
             function writeFile() {
-                console.log('app:writeFile' + opts.fileStorageName + folder + fName);
+
                 fstream = fs.createWriteStream(opts.fileStorageName + folder + fName);
                 file.pipe(fstream);
                 fstream.on('close', function () {
@@ -117,7 +119,10 @@ function main(opts, appLifeCycle) {
                 });
             }
 
-            console.log('uploadFile', '/files' + folder);
+            appLifeCycle && appLifeCycle.onUploadFile && appLifeCycle.onUploadFile(req, {
+                    rootFolder : opts.fileStorageName,
+                    fileName : folder + fName
+                });
             folderUtil.createFolder(opts.fileStorageName, folder, writeFile);
         });
     });
@@ -225,6 +230,10 @@ function main(opts, appLifeCycle) {
                 fileName = '/' + fileName;
             }
             fs.unlink(opts.fileStorageName + fileName, function () {
+                appLifeCycle && appLifeCycle.onDeleteFile && appLifeCycle.onDeleteFile(req, {
+                    ootFolder : opts.fileStorageName,
+                    fileName : fileName
+                });
                 res.status(200).send(req.query.filename);
             });
             thumbNail.remove(fileName);
