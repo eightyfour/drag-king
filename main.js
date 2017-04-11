@@ -111,7 +111,7 @@ function main(opts, appLifeCycle) {
                 fstream.on('close', function () {
                     // TODO add correct type
                     var extension = fName.split('.').pop();
-                    if (acceptedImageExtensions.indexOf(extension) !== -1) {
+                    if (extension && acceptedImageExtensions.indexOf(extension.toLowerCase()) !== -1) {
                         res.status(200).send({file: folder + fName, name: fName, type: 'image/jpg'});
                     } else {
                         res.status(200).send({file: folder + fName, name: fName, type: extension});
@@ -159,7 +159,7 @@ function main(opts, appLifeCycle) {
                                 // TODO add correct type
                                 var extension = file.split('.').pop();
 
-                                if (acceptedImageExtensions.indexOf(extension) !== -1) {
+                                if (extension && acceptedImageExtensions.indexOf(extension.toLowerCase()) !== -1) {
                                     fileList.push({file: folder + file, name: file, type: 'image/jpg'});
                                 } else {
                                     fileList.push({file: folder + file, name: file, type: extension});
