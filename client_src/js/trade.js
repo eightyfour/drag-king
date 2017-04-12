@@ -11,7 +11,7 @@ function callEventsQueue(queue) {
  * @param file
  */
 function sendFile(file, directCallback) {
-    var uri = "/uploadFile?folder=" + location.pathname,
+    var uri = "/uploadFile?folder=" + location.pathname + '&filename=' + file.name,
         xhr = new XMLHttpRequest(),
         fd = new FormData();
 
