@@ -82,7 +82,7 @@ function main(opts, appLifeCycle) {
                     }
                 } else {
                     // no file found - send 404 file
-                    res.sendFile(opts.dirName + '404.html');
+                    res.status(404).sendFile(opts.dirName + '404.html');
                 }
             });
 
