@@ -61,7 +61,7 @@ function main(opts, appLifeCycle) {
     app.get(/^((?!^(\/dist)).)*$/, function (req, res) {
         if (/\./.test(req.path)) {
             // contains a . - looks like a file request so check the files system
-            fs.exists(opts.fileStorageName + req.path, function (exists) {
+            fs.exists(decodeURI(opts.fileStorageName + req.path), function (exists) {
                 if (exists) {
                     // not sure if it is good by default but - needs to be configurable
                     res.header("Access-Control-Allow-Origin", "*");
@@ -69,16 +69,16 @@ function main(opts, appLifeCycle) {
 
                     if (/\?tmb/.test(req.url)) {
 
-                        thumbNail.create(req.path, function (file) {
+                        thumbNail.create(decodeURI(req.path), function (file) {
                             if (file) {
                                 res.sendFile(file);
                             } else {
-                                res.sendFile(opts.fileStorageName + req.path);
+                                res.sendFile(decodeURI(opts.fileStorageName + req.path));
                             }
                         });
 
                     } else {
-                        res.sendFile(opts.fileStorageName + req.path, {dotfiles : 'allow'});
+                        res.sendFile(decodeURI(opts.fileStorageName + req.path), {dotfiles : 'allow'});
                     }
                 } else {
                     // no file found - send 404 file
