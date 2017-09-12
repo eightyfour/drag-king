@@ -9,7 +9,7 @@ let userPermission = {admins : [], maintainers: []};
 
 try {
     // TODO read file on the fly in case that the files changes we need no server restart
-    userPermission = require('../../files/.user-permission.json');
+    userPermission = Object.assign(userPermission, require('../../files/.user-permission.json'));
 } catch (err) {
     if (err.code === 'MODULE_NOT_FOUND') {
         console.log('auth:user-permission.json NOT FOUND');
@@ -83,7 +83,7 @@ module.exports = function (app, authConfig) {
                         res.redirect(backURL);
                     }
                 } catch (e) {
-                    console.log('auth:can\'t read .allowedUsers.json - the foamt must be a JSON!');
+                    console.log('auth:can\'t read .allowedUsers.json - the format must be a JSON!');
                     req.session.isAdmin = false;
                     req.session.isMaintainer = false;
                     res.redirect(backURL);
