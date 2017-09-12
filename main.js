@@ -5,6 +5,10 @@
  *
  * @param {Object} opts
  * @param {Object} appLifeCycle - handle different life cycle phases for registering requests to the express app instance
+ * @param {boolean} auth - disable the auth handling to implement by your own
+ * @param {string} secret - the cookie secret name for cookie access
+ * @param {number} port - the cookie secret name for cookie access
+ * @param {string} fileStorageName - path to store the files
  * @param {function} appLifeCycle.phase1 - executed before the files listener is attached
  * @param {function} appLifeCycle.fileFilter - filter for files and folders which will not be send to client (return file name or undefined to filter out)
  * @param {function} appLifeCycle.onUploadFile - listener will be called if file is successfully saves on file system
@@ -12,10 +16,15 @@
  * @returns {function}
  */
 function main(opts, appLifeCycle) {
-
-
+    
     var fs = require('fs'),
+        wsConnection = require('./server/lib/wsConnection'),
+        cookieParser = require('cookie-parser'),
+        sessionStore = require('./server/lib/sessionStore'),
+        packageJSON = require('./package.json'),
+        bodyParser = require('body-parser'),
         folderUtil = require('./lib/folderUtil'),
+        changeHistoryLogger = require('./server/lib/changeHistoryLogger'),
         express = require('express'),
         busboy = require('connect-busboy'),
         serveIndex = require('serve-index'),
@@ -51,8 +60,79 @@ function main(opts, appLifeCycle) {
         });
     });
 
-    appLifeCycle && appLifeCycle.phase1 && appLifeCycle.phase1(app);
+    // use bodyParser middleware for handling request bodies (express does *not* provide that feature out-of-the-box).
+    // since we only have one case of that (POST to /login where username, password are in the body) and that one is url-encoded,
+    // we only need that flavor of bodyParser. about the "extended" property, see https://github.com/expressjs/body-parser#bodyparserurlencodedoptions
+    app.use(bodyParser.urlencoded({ extended: false }));
+    // same for parsing cookie
+    app.use(cookieParser());
 
+    appLifeCycle && appLifeCycle.phase1 && appLifeCycle.phase1(app);
+    app.get(/^((?!^(\/dist|\/bower_components)).)*$/, function(req, res, next) {
+
+        if (packageJSON.config.auth) {
+            // file request
+            let isAuth = req.session && req.session.authId;
+            if (!/\./.test(req.path) && !isAuth) {
+                // TODO sending the login page only makes sense for browser requests. if anybody is e.g. using curl to
+                // retrieve message bundles, we should only return a 401 but no content
+                res.sendFile(__dirname + '/auth.html');
+            } else {
+                next();
+            }
+        } else {
+            next();
+        }
+
+    });
+
+    app.post('/uploadFile', function (req, res, next) {
+        if (packageJSON.config.auth) {
+            if (req.session && (req.session.isMaintainer) || req.session.isAdmin) {
+                if (req.session.isAdmin) {
+                    next();
+                } else if (!/.json/.test(req.query.filename)) {
+                    next();
+                } else {
+                    res.status(401).send('Not authorized');
+                }
+            } else {
+                res.status(401).send('Not authorized');
+            }
+        } else {
+            // res.status(401).send('Not authorized');
+            next()
+        }
+    });
+
+    /**
+     * Limited restrictions!
+     *
+     * visitors:
+     *  * are not allowed at all
+     * maintainer:
+     *  * not allowed to delete .json files
+     * admins:
+     *  * allowed to do everything
+     */
+    app.post('/deleteFile', function (req, res, next) {
+        if (packageJSON.config.auth) {
+            if (req.session && req.session.isMaintainer || req.session.isAdmin) {
+                if (req.session.isAdmin) {
+                    next();
+                } else if (!/.json/.test(req.query.filename)) {
+                    next();
+                } else {
+                    res.status(401).send('Not authorized');
+                }
+            } else {
+                res.status(401).send('Not authorized');
+            }
+        } else {
+            // res.status(401).send('Not authorized');
+            next()
+        }
+    });
     /**
      * match except for folder dist
      *
@@ -118,11 +198,11 @@ function main(opts, appLifeCycle) {
                     }
                 });
             }
-
+            changeHistoryLogger.write(opts.fileStorageName, folder + fName, 'upload', req.session.authId || 'anonymous');
             appLifeCycle && appLifeCycle.onUploadFile && appLifeCycle.onUploadFile(req, {
-                    rootFolder : opts.fileStorageName,
-                    fileName : folder + fName
-                });
+                rootFolder : opts.fileStorageName,
+                fileName : folder + fName
+            });
             folderUtil.createFolder(opts.fileStorageName, folder, writeFile);
         });
     });
@@ -230,6 +310,7 @@ function main(opts, appLifeCycle) {
                 fileName = '/' + fileName;
             }
             fs.unlink(opts.fileStorageName + fileName, function () {
+                changeHistoryLogger.write(opts.fileStorageName, fileName, 'delete', req.session.authId || 'anonymous');
                 appLifeCycle && appLifeCycle.onDeleteFile && appLifeCycle.onDeleteFile(req, {
                     rootFolder : opts.fileStorageName,
                     fileName : fileName
@@ -240,6 +321,19 @@ function main(opts, appLifeCycle) {
         } else {
             res.status(200).send(false);
         }
+    });
+
+
+    let server;
+
+    server = app.listen(opts.port, function () {
+        console.log('server started on port %d', opts.port);
+    });
+
+    // initialize the json persist via websocket
+    wsConnection(server, {
+        secret : opts.secret,
+        dirName : opts.fileStorageName
     });
 
     return app;
