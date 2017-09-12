@@ -1,0 +1,92 @@
+@import "carousel";
+
+.assetSlider {
+  .overlay-styles();
+
+  &-slider {
+    .carousel();
+    &.c-prev-btn, &.c-next-btn, &.c-close-btn{
+      color: white;
+      font-size: 3em;
+      .octicon{
+        fill: currentColor;
+      }
+      &:hover .octicon{
+        opacity: .7;
+      }
+      &:active .octicon{
+        opacity: .7;
+        fill: #9da3a8;
+      }
+    }
+    &.c-prev-btn .octicon {
+      position: absolute;
+      top: 43%;
+      right: 40%;
+    }
+    &.c-next-btn .octicon{
+      position: absolute;
+      top: 43%;
+      left: 40%;
+    }
+    .c-item {
+      > .slider-item {
+        width: 100%;
+        height: 80%;
+        display: -ms-flexbox;
+        display: -webkit-box;
+        display: -moz-box;
+        display: -webkit-flex;
+        display: -moz-flex;
+        display: flex;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -moz-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        -webkit-box-pack: center;
+        -ms-flex-pack: center;
+        -webkit-justify-content: center;
+        -moz-justify-content: center;
+        -ms-justify-content: center;
+        justify-content: center;
+        margin-top: 5%;
+        .slider-img{
+          background-position: center;
+          background-size: contain;
+          background-repeat: no-repeat;
+          width: 100%;
+          height: 100%;
+        }
+        .slider-item-content {
+          width: 100%;
+          height: 100%;
+          vertical-align: middle;
+          -webkit-box-flex: 0;
+          -webkit-flex: 0 1 auto;
+          -moz-flex: 0 1 auto;
+          -ms-flex: 0 1 auto;
+          flex: 0 1 auto;
+          margin-top: 1em;
+          padding: 1em;
+        }
+        .slider-textContent {
+          color: #fff;
+          text-align: center;
+          margin-top: 1em;
+          &-link{
+            display: block;
+            margin-top: 1em;
+            color: #52c2ff;
+            &:hover{
+              color: #8bd4fd;
+            }
+            &:active{
+              color:#00a3ff;
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,187 @@
+.gallery {
+  // background for work
+  //background: lightblue;
+
+  @import 'dropzone';
+
+  .dropzone-box{
+    float: left;
+    margin: 0.5em;
+  }
+
+  position: relative;
+  display: inline-block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 900px;
+
+  .controlPanel {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    z-index: -1;
+    height: 1.5em;
+
+    .deleteBtn{
+      position: absolute;
+      cursor: pointer;
+      z-index: 10;
+      //color: rgba(100,100,100,.2);
+      &:hover {
+        svg {
+          fill : #ff0500;
+        }
+      }
+    }
+  }
+
+  .gallery-item {
+    display: inline-block;
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    position: relative;
+    min-width: 9em;
+    height: 8em;
+    .img {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      top: 0;
+      left: 0;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      margin: 0;
+      padding: 0;
+    }
+    &-name{
+       max-width: 10em;
+       word-wrap: break-word;
+    }
+
+    &:hover {
+      position: relative;
+      z-index: 20;
+      .img {
+        opacity: 0.5;
+      }
+      // show the control panel
+      .controlPanel, .controlPanel:hover{
+        opacity: 1;
+        top: -1.5em;
+        height: 1.5em;
+        z-index: 1;
+        transition: all 200ms;
+      }
+    }
+
+    &:active .img{
+      opacity: 0.7;
+    }
+
+    i {
+      margin-right: 0.3em;
+      svg{
+        fill: currentColor;
+      }
+    }
+
+    .img i{
+      font-size: 5.5em;
+      display: table;
+      position: absolute;
+      width: 100%;
+      top: 0.2em;
+    }
+
+    &.dropzone-box{
+      width: 9em;
+      height: 10em;
+    }
+
+  }
+
+  .c-fileupdated {
+    -webkit-animation: pulse 500ms ease-out;
+    animation: pulse 500ms ease-out;
+    -webkit-animation-iteration-count:5;
+    animation-iteration-count:5;
+    /*transition: all 500ms;*/
+  }
+  // can be added to highlight a element
+  .c-highlight{
+    -webkit-animation: pulse-highlight 500ms ease-out;
+    animation: pulse-highlight 500ms ease-out;
+    -webkit-animation-iteration-count:5;
+    animation-iteration-count:5;
+  }
+  .c-selected{
+    -webkit-animation: pulse-selected 500ms ease-out;
+    animation: pulse-selected 500ms ease-out;
+    -webkit-animation-iteration-count:5;
+    animation-iteration-count:5;
+    box-shadow: 0 0 3px 3px rgba(255, 0, 0, 0.28);
+  }
+  // the link which triggered the open slider or open file
+  .open-btn{
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    display: block;
+    position: absolute;
+    color: #333;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  div .copyClipNode{
+    top: -1.5em;
+    left: -1.5em;
+    width: 80%;
+    height: 114%;
+    cursor: copy;
+  }
+}
+@-webkit-keyframes pulse {
+  0% { box-shadow: 0 0 3px 3px rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 3px 3px orange; }
+  100% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 3px 3px rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 3px 3px orange; }
+  100% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+}
+
+@-webkit-keyframes pulse-selected {
+  0% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 3px 3px red; }
+  100% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+}
+@keyframes pulse-selected {
+  0% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 3px 3px red; }
+  100% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+}
+
+@-webkit-keyframes pulse-highlight {
+  0% { box-shadow: 0 0 3px 3px rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 3px 3px #e95a86; }
+  100% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+}
+@keyframes pulse-highlight {
+  0% { box-shadow: 0 0 3px 3px rgba(0,0,0,0); }
+  50% { box-shadow: 0 0 3px 3px #e95a86; }
+  100% { box-shadow: 0 0 0 0  rgba(0,0,0,0); }
+}
+/*BG test*/
+@keyframes pulse-bg {
+  0% { background-color:  rgba(0,0,0,0)}
+  50% { background-color:  orange;}
+  100% { background-color:  rgba(0,0,0,0);}
+}

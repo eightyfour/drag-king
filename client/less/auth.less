@@ -1,0 +1,61 @@
+html, body {
+  height: 100%;
+  font-family: monospace;
+  color: #868686;
+  background-color: white;
+}
+
+body {
+  margin: 0;
+}
+
+@import "src/button";
+@import "src/inputField";
+
+main {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+section {
+  position: relative;
+  padding: 0 2em 15%;
+  p{
+    text-align: center;
+  }
+}
+a {
+  margin-top: 10%;
+  display: block;
+}
+a {
+  color: #868686;
+}
+a:hover {
+  color: #565656;
+}
+a:before {
+  content: '>';
+  display: inline-block;
+  margin-right: 0.5em;
+}
+form {
+  width: 50%;
+  margin: 0 auto 3em;
+}
+.button {
+  width: 100%;
+  min-height: 2em;
+  padding: .7em 0;
+}
+.inputField {
+  min-height: 2em;
+  margin-bottom: 1em;
+}

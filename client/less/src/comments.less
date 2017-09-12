@@ -1,0 +1,114 @@
+.comments-tab-content{
+  max-height: 400px;
+  overflow: auto;
+  .tip- {
+    width: 0;
+    height: 0;
+    top: 9px;
+    left: -20px;
+    position: absolute;
+    background: transparent;
+    border: 10px solid rgba(204, 204, 204, 0.22);
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+  }
+  .tip-left {
+    width: 0;
+    height: 0;
+    position: absolute;
+    background: transparent;
+    top: 10px;
+    left: -25px;
+    border-top-color: transparent;
+    border-left-color: transparent;
+    border-bottom-color: transparent;
+  }
+  .approve-true {
+    background-color: rgba(0, 154, 0, 0.22);
+    .tip-true {
+      width: 0;
+      height: 0;
+      position: absolute;
+      background: transparent;
+      border: 10px solid rgba(0, 154, 0, 0.22);
+      top: 9px;
+      left: -20px;
+      border-top-color: transparent;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+    }
+  }
+  .approve-false {
+    background-color: rgba(255, 0, 2, 0.22);
+    .tip-false {
+      width: 0;
+      height: 0;
+      position: absolute;
+      background: transparent;
+      border: 10px solid rgba(255, 0, 2, 0.22);
+      top: 9px;
+      left: -20px;
+      border-top-color: transparent;
+      border-left-color: transparent;
+      border-bottom-color: transparent;
+    }
+  }
+  .approve-icon{
+    font-size: 1em;
+    top: 0.1em;
+    position: absolute;
+    right: .17em;
+    color: red;
+  }
+  .comment{
+    color: #333;
+    &::after{
+      content: ' ';
+    }
+  }
+
+  ul {
+    margin-left: 4em;
+    padding: 0;
+    li {
+      position: relative;
+      list-style: none;
+      padding: .5em .5em .5em 0.5em;
+      margin-bottom: 2px;
+      background-color: rgba(204, 204, 204, 0.22);
+      border-radius: 3px;
+
+      &::before {
+        margin-right: 1em;
+        content: attr(reporter) ':';
+        position: absolute;
+        top: 8px;
+        right: 100%;
+        text-align: right;
+        width: 7em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      &::after {
+        color: #9da6ab;
+        margin-right: .4em;
+        content: attr(date);
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        padding-right: 5px;
+        text-align: right;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.6em;
+      }
+      a img {
+        max-width: 30em;
+        max-height: 10em;
+        display: block;
+      }
+    }
+  }
+}

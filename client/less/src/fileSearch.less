@@ -1,0 +1,51 @@
+.fileSearch{
+  &--overlay{
+    .overlay-styles();
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  &--content {
+    // give them a offset position
+    position: relative;
+    top: -30%;
+    width: 80%;
+
+  }
+  &--searchInput{
+    input {
+      padding: .2em .5em;
+    }
+  }
+  &-searchOutput{
+    position: absolute;
+    width: 100%;
+    ul {
+      // TODO ui
+      padding: 0;
+      margin: 0;
+      max-height: 700px;
+      overflow: auto;
+      max-width: 70%;
+      li {
+        cursor: pointer;
+        background-color: #252525;
+        color: whitesmoke;
+        list-style: none;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 0 0.5em;
+        .path{
+          color: #a3a3a3;
+        }
+        &.active{
+          background-color: #444444;
+        }
+        &:hover{
+          background-color: #444444;
+        }
+      }
+    }
+  }
+}

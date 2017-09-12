@@ -1,0 +1,23 @@
+<header canny-mod="pageEnvironment">
+  <ol class="breadcrumb" canny-mod="folderNav">
+    <li><a class ="a" href="/">Home</a></li>
+  </ol>
+
+  <div class="search-button" title="Search files (ctrl+s)" canny-mod="icons search" canny-var="search"></div>
+
+  <div class="hidden-input">
+    <div class="section-inner">
+      <label class="section-plus" for="section-field" title="Create a directory" canny-mod="icons" canny-var="plus"></label>
+      <input canny-mod="newFolder" tabindex="1" id="section-field" class="section-field" type="text"
+             placeholder="New folder" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
+  </div>
+
+  <ol class="folders listFolders" canny-mod="listFolders"></ol>
+
+  <div class="user-options-container">
+    <span class="auth-userName">{{page.name}}</span>
+    <span canny-mod="auth icons" canny-var="logoutButton" canny-icons="sign-out" title="logout" class="auth-logout-btn"></span>
+  </div>
+
+</header>

@@ -1,0 +1,72 @@
+.folders {
+  color: #777;
+  margin: 0;
+  padding: 12px 15px 0;
+
+  li {
+    padding-left: 1.3em;
+    font-size: 1.3rem;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    list-style: none;
+    margin: .1em 1em;
+    span{
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    svg{
+      position: absolute;
+      left: 0;
+    }
+    > ul {
+      position: absolute;
+      top: -5px;
+      box-shadow: 0 0 1px 0 #333, 0 0 10px 0 #aaa;
+      background-color: white;
+      z-index: 10;
+      display: none;
+      border-radius: 2px;
+      padding: 0.7em;
+      margin-left: 5em;
+      li {
+        margin: .1em 0 .1em 1em
+      }
+      &::before{
+        width: 0;
+        height: 0;
+        position: absolute;
+        content: '';
+        display: block;
+        background: transparent;
+        border: 10px solid rgba(0, 0, 0, 0.6);
+        top: 4px;
+        left: -20px;
+        border-top-color: transparent;
+        border-left-color: transparent;
+        border-bottom-color: transparent;
+      }
+    }
+    &.show-sub-menu > ul {
+      display: block;
+    }
+  }
+  ol>li>ul{
+    margin: 0;
+  }
+
+}
+
+.folders li:before{
+  position: absolute;
+  left: -0.1em;
+  top: -.2em;
+  font-size: 1.3em;
+}
+.newFolderinput{
+  width: 10em;
+  float: left;
+}

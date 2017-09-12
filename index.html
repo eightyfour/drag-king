@@ -2,76 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Drag King - Drag and Drop to Upload to Server</title>
+    <title>Asset management system</title>
+    <link href="/dist/img/favicon.ico" rel="icon" type="image/x-icon" />
+
     <link rel="stylesheet" href="/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="/dist/css/main.css">
-    <link rel="stylesheet" href="/dist/css/marching-ants.css">
-    <link rel="stylesheet" href="/dist/css/octicons.min.css">
 </head>
-<body class="dk">
-    <nav>
-        <ol class="breadcrumb" canny-mod="folderNav">
-            <li><a href="/">Home</a></li>
-        </ol>
+<body class="dk" canny-mod="pageEnvironment">
+<nav canny-mod="header viewControl" canny-viewControl="header"></nav>
 
-        <ol class="folders" canny-mod="listFolders">
-        </ol>
+<section canny-mod="folderDescription viewControl" canny-viewControl="folderDescription" class="folderDescription"></section>
 
-        <div class="hidden-input">
-            <div class="section-inner">
-                <label for="section-field" class="section-plus" canny-mod="icons" canny-var="plus"></label>
-                <input canny-mod="newFolder" tabindex="1" id="section-field" class="section-field" type="text" placeholder="New folder" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
-            </div>
-        </div>
-    </nav>
+<div class="container">
+    <section canny-mod="fileViewer viewControl" canny-viewControl="fileViewer" class="fileViewer container-row"></section>
+</div>
 
-    <div class="container">
+<div class="historyRenderer" canny-mod="historyRenderer viewControl" canny-viewControl="historyRenderer"></div>
 
-        <div class="row">
-            <div id="dropzone-box" class="dropzone-box">
-                <div class="dropzone-icon"></div>
-                <label for="dropzone" id="dropzone-label" class="marching-ants marching headline dropzone-label">Drag and
-                    drop your file to begin uploading</label>
-                <ul id="fileNamePreview" class="fileNamePreview"></ul>
-                <input canny-mod="upload" id="dropzone-input" multiple="" directory class="dropzone-input"
-                       canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
-            </div>
-        </div>
+<footer canny-mod="viewControl" canny-viewControl="footer">
 
-    </div>
+</footer>
 
-    <div class="gallery" canny-mod="gallery">
-        <nav>
-            <ul>
-                <li title="full screen" canny-mod="imagePreviewer" canny-var="show"><span canny-mod="icons" canny-var="telescope"></span></li>
-                <li title="fileDownloader JSON" canny-mod="fileDownLoaderFormat" canny-var="show"><span canny-mod="icons" canny-var="gist-secret"></span></li>
-            </ul>
-        </nav>
-    </div>
-
-    <div class="image-preview" canny-mod="imagePreviewer" canny-var="main">
-        <div class="image-preview-box">
-            <div class="image-preview-box-close"  canny-mod="imagePreviewer icons" canny-icons="x" canny-var="close"></div>
-
-
-            <div class="c-slider c-prev-btn ts3" canny-mod="slider icons" canny-slider="{'id':'imagePreview','type':'prev'}" canny-icons="chevron-left"></div>
-
-            <div canny-mod="imagePreviewer" canny-var="bgImage" class="image-preview-box-content-background"></div>
-
-            <div class="c-slider c-main" canny-mod="slider" canny-slider="{'id':'imagePreview','autoInit':'false'}">
-                <div class="c-wrap"></div>
-            </div>
-
-            <div class="c-slider c-next-btn ts3" canny-mod="slider icons" canny-slider="{'id':'imagePreview','type':'next'}" canny-icons="chevron-right"></div>
-
-            <!-- pagination -->
-            <div class="c-slider c-paginationProgressWrap">
-                <div class="c-paginationProgress" canny-mod="slider" canny-slider="{'id':'imagePreview','type':'paginationProgress'}"></div>
-            </div>
-        </div>
-    </div>
-
-
-    <script src="/dist/main.gen.js"></script>
-    </body>
+<script src="/dist/main.gen.js"></script>
+</body>
 </html>

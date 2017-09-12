@@ -1,0 +1,51 @@
+.historyRenderer{
+  // template part to give them a position
+  position: fixed;
+  z-index: 10;
+  right: 100%;
+  background-color: #333131;
+  color: wheat;
+  height: 30%;
+  top: 30%;
+  transition: transform 100ms, opacity 100ms, top 100ms, height 100ms;
+  transform: translate(2em, 0);
+  opacity: 0.1;
+  min-width: 16em;
+  // hide the scrollbar
+  overflow: hidden;
+
+  &:hover, &.show{
+    height:100%;
+    opacity: 1;
+    transition: transform 100ms, opacity 100ms, top 100ms, height 100ms;
+    transform: translate(100%, -30%);
+  }
+
+  ul {
+    padding: 0.5em;
+    // hide the scrollbar
+    overflow: hidden;
+    overflow-y: scroll;
+    margin-right: -2em;
+    padding-right: 1.5em;
+    height: 100%;
+  }
+
+  &-item {
+    display: block;
+    list-style: none;
+    margin-bottom: 1em;
+
+    &-timestamp{
+      font-size: 80%;
+      top: 0.5em;
+      position: absolute;
+      right: 0;
+      line-height: 100%;
+    }
+    &-alias{
+      position: relative;
+      margin:0;
+    }
+  }
+}

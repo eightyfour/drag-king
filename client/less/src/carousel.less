@@ -1,0 +1,227 @@
+@slider-margin: 5px;
+@slider-close-btn-height: 70px;
+@slider-portrait-bottom-height: 15%;
+@slider-arrow-pagination-center-position: 46%;
+.carousel() {
+
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  padding: 0;
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+
+  &.c-next-btn,&.c-prev-btn,&.c-close-btn{
+    color: #FFF;
+    position: absolute;
+    top: 0;
+    width: 10%;
+    height: 100%;
+    z-index: 1;
+    &:active{
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    }
+    &.c-inactive{
+      // the functionality of the button is not available. E.g. only one image loaded in slider
+      opacity: .3;
+    }
+  }
+
+  &.c-close-btn{
+    right: 0;
+    height: @slider-close-btn-height;
+    z-index: 2;
+    text-align: center;
+    line-height: @slider-close-btn-height;
+  }
+
+  &.c-prev-btn {
+    left:0;
+    &[class^="icf-"]:before, &[class*="icf-"]:before {
+      position: absolute;
+      top: @slider-arrow-pagination-center-position;
+      right: 40%;
+    }
+  }
+
+  &.c-next-btn {
+    right:0;
+    &[class^="icf-"]:before, &[class*="icf-"]:before {
+      position: absolute;
+      top: @slider-arrow-pagination-center-position;
+      left: 40%;
+    }
+  }
+
+  &.c-paginationProgressWrap {
+    position: absolute;
+    bottom:0;
+    height: 8%;
+    width:100%;
+    .c-paginationProgress {
+      margin: auto;
+      display: table;
+      vertical-align: middle;
+      .c-item {
+        width: 15px;
+        height: 15px;
+        position: relative;
+        float: left;
+        margin: 6px 2px;
+        &:before{
+          content: ' ';
+          position: absolute;
+          border-radius: 100%;
+          width: 5px;
+          height: 5px;
+          background-color: rgba(255, 255, 255, 0.2);
+          -webkit-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
+          -moz-box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
+          box-shadow: 0 0 4px 1px rgba(0, 0, 0, 0.3);
+
+          margin: (@slider-margin / 2) @slider-margin;
+          -webkit-transition: all 0.2s ease-in-out;
+          -moz-transition: all 0.2s ease-in-out;
+          -o-transition: all 0.2s ease-in-out;
+          transition: all 0.2s ease-in-out;
+        }
+
+        &.c-active {
+          &:before {
+            width: 10px;
+            height: 10px;
+            margin: 0 @slider-margin - (@slider-margin / 2);
+            background-color: white;
+          }
+        }
+      }
+    }
+  }
+
+  &.c-main{
+    width: 100%;
+    height: 100%;
+    padding: 0 10% 5%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    box-sizing: border-box;
+    .c-wrap {
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      // all direct children
+      > * {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: none;
+
+        &.c-can-animate {
+          -webkit-transition: all 0.8s;
+          -moz-transition: all 0.8s;
+          -o-transition: all 0.8s;
+          transition: all 0.8s;
+        }
+        &.c-prev {
+          -ms-transform: translateX(-100%)  translateY(0px) translateZ(0px);
+          -webkit-transform: translateX(-100%)  translateY(0px) translateZ(0px);
+          transform: translateX(-100%)  translateY(0px) translateZ(0px);
+          display: block;
+        }
+        &.c-active {
+          -ms-transform: translateX(0)  translateY(0px) translateZ(0px);
+          -webkit-transform: translateX(0)  translateY(0px) translateZ(0px);
+          transform: translateX(0)  translateY(0px) translateZ(0px);
+          display: block;
+        }
+        &.c-next {
+          -ms-transform: translateX(100%)  translateY(0px) translateZ(0px);
+          -webkit-transform: translateX(100%)  translateY(0px) translateZ(0px);
+          transform: translateX(100%)  translateY(0px) translateZ(0px);
+          display: block;
+        }
+      }
+    }
+    .c-item{
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+
+  &.c-main-coverFlow {
+    overflow: inherit;
+    position: relative;
+    margin: auto;
+
+    .c-wrap {
+      height: 100%;
+      width: 100%;
+    }
+    .c-item {
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      -o-box-sizing: border-box;
+      box-sizing: border-box;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      border: none;
+      //        -webkit-box-reflect: below 0px -webkit-gradient(linear, left top, left bottom, from(transparent), color-stop(70%, transparent), to(rgba(255, 255, 255, 0.4)));
+      -webkit-transition: padding 0.5s ease-in-out;
+      -moz-transition: padding 0.5s ease-in-out;
+      -o-transition: padding 0.5s ease-in-out;
+      transition: padding 0.5s ease-in-out;
+      > * {
+        //            width: 100%;
+        height: 100%;
+      }
+    }
+  }
+  // if the parent class portrait is set the slider goes portrait
+  // TODO refactor this it's not a good code behavior to dependent on a parent class named portrait
+  .portrait & {
+    &.c-next-btn,&.c-prev-btn{
+      top: initial;
+      bottom: 0;
+      width: 50%;
+      height: @slider-portrait-bottom-height;
+    }
+
+    &.c-close-btn{}
+
+    &.c-prev-btn {
+      &[class^="icf-"]:before, &[class*="icf-"]:before {
+        right: 80%;
+      }
+    }
+
+    &.c-next-btn {
+      &[class^="icf-"]:before, &[class*="icf-"]:before {
+        left: 80%;
+      }
+    }
+    &.c-paginationProgressWrap {
+      .c-paginationProgress {
+        position: relative;
+      }
+    }
+
+    &.c-main{
+      padding: @slider-close-btn-height 0 @slider-portrait-bottom-height;
+    }
+  }
+}
+
+

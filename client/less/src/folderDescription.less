@@ -1,0 +1,55 @@
+.folderDescription{
+
+  padding: 0.5em 0.5em 2em;
+  transition: background-color 500ms;
+  margin: 0;
+  display: inline-block;
+  width: 100%;
+
+  &-content{
+    position: relative;
+  }
+
+  .editable{
+    padding: 0.5em;
+  }
+  .closeButton, .saveButton{
+    position: absolute;
+    right: 0;
+    top:0;
+    opacity: 0;
+    transition: opacity 500ms;
+    font-size: 200%;
+    cursor: pointer;
+    z-index: 1;
+    &:hover{
+      svg {
+        fill: #b3afb2;
+      }
+   }
+  }
+
+  .saveButton {
+    right: 1em;
+    margin-right: 10px;
+  }
+
+  &.editMode {
+    background-color: #e9eff4;
+    transition: background-color 500ms;
+    .closeButton {
+      opacity: 1;
+      transition: opacity 500ms;
+      transition-delay: 100ms;
+    }
+    .saveButton {
+      opacity: 1;
+      transition: opacity 500ms;
+      transition-delay: 300ms;
+    }
+  }
+  &.default{
+    opacity: .5;
+    box-shadow: none;
+  }
+}

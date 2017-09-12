@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>auth</title>
+	<link rel="stylesheet" href="/dist/css/auth.css">
+	<link href="/dist/img/favicon.ico" rel="icon" type="image/x-icon" />
+</head>
+<body>
+<main>
+	<section>
+		<h1>hey, welcome to our asset manager...</h1>
+		<!--<h3>But sorry...</h3>-->
+		<div class="mole"></div>
+		<!--<p>Please authenticate first...</p>-->
+		<form name="login" action="/login" method="POST">
+			<input type="text" name="username" placeholder="Enter name" class="inputField">
+			<input type="password" name="password" placeholder="Enter password" class="inputField">
+			<input canny-mod="loginAnchor" class="inputField" type="hidden" name="from" value="">
+			<button type="submit" class="button octicon octicon-sign-in">let me in</button>
+		</form>
+		<p>...please authenticate first</p>
+		<!--<h1>...hey, welcome to our asset manager</h1>-->
+	</section>
+</main>
+
+</body>
+</html>

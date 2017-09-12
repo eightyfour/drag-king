@@ -1,0 +1,84 @@
+
+.button {
+  font-size: 1em;
+  min-height: 20px;
+  color: #777;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  border: none;
+  outline: none;
+  font-weight: bold;
+  font-family: inherit;
+  border-radius: 2px;
+  background-clip: padding-box;
+  -o-text-shadow: 0 1px 1px #464d52;
+  -moz-text-shadow: 0 1px 1px #464d52;
+  -webkit-text-shadow: 0 1px 1px #464d52;
+  text-shadow: 0 1px 1px #ddd,0 1px 1px #ddd,0 1px 1px #ddd;
+  /* background: #a2a8ad; */
+  background: linear-gradient(rgb(214, 213, 213), #C5CDD4);
+  box-shadow: 0px -2px 0px 0px #989A9C inset;
+
+  &:hover{
+    background: rgb(214, 213, 213);
+  }
+  &:active{
+    background: #b1b8be;
+  }
+  &:before{
+    padding-right: .3em;
+  }
+}
+button.btn {
+  font-size: 1em;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  min-width: 100px;
+  font-weight: bold;
+}
+
+.input-group-btn {
+  position: relative;
+  font-size: 0;
+  white-space: nowrap;
+  width: 1%;
+  vertical-align: middle;
+  display: inline;
+  &.input-group-btn {
+    padding-top: 2px;
+  }
+}
+.comment-btn {
+  vertical-align: text-bottom;
+  display: inline-block;
+
+}
+
+button.btn {
+  border-radius: 4px;
+  background-color: #1982cc;
+  border-color: #125385;
+  color: #fff;
+  // TODO fix this em is better but the actual font size in the form is 0 :(
+  font-size: 11px;
+  border-radius: 4px;
+  &:focus {
+    outline: none;
+    background-color: #1982cc;
+    border-color: #125385;
+  }
+  &:hover{
+    background-color: #60b5ff;
+  }
+  &:active{
+    color: #fff;
+    background-color: #1a66a8;
+  }
+
+}
+// overwrite bootstrap
+.input-group-btn button.btn{
+  border-radius: 4px;
+}

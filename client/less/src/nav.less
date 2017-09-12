@@ -1,0 +1,29 @@
+nav{
+  background-color: rgba(0,0,0,.1);
+  display: inline-block;
+  width: 100%;
+  > header {
+    display: flex;
+    .breadcrumb{
+      flex: 0 0 auto;
+    }
+    .hidden-input{
+      flex: 0 0;
+      .section-inner{
+        position: absolute;
+        z-index: 3;
+      }
+    }
+    .folders{
+      // space for the login section
+      padding-right: 170px;
+      li{
+        width: 180px;
+      }
+    }
+    .user-options-container{
+      //flex: 200px 0;
+      //position: relative;
+    }
+  }
+}

@@ -1,0 +1,17 @@
+<div class="gallery" canny-mod="showOnDropOver">
+  <!-- first item in row to start uploading a file -->
+  <div class="dropzone-box gallery-item">
+    <div class="dropzone-box-icon" canny-mod="icons" canny-var="plus"></div>
+    <input title="upload a file" canny-mod="upload" multiple="" directory class="dropzone-input"
+           canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
+  </div>
+  <!-- the ovlay if you drag over a file -->
+  <div canny-mod="showOnDropOver" canny-var="item" class="dropzone-overlay">
+    <!--<label for="dropzone" id="dropzone-label" class="headline dropzone-label"></label>-->
+    <input canny-mod="upload" multiple="" directory class="dropzone-input"
+           canny-var="fileInput" type="file" name="filedrag" accept="*/*"/>
+  </div>
+  <div canny-mod="fileSpace" class="fileContainer"></div>
+
+  <div title="show download files" class="fileDownLoaderFormat-link" canny-mod="fileDownLoaderFormat icons" canny-var="show" canny-icons="desktop-download"></div>
+</div>

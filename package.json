@@ -4,39 +4,50 @@
   "description": "Drag and drop to upload to server",
   "main": "main.js",
   "watch": {
-    "js": {
-      "patterns": [
-        "client_src"
-      ],
-      "extensions": "js"
-    },
     "less": {
       "patterns": [
-        "client_src/less"
+        "client/less"
       ],
-      "extensions": "less"
+      "extensions": "less",
+      "quiet": false
+    },
+    "js": {
+      "patterns": [
+        "client"
+      ],
+      "extensions": [
+        "js",
+        "html"
+      ],
+      "quiet": false
     }
   },
-  "scripts": {
-    "prepublish": "npm-run-all images css js less",
-    "preimages": "mkdir -p dist/img",
-    "images": "cp -rf client_src/images/* dist/img/.",
-    "precss": "mkdir -p dist/css",
-    "css": "cp -rf client_src/css/* dist/css/.",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "js": "browserify client_src/js/main.js -o dist/main.gen.js",
-    "preless": "mkdir -p dist/css && cp node_modules/octicons/build/octicons.min.css dist/css/.",
-    "less": "lessc client_src/less/main.less dist/css/main.css",
-    "start": "forever start dragKing.js",
-    "startNode": "node dragKing.js",
-    "watch": "npm-watch"
-  },
   "config": {
-    "port": 80,
-    "bundle": "dist/main.gen.js",
-    "outfile": [
-      "client_src/js/main.js"
-    ]
+    "port": {
+      "development": 8001,
+      "production": 80
+    },
+    "auth": true
+  },
+  "scripts": {
+    "install": "npm run dist",
+    "dist": "npm-run-all ts js less images",
+    "watch": "npm-watch",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prejs": "mkdir -p dist",
+    "ts": "tsc",
+    "js": "browserify -t [ stringify --extensions [.html] ] client/dragKing.js -o dist/main.gen.js",
+    "__preless": "mkdir -p dist/css && cp -rf node_modules/drag-king/client_src/css/* dist/css/.",
+    "less": "npm-run-all less:*",
+    "less:main": "lessc --npm-import client/less/main.less dist/css/main.css",
+    "less:auth": "lessc --npm-import client/less/auth.less dist/css/auth.css",
+    "postless": "npm-run-all mediumEditor:*",
+    "mediumEditor:main": "cat node_modules/medium-editor/dist/css/medium-editor.min.css >> dist/css/main.css",
+    "mediumEditor:theme": "cat node_modules/medium-editor/dist/css/themes/flat.min.css >> dist/css/main.css",
+    "preimages": "mkdir -p dist/img",
+    "images": "npm-run-all images:*",
+    "images:images": "cp -rf client/images/* dist/img/.",
+    "start": "node dragKing.js"
   },
   "repository": {
     "type": "git",
@@ -48,20 +59,35 @@
     "url": "https://github.com/alextrastero/drag-king/issues"
   },
   "dependencies": {
-    "browserify": "x",
-    "canny": "github:eightyfour/canny",
+    "body-parser": "^1.17.1",
+    "canny": "^0.2.1",
     "connect-busboy": "0.0.2",
-    "express": "^4.0.0",
+    "cookie-parser": "^1.4.3",
+    "directory-tree": "^2.0.0",
+    "dnode": "^1.2.2",
+    "express": "^4.14.0",
+    "express-session": "^1.15.2",
     "finalhandler": "*",
+    "md5": "^2.2.1",
+    "medium-editor": "^5.23.1",
+    "message-toast": "github:eightyfour/message-toast",
     "node-thumbnail": "^0.8.1",
     "octicons": "^5.0.1",
+    "passport": "^0.3.2",
+    "passport-ldapauth": "^1.0.0",
     "serve-index": "*",
     "serve-static": "*",
-    "string-to-color": "github:eightyfour/string-to-color"
+    "shoe": "0.0.15",
+    "string-to-color": "github:eightyfour/string-to-color",
+    "stringify": "^5.1.0"
   },
   "devDependencies": {
+    "@types/node": "^7.0.13",
+    "browserify": "^13.1.1",
     "less": "^2.7.1",
+    "less-plugin-npm-import": "^2.1.0",
     "npm-run-all": "^3.1.2",
-    "npm-watch": "^0.1.6"
+    "npm-watch": "^0.1.7",
+    "typescript": "^2.2.2"
   }
 }
