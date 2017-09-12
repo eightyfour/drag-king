@@ -30,7 +30,7 @@
     "auth": true
   },
   "scripts": {
-    "install": "npm run dist",
+    "postinstall": "npm run dist",
     "dist": "npm-run-all ts js less images",
     "watch": "npm-watch",
     "test": "echo \"Error: no test specified\" && exit 1",
