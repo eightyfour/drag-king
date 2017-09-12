@@ -10,18 +10,13 @@
  * @requires module:fileHandler
  */
 
-/**
- * Some inner stuff in here
- * @inner
- */
-
 const shoe = require('shoe'),
     dnode = require('dnode'),
     fileHandler = require('./fileHandler'),
     cookieParser = require('cookie-parser'),
     sessionStore = require('./sessionStore');
 
-let dirname;
+let config;
 
 const sock = shoe(function (stream) {
     const d = dnode({
@@ -32,7 +27,7 @@ const sock = shoe(function (stream) {
          * @param cb
          */
         getDirectoryTree : function (path, cb) {
-            fileHandler.getDirectoryTree(dirname, path, cb);
+            fileHandler.getDirectoryTree(config.dirName, path, cb);
         },
         /**
          *
@@ -40,7 +35,7 @@ const sock = shoe(function (stream) {
          * @param {function} cb
          */
         loadModuleConfig : function (file, cb) {
-            fileHandler.getModuleConfigFromJSON(dirname, file, function (data) {
+            fileHandler.getModuleConfigFromJSON(config.dirName, file, function (data) {
                 cb(data); // 1492083845980 - 1492083863075
             })
         },
@@ -56,7 +51,7 @@ const sock = shoe(function (stream) {
                 cb(false);
                 return;
             }
-            fileHandler.saveFile(dirname, fileName[0] === '/' ? fileName : '/' + fileName , content, cb);
+            fileHandler.saveFile(config.dirName, fileName[0] === '/' ? fileName : '/' + fileName , content, cb);
         },
         /**
          *
@@ -67,11 +62,11 @@ const sock = shoe(function (stream) {
          * @param {function} cb
          */
         saveModuleConfig : function (file, obj, cb) {
-            fileHandler.getModuleConfigFromJSON(dirname, file, function (data) {
+            fileHandler.getModuleConfigFromJSON(config.dirName, file, function (data) {
                 if (data === false || data.timeStamp === obj.timeStamp) {
                     // file does not exists - but this is no problem
                     obj.timeStamp = (new Date()).getTime();
-                    fileHandler.saveJSON(dirname, file, obj, function (data) {
+                    fileHandler.saveJSON(config.dirName, file, obj, function (data) {
                         cb(data);
                     })
                 } else {
@@ -86,7 +81,7 @@ const sock = shoe(function (stream) {
                     hey : function (s) {
                         console.log('hey', s);
                     }
-                }, sid = cookieParser.signedCookie(path.session, 'joker');
+                }, sid = cookieParser.signedCookie(path.session, config.secret);
 
             if (sid) {
                 sessionStore.get(sid, function(err, session) {
@@ -115,9 +110,9 @@ const sock = shoe(function (stream) {
  * Create a persist instance
  *
  * @param {object} server - the server instance from app.listen...
- * @param {string} dirName - application root folder where to save the files
+ * @param {{dirName:string, secret:string}} moduleConfig - application root folder where to save the files
  */
-module.exports = function (server, dirName) {
-    dirname = dirName;
+module.exports = function (server, moduleConfig) {
+    config = moduleConfig;
     sock.install(server, '/dnode');
 };

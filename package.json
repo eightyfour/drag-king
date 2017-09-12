@@ -30,14 +30,12 @@
     "auth": true
   },
   "scripts": {
-    "postinstall": "npm run dist",
     "dist": "npm-run-all ts js less images",
     "watch": "npm-watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prejs": "mkdir -p dist",
     "ts": "tsc",
     "js": "browserify -t [ stringify --extensions [.html] ] client/dragKing.js -o dist/main.gen.js",
-    "__preless": "mkdir -p dist/css && cp -rf node_modules/drag-king/client_src/css/* dist/css/.",
     "less": "npm-run-all less:*",
     "less:main": "lessc --npm-import client/less/main.less dist/css/main.css",
     "less:auth": "lessc --npm-import client/less/auth.less dist/css/auth.css",

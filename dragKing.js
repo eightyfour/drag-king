@@ -19,6 +19,7 @@ const main = require('./main'),
     sessionStore = require('./server/lib/sessionStore'),
     wsConnection = require('./server/lib/wsConnection'),
     fileStorageName = __dirname + '/files',
+    cookieSecretName = 'dragKing',
     app = main({
         dirName: __dirname + '/',
         fileStorageName: fileStorageName
@@ -41,7 +42,7 @@ const main = require('./main'),
             // TODO activate auth and make it configureable
             app.use(auth(app, {
                 rootDir : fileStorageName,
-                secret: 'dragKing',
+                secret: cookieSecretName,
                 sessionTimeout: 1000 * 60 * 60
             }));
 
@@ -131,4 +132,7 @@ server = app.listen(port, function () {
 });
 
 // initialize the json persist via websocket
-wsConnection(server, __dirname + '/files');
+wsConnection(server, {
+    secret : cookieSecretName,
+    dirName : __dirname + '/files'
+});
