@@ -1,3 +1,4 @@
+import { ProgressToast } from './ProgressToast'
 /**
  * These file handles the REST calls to the server
  */
@@ -29,13 +30,21 @@ function callEventsQueue(queue:Array<()=>{}>, ...any) {
  * @param file
  */
 function sendFile(file, directCallback) {
-    var uri = "/uploadFile?folder=" + location.pathname + '&filename=' + file.name,
+    const uri = "/uploadFile?folder=" + location.pathname + '&filename=' + file.name,
         xhr = new XMLHttpRequest(),
-        fd = new FormData();
+        fd = new FormData(),
+        progressBar = ProgressToast(file.name);
+
+    xhr.upload.onprogress = function (e) {
+        progressBar.update(e.loaded / 1000, e.total / 1000)
+    };
+    xhr.upload.onloadend = function (e) {
+        progressBar.destroy()
+    };
 
     xhr.open("POST", uri, true);
     xhr.onreadystatechange = function() {
-        var data;
+        let data;
         if (xhr.readyState == 4) {
             // Handle response.
             data = xhr.status == 200 ? JSON.parse(xhr.responseText) : xhr.responseText;
