@@ -162,7 +162,6 @@ function main(opts, appLifeCycle) {
                     }
                 } else {
                     // no file found - send 404 file
-                    console.log('main:fileName', __dirname);
                     res.status(404).sendFile(opts.fourOFourFile ? opts.fourOFourFile : __dirname + '/404.html');
                 }
             });
