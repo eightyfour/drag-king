@@ -29,5 +29,8 @@ complete refactoring of the application
    * login
    * ...
 
+**0.1.1**
+ * provide default 404 file (configurable via fourOFourFile property)
+
 TODO: server side code needs to be refactored ...comming soon
  

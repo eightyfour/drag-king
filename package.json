@@ -1,6 +1,6 @@
 {
   "name": "drag-king",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Drag and drop to upload to server",
   "main": "main.js",
   "watch": {
