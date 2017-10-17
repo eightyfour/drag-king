@@ -45,9 +45,6 @@ canny.ready(function () {
             path : location.pathname,
             session : forSessionCookie('translatron_session').getValues()
         }, function (con) {
-            console.log('tradeWs:message', con.message);
-            console.log('tradeWs:user', con.user);
-            con.hey('back from client');
             eventQueue.init.forEach(function (fc) {
                 fc(con);
             });

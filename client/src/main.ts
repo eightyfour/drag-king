@@ -2,7 +2,6 @@ import { tradeWs } from './tradeWs';
 import * as trade from './trade';
 import { authController } from './components/auth/authController';
 import { historyController } from './components/history/historyController';
-import { mainController } from './components/mainController';
 import * as canny from 'canny';
 import * as url from 'canny/mod/url';
 import * as toast from 'message-toast';
@@ -25,7 +24,6 @@ export function main() {
     authController();
     sliderController();
     historyController();
-    mainController();
     folderDescriptionController({});
 
     canny.add('viewControl', viewControl());

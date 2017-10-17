@@ -50,7 +50,6 @@ function main(opts, appLifeCycle) {
     });
 
     app.get('/files*', function (req, res) {
-        console.log('app:files*');
         var done = finalhandler(req, res);
         serve(req, res, function onNext(err) {
             if (err) {
@@ -215,7 +214,6 @@ function main(opts, appLifeCycle) {
 
         req.on("data", function (chunk) {
             folder += chunk.toString();
-            console.log('app:getFiles folder', folder);
         });
 
         req.on("end", function () {
@@ -304,7 +302,6 @@ function main(opts, appLifeCycle) {
     app.post('/deleteFile', function (req, res) {
         var fileName;
         if (req.query.hasOwnProperty('filename')) {
-            console.log('app:deleteFile', req.query.filename);
             fileName = req.query.filename;
             if (fileName[0] !== '/') {
                 fileName = '/' + fileName;

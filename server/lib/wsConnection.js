@@ -77,15 +77,12 @@ const sock = shoe(function (stream) {
         },
         init : function (path, cb) {
             const returnObject = {
-                    path : path.path,
-                    hey : function (s) {
-                        console.log('hey', s);
-                    }
-                }, sid = cookieParser.signedCookie(path.session, config.secret);
+                    path : path.path
+                },
+                sid = cookieParser.signedCookie(path.session, config.secret);
 
             if (sid) {
                 sessionStore.get(sid, function(err, session) {
-                    console.log('persist:', session);
                     if (!session) {
                         session = {};
                     }
