@@ -9,6 +9,7 @@
  * @param {string} secret - the cookie secret name for cookie access
  * @param {number} port - the cookie secret name for cookie access
  * @param {string} fileStorageName - path to store the files
+ * @param {string} fourOFourFile - path of the 404.html which will be shown if the file is not available (default is the dragKing own file)
  * @param {function} appLifeCycle.phase1 - executed before the files listener is attached
  * @param {function} appLifeCycle.fileFilter - filter for files and folders which will not be send to client (return file name or undefined to filter out)
  * @param {function} appLifeCycle.onUploadFile - listener will be called if file is successfully saves on file system
@@ -161,7 +162,8 @@ function main(opts, appLifeCycle) {
                     }
                 } else {
                     // no file found - send 404 file
-                    res.status(404).sendFile(opts.dirName + '404.html');
+                    console.log('main:fileName', __dirname);
+                    res.status(404).sendFile(opts.fourOFourFile ? opts.fourOFourFile : __dirname + '/404.html');
                 }
             });
 
