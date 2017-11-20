@@ -30,7 +30,7 @@
     "auth": true
   },
   "scripts": {
-    "dist": "npm-run-all ts js less images",
+    "dist": "npm-run-all ts js less* images*",
     "watch": "npm-watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prejs": "mkdir -p dist",
