@@ -1,49 +1,46 @@
 import { overlay } from '../overlay/overlay';
 import * as trade from '../../trade';
+import * as whisker from 'canny/mod/whisker';
 
-const files = [];
+const template = require('./fileDownLoaderFormat.html');
+const imageFiles = [];
+const svgFiles = [];
 
 trade.on({
     getFiles: function (data) {
         data.forEach(function (file) {
             if (/image\/.*/.test(file.type)) {
-                files.push(file.file);
+                imageFiles.push(file.file);
+            }
+
+            if (/svg/.test(file.type)) {
+                svgFiles.push(file.file);
             }
         });
     }
 });
 
-function addNode(content) {
+function addNodes(content) {
     const node = document.createElement('div');
-    node.appendChild(content);
+    content.forEach((n) => {
+        node.appendChild(n);
+    })
     return node;
 }
 
-function getJSONAsArray() {
-    const frag = document.createDocumentFragment(),
+function getImagesWgetFormat() {
+    let retString = "wget -P .",
         host = location.host;
-    let i = 0;
-
-    frag.appendChild(document.createTextNode('['));
-    files.forEach(function (name) {
-        i++;
-        frag.appendChild(document.createTextNode('\''));
-        frag.appendChild(document.createTextNode('http://' + host + name));
-        frag.appendChild(document.createTextNode('\''));
-
-        if (i < files.length) {
-            frag.appendChild(document.createTextNode(','));
-            frag.appendChild(document.createElement('br'));
-        }
+    imageFiles.forEach(function (name) {
+        retString += ' http://' + host + name;
     });
-    frag.appendChild(document.createTextNode(']'));
-    return frag;
+    return retString;
 }
 
-function getWgetFormat() {
-    let retString = "wget -P src/images",
+function getSVGWgetFormat() {
+    let retString = "wget -P .",
         host = location.host;
-    files.forEach(function (name) {
+    svgFiles.forEach(function (name) {
         retString += ' http://' + host + name;
     });
     return retString;
@@ -58,11 +55,16 @@ export const fileDownloaderFormat =  {
         if (attr === 'show') {
             elem.addEventListener('click', function () {
                 overlay.add(function (ov) {
-                    ov.getNode().appendChild(addNode(document.createTextNode(getWgetFormat())));
+                    ov.getNode().innerHTML = template;
+                    whisker.add(ov.getNode(), {
+                        svg : getSVGWgetFormat(),
+                        images : getImagesWgetFormat(),
+                    });
                     ov.show();
                     ov.onBackgroundClick(function () {
                         ov.hide();
-                    })
+                        ov.getNode().remove()
+                    });
                 })
             })
         }
