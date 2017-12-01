@@ -139,10 +139,15 @@ function main(opts, appLifeCycle) {
      * If the URL has a dot inside it expect to send a files. Otherwise it sends the index.
      */
     app.get(/^((?!^(\/dist)).)*$/, function (req, res) {
-        if (/\./.test(req.path)) {
-            // contains a . - looks like a file request so check the files system
-            fs.exists(decodeURI(opts.fileStorageName + req.path), function (exists) {
-                if (exists) {
+        fs.stat(decodeURI(opts.fileStorageName + req.path), function (err, stats) {
+            if (!err) {
+
+                if (stats.isDirectory() ) {
+                    res.sendFile(opts.dirName + 'index.html');
+                    return;
+                } else {
+                    // is a file
+
                     // not sure if it is good by default but - needs to be configurable
                     res.header("Access-Control-Allow-Origin", "*");
                     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -158,19 +163,22 @@ function main(opts, appLifeCycle) {
                         });
 
                     } else {
-                        res.sendFile(decodeURI(opts.fileStorageName + req.path), {dotfiles : 'allow'});
+                        res.sendFile(decodeURI(opts.fileStorageName + req.path), {dotfiles: 'allow'});
                     }
-                } else {
-                    // no file found - send 404 file
-                    res.status(404).sendFile(opts.fourOFourFile ? opts.fourOFourFile : __dirname + '/404.html');
                 }
-            });
+            } else {
+                // no file found - send 404 file
+                // res.status(404).sendFile(opts.fourOFourFile ? opts.fourOFourFile : __dirname + '/404.html');
+                if (/\./.test(req.path.split('/').slice(-1)) && !req.query.folder) {
+                    // so it will not be possible to create folders with a dot inside ;-)
+                    // but we need this to send a 404 for backward compatibility reasons
+                    res.status(404).sendFile(opts.fourOFourFile ? opts.fourOFourFile : __dirname + '/404.html');
+                } else {
+                    res.sendFile(opts.dirName + 'index.html');
+                }
+            }
+        });
 
-        } else {
-            // send index
-            res.sendFile(opts.dirName + 'index.html');
-
-        }
     });
 
 

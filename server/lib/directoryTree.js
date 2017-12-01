@@ -22,6 +22,8 @@ const directoryTree = require('directory-tree');
  * @returns {NodeModule[]|*|{treeObject}[]|Array|HTMLElement[]}
  */
 function treeFilter(rootFolder, treeObjectList) {
+    if (!treeObjectList) return [];
+
     const rec = (treeObjectList) => {
         treeObjectList.forEach((treeObject) => {
             delete treeObject.size;

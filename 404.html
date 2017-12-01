@@ -38,6 +38,14 @@
             display: inline-block;
             margin-right: 0.5em;
         }
+        aticle{
+            display: block;
+            margin:6em 0 0;
+
+        }
+        aticle p a {
+            display: inline;
+        }
     </style>
 </head>
 <body>
@@ -46,6 +54,9 @@
             <h2>Nope...</h2>
             <p>Looks like that <strong id="js-fileName"></strong> is not available on this sever.</p>
             <a id="js-folderLink" href="javascript:void(0)">See folder</a>
+            <aticle id="js-createFolderWithDot" style="display: none">
+                <p>... or do you need to create a folder with a dot inside? <a id="js-openAsFolderLink" href="javascript:void(0)">Click here!</a></p>
+            </aticle>
         </section>
     </main>
 
@@ -53,13 +64,24 @@
         (function () {
             'use strict';
             var node = document.getElementById('js-fileName'),
-                thisFolder = document.getElementById('js-folderLink');
+                thisFolder = document.getElementById('js-folderLink'),
+                openAsFolderSection = document.getElementById('js-createFolderWithDot'),
+                openAsFolder = document.getElementById('js-openAsFolderLink');
+
             node.appendChild(document.createTextNode(location.pathname));
 
             thisFolder.addEventListener('click', function () {
                 var folders = location.pathname.split('/');
-                location.href = folders.slice(0, folders.length - 1).join('/')
+                location.href = folders.slice(0, -1).join('/') || '/';
             });
+
+            if (/\./.test(location.pathname.split('/').splice(-1))) {
+                openAsFolderSection.style.display = '';
+                openAsFolder.addEventListener('click', function () {
+                    location.href = location.pathname + '?folder=true';
+                })
+            }
+
         }());
     </script>
 </body>

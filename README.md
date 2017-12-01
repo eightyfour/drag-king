@@ -32,5 +32,8 @@ complete refactoring of the application
 **0.1.1**
  * provide default 404 file (configurable via fourOFourFile property)
 
+**0.1.3**
+ * support folder names with a dot inside
+
 TODO: server side code needs to be refactored ...comming soon
  
