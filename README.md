@@ -35,5 +35,11 @@ complete refactoring of the application
 **0.1.3**
  * support folder names with a dot inside
 
+**0.1.4**
+ * support /_/ls/
+ ** add following a path the server result will be a JSON array with
+ all containing files
+ ** support request parameter ?ext=jpg to filter for jpg files
+
 TODO: server side code needs to be refactored ...comming soon
  

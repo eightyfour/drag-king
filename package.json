@@ -1,6 +1,6 @@
 {
   "name": "drag-king",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Drag and drop to upload to server",
   "main": "main.js",
   "watch": {
@@ -27,7 +27,7 @@
       "development": 8001,
       "production": 80
     },
-    "auth": true
+    "auth": false
   },
   "scripts": {
     "dist": "npm-run-all ts js less* images*",

@@ -59,6 +59,10 @@ function main(opts, appLifeCycle) {
             index(req, res, done);
         });
     });
+    /**
+     * Register all special function via underscore '_'
+     */
+    app.use('/_/', require('./server/lib/router/ls')(opts.fileStorageName));
 
     // use bodyParser middleware for handling request bodies (express does *not* provide that feature out-of-the-box).
     // since we only have one case of that (POST to /login where username, password are in the body) and that one is url-encoded,
