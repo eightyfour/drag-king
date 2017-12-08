@@ -27,7 +27,7 @@
       "development": 8001,
       "production": 80
     },
-    "auth": false
+    "auth": true
   },
   "scripts": {
     "dist": "npm-run-all ts js less* images*",
