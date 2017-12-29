@@ -1,0 +1,41 @@
+.contextMenu {
+  position:absolute;
+  background-color: #fff;
+  box-shadow: 0 0 1px 2px #aaa;
+  text-align: center;
+  padding: 0.4em;
+
+  &--overlay{
+    background-color: rgba(170, 170, 170, 0.2);
+  }
+  h3 {
+    font-size: 15px;
+    font-weight: bold;
+    margin: 3px 5px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 0.2em;
+  }
+
+  ul {
+    font-size: 13px;
+    text-align: left;
+    min-width: 150px;
+    padding: 0;
+    margin: 0;
+    li {
+      margin: 0;
+      text-align: left;
+      list-style: none;
+      padding: 0.4em 7px .2em;
+      cursor: pointer;
+      display: flex;
+      i{
+        margin-right: .2em;
+        font-size: 120%;
+      }
+      &:hover{
+        background-color: #ececec;
+      }
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { FolderItem } from '../../model/Folder'
 import * as octicons from 'octicons';
+import * as contextMenu from '../contextMenu/contextMenu';
 
 let node;
 
@@ -53,6 +54,8 @@ function createLiItem (path, name) {
     li.innerHTML = octicons['file-directory'].toSVG();
     span.appendChild(document.createTextNode(name));
     li.appendChild(span);
+    contextMenu.add(li, name);
+
     li.addEventListener('click', function (e) {
         location.href = path + name;
         e.stopPropagation();

@@ -20,6 +20,15 @@
         "html"
       ],
       "quiet": false
+    },
+    "ts": {
+      "patterns": [
+        "client"
+      ],
+      "extensions": [
+        "ts"
+      ],
+      "quiet": false
     }
   },
   "config": {
