@@ -1,11 +1,16 @@
 import { FolderItem } from '../../model/Folder'
 import * as contextMenu from '../contextMenu/contextMenu'
-import { folderTree, createLiItem }  from '../folderTree/folderTree'
+import { folderTree }  from '../folderTree/folderTree'
 
 let node;
+const folderTreeInstance = folderTree();
+
+folderTreeInstance.onItemClicked((path, name) => {
+    location.href = path + name;
+});
 
 export const listFolders = function (folders:Array<FolderItem>) {
-    folderTree(node, folders.filter((item) => {
+    folderTreeInstance.render(node, folders.filter((item) => {
         return item.type === 'directory' ? item : undefined
     }));
 };
@@ -16,7 +21,7 @@ function printFolders(folders) {
         path += '/';
     }
     folders.forEach(function (folder) {
-        let liItem = createLiItem(path, folder);
+        let liItem = folderTreeInstance.createLiItem(path, folder);
         contextMenu.add(liItem, folder);
         node.appendChild(liItem);
     });

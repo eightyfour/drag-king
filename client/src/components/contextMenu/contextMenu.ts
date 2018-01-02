@@ -23,10 +23,10 @@ function setToCursorPosition(node:HTMLElement, e:any) {
     console.log('contextMenu:cursor position', x, y);
 }
 
-function showfolderTree() {
+function showfolderTree(config) {
     getFolderTree((node)=> {
         document.body.appendChild(node);
-    })
+    }, config)
 }
 
 function CreateContextMenu(obj:{name: string}) {
@@ -42,8 +42,8 @@ function CreateContextMenu(obj:{name: string}) {
         name: obj.name,
         copy : (node) => {
             node.addEventListener('click', ()=> {
-                prompt('Enter a new location', obj.name);
-                showfolderTree();
+                // prompt('Enter a new location', obj.name);
+                showfolderTree({name : obj.name});
             })
         },
         move : (node) => {
