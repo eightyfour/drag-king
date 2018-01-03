@@ -12,22 +12,38 @@ interface RemoteServer {
     saveModuleConfig: (filePath:string, obj: object, callback: (result:any) => {}) => void;
     init: (path: any, callback: (obj: any) => void) => void;
     getDirectoryTree: (path: string, callback: (folderItems:Array<FolderItem>) => void) => void;
+    copy: (fromFile:string, toFile:string, callback:() => void) => void,
+    move: (fromFile:string, toFile:string, callback:() => void) => void,
+    remove: (file:string, callback:() => void) => void,
+    rename: (fromFile:string, toFile:string, callback:() => void) => void
 }
 interface OnListener {
     loadModuleConfig?: () => void;
     getDirectoryTree?: (folderItems:Array<FolderItem>) => void;
     init?: (config: any) => void;
+    copy?: (config: any) => void;
+    move?: (config: any) => void;
+    remove?: (config: any) => void;
+    rename?: (config: any) => void;
 }
 export enum serverCalls {
     loadModuleConfig,
     saveFile,
     getDirectoryTree,
-    saveModuleConfig
+    saveModuleConfig,
+    copy,
+    move,
+    remove,
+    rename
 }
 
 const eventQueue = {
         init : [],
-        getDirectoryTree : []
+        getDirectoryTree : [],
+        copy : [],
+        move : [],
+        remove : [],
+        rename : []
     },
     readyQueue:Array<()=>void> = [];
 

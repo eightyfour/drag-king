@@ -5,28 +5,33 @@ import { folderTree } from '../folderTree/folderTree'
 
 let folders,
     whiskerFc;
-const renderFolderTree = folderTree();
-const template =
-    "<div class='content'>" +
-    "<h3>Select a folder</h3>" +
-    "<p>{{item.path}} <strong>{{item.name}}</strong></p>" +
-    "<ul wk-bind='item.content'></ul>" +
-    "</div>";
 
-renderFolderTree.onItemClicked((path, name) => {
+const renderFolderTree = folderTree();
+const templateCopy = require('./showFolderTree.html');
+let actualSelected = '/';
+
+function minimizeSlashes(s) {
+    while(/\/\//.test(s))
+        s = s.replace('//','/');
+    // add slash at the end
+    s += s[s.length -1 ] !== '/' ? '/' : '';
+    return s;
+}
+
+renderFolderTree.onItemClicked(function (path, name) {
+    this.close();
     console.log('showFolderTree:', path, name);
 });
 
 renderFolderTree.onItemHover((path, name) => {
-    console.log('showFolderTree:', path, name);
+    actualSelected = minimizeSlashes(path + name);
     whiskerFc({
-        path : path + name
+        path : actualSelected
     })
 });
 
-function listFolders(folders:Array<FolderItem>, config:{name:string}) {
+function listFolders(folders:Array<FolderItem>, config:{name:string, path:string, mode:string, success : (result:(null|{from:{path:string,name:string}, to:{path:string,name:string}})) => void}) {
     const node = document.createElement('div');
-    const ul = document.createElement('ul');
     node.style.position= 'fixed';
     node.style.zIndex= '99999';
     node.style.top= '0';
@@ -34,10 +39,12 @@ function listFolders(folders:Array<FolderItem>, config:{name:string}) {
     node.style.left= '0';
     node.style.right= '0';
     node.className = 'folders contextMenu--folderTree';
-    node.innerHTML = template;
+    node.innerHTML = templateCopy;
     whisker.add(node, (wfc)=> {
         whiskerFc = wfc;
         whiskerFc({
+            mode : config.mode === 'copy' ? 'Copy' : 'Move',
+            original : config.path + config.name,
             path : '/',
             name : config.name,
             content : function (ul) {
@@ -45,23 +52,49 @@ function listFolders(folders:Array<FolderItem>, config:{name:string}) {
                 renderFolderTree.render(ul, folders.filter((item) => {
                     return item.type === 'directory' ? item : undefined
                 }));
+            },
+            clickPath : (node) => {
+                node.addEventListener('click', () => {
+                    let res = prompt('Destination path:', actualSelected);
+                    if (res) {
+                        actualSelected = minimizeSlashes(res)
+                        whiskerFc({
+                            path : actualSelected
+                        })
+                    }
+                })
+            },
+            button : (n) => {
+               n.addEventListener('click', () => {
+                   config.success.apply({
+                       close: () => { node.remove();}
+                   }, [({from: {path : config.path, name: config.name},
+                       to: { path: actualSelected, name: config.name }})])
+               })
+            },
+            cancel : (n) => {
+               n.addEventListener('click', () => {
+                   node.remove();
+               })
             }
         })
     });
-    // temporary
-    node.addEventListener('click', () => {
-        node.remove();
-    });
-
+    node.addEventListener('click', (e) => {
+        if (node === e.target) {
+            node.remove();
+        }
+    })
     return node;
 }
 
+
+
 /**
- *
+ * mode : copy|move
  * @param cb
- * @param config
+ * @param {{name: string; path: string; success: ((result: {path: string; name: string}) => void); mode: string}} config
  */
-export function getFolderTree(cb, config:{name:string}) {
+export function getFolderTree(cb, config:{name:string, path:string, mode:string, success : (result:(null|{from:{path:string,name:string}, to:{path:string,name:string}})) => void}) {
 
     if (!folders) {
         tradeWs.request(serverCalls.getDirectoryTree, '/', function (result) {

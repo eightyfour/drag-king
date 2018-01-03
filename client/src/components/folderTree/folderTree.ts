@@ -5,18 +5,18 @@ export const folderTree = function () {
     const actionQueque = [];
     const hoverQueque = [];
 
-    function renderHoverMenuItems(node, children) {
+    function renderHoverMenuItems(node, children, context?) {
         const ul = document.createElement('ul');
         children.forEach((item) => {
             if (item.type === 'directory') {
-                const li = createLiItem(item.path.replace(item.name, ''), item.name);
+                const li = createLiItem(item.path.replace(item.name, ''), item.name, context);
                 ul.appendChild(li);
             }
         });
         node.appendChild(ul);
     }
 
-    function createLiItem (path, name) {
+    function createLiItem (path, name, context?) {
         const li = document.createElement('li');
         const span = document.createElement('span');
         li.innerHTML = octicons['file-directory'].toSVG();
@@ -25,7 +25,7 @@ export const folderTree = function () {
 
         li.addEventListener('click', function (e) {
             actionQueque.forEach((fc) => {
-                fc(path, name)
+                fc.apply(context, [path, name]);
             });
             e.stopPropagation();
         });
@@ -85,7 +85,13 @@ export const folderTree = function () {
                                 init = true;
                                 li.classList.add('show-sub-menu');
                                 // render first time
-                                renderHoverMenuItems(li, children);
+                                renderHoverMenuItems(li, children, {
+                                    close : () => {
+                                        [...node.querySelectorAll('li.show-sub-menu')].forEach((li) => {
+                                            li.classList.remove('show-sub-menu');
+                                        })
+                                    }
+                                });
                                 addHoverDirectoryTreeMenu(li, children);
                             } else {
                                 li.classList.add('show-sub-menu');

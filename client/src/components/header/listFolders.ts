@@ -22,7 +22,7 @@ function printFolders(folders) {
     }
     folders.forEach(function (folder) {
         let liItem = folderTreeInstance.createLiItem(path, folder);
-        contextMenu.add(liItem, folder);
+        contextMenu.add(liItem, {path: path, name: folder});
         node.appendChild(liItem);
     });
 }

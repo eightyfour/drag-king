@@ -50,6 +50,20 @@
     .content{
       background-color: white;
       padding: 4em;
+      > ul {
+        margin: 0;
+        padding: 0;
+      }
+      > ul > li{
+        margin: 0;
+      }
+      .changePathLink{
+        cursor: pointer;
+        text-decoration: underline;
+        &:hover{
+          opacity: .7;
+        }
+      }
     }
   }
 }

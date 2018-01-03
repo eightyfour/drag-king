@@ -98,6 +98,18 @@ const sock = shoe(function (stream) {
                 cb(returnObject)
             }
 
+        },
+        copy : (fromFile, toFile, cb) => {
+            cb(fromFile, toFile);
+        },
+        move : (fromFile, toFile, cb) => {
+            cb(fromFile, toFile);
+        },
+        remove : (file, cb) => {
+            cb(file);
+        },
+        rename : (fromFile, toFile, cb) => {
+            cb(fromFile, toFile);
         }
     });
     d.pipe(stream).pipe(d);
