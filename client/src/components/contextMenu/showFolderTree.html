@@ -1,7 +1,14 @@
 <div class='content'> 
-	<h3>Select a folder</h3>
-	<p>{{item.mode}} <strong>{{item.original}}</strong> to <span class="changePathLink" wk-bind='item.clickPath'><strong>{{item.path}}</strong>{{item.name}}</span></p>
-	<ul wk-bind='item.content'></ul>
-	<button class="button" wk-bind="item.button">OK</button>
-	<button class="button" wk-bind="item.cancel">Cancel</button>
+	<h3>{{item.mode}} a folder</h3>
+	<section>
+		<p>from <strong>{{item.original}}</strong> to <span class="changePathLink" wk-bind='item.clickPath'><strong>{{item.path}}</strong>{{item.name}}</span></p>
+		<fieldset>
+			<legend>Hover to select a existing folder:</legend>
+			<ul wk-bind='item.content'></ul>
+		</fieldset>
+	</section>
+	<section class="action">
+		<button class="button" wk-bind="item.button">OK</button>
+		<button class="button" wk-bind="item.cancel">Cancel</button>
+	</section>
 </div>

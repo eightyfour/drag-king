@@ -41,6 +41,9 @@
   &--folderTree{
     // overlay container to select a directory to copy or move the current selected folder
     background-color: rgba(10, 10, 10, 0.57);
+    display: flex;
+    padding: 0;
+
     li {
     }
     li > ul {
@@ -49,12 +52,19 @@
     }
     .content{
       background-color: white;
-      padding: 4em;
-      > ul {
+      padding: 1em 4em;
+      width: 50%;
+      margin: auto;
+      min-width: 50em;
+
+      h3{
+        text-align: center;
+      }
+      fieldset > ul {
         margin: 0;
         padding: 0;
       }
-      > ul > li{
+      fieldset > ul > li{
         margin: 0;
       }
       .changePathLink{
@@ -65,5 +75,43 @@
         }
       }
     }
+
+    section.action{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      button{
+        margin: 0.5em 2em 1em;
+        min-width: 6em;
+        min-height: 2em;
+      }
+    }
+
+    fieldset{
+      display: block;
+      -webkit-margin-start: 2px;
+      -webkit-margin-end: 2px;
+      -webkit-padding-before: 0.35em;
+      -webkit-padding-start: 0.75em;
+      -webkit-padding-end: 0.75em;
+      -webkit-padding-after: 0.625em;
+      min-width: -webkit-min-content;
+      border-width: 1px;
+      border-style: groove;
+      border-color: currentColor;
+      border-image: initial;
+      color:inherit;
+      margin: 0 0 1em 0;
+    }
+    legend{
+      width: auto;
+      -webkit-padding-start: .3em;
+      -webkit-padding-end: .3em;
+      border: none;
+      color: inherit;
+      font-size: 1em;
+      margin-bottom: 0;
+    }
+
   }
 }

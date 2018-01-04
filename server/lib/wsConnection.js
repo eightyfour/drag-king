@@ -121,7 +121,7 @@ const sock = shoe(function (stream) {
                 changeHistoryLogger.log(
                     config.dirName,
                     toFile.split('/').slice(0, -1).join('/'),
-                    fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0],
+                    fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
                     'copyFrom',
                     user.authId);
             }).catch((err) => {
@@ -196,7 +196,7 @@ const sock = shoe(function (stream) {
                     user.authId);
                 cb(fromFile, toFile);
             }).catch((err) => {
-                cb(null);
+                cb(null, err.errno);
             })
         }
     });

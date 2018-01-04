@@ -40,12 +40,15 @@ function listFolders(folders:Array<FolderItem>, config:{name:string, path:string
     node.style.right= '0';
     node.className = 'folders contextMenu--folderTree';
     node.innerHTML = templateCopy;
+
+    actualSelected = config.path;
+
     whisker.add(node, (wfc)=> {
         whiskerFc = wfc;
         whiskerFc({
             mode : config.mode === 'copy' ? 'Copy' : 'Move',
             original : config.path + config.name,
-            path : '/',
+            path : actualSelected,
             name : config.name,
             content : function (ul) {
                 ul.appendChild(renderFolderTree.createLiItem('/', '/'));

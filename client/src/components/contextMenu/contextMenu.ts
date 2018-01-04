@@ -69,7 +69,7 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                                 return;
                             }
                             if (confirm('Copy to ' + destination)) {
-                                tradeWs.request(serverCalls.copy, obj.path + obj.name, res.to.path + res.to.name, (from, to) => {
+                                tradeWs.request(serverCalls.copy, obj.path + obj.name, destination, (from, to) => {
                                     this.close();
                                     // handle toast in separate component
                                     toast.showMessage(`Copy to <a href='${to}'>${to}</a>`);
@@ -98,7 +98,7 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                                 return;
                             }
                             if (confirm('Move to ' + destination)) {
-                                tradeWs.request(serverCalls.move, obj.path + obj.name, res.to.path + res.to.name, (from, to) => {
+                                tradeWs.request(serverCalls.move, obj.path + obj.name, destination, (from, to) => {
                                     this.close();
                                     // handle toast in separate component
                                     toast.showMessage(`Move to <a href='${to}'>${to}</a>`);
@@ -111,8 +111,7 @@ function CreateContextMenu(obj:{name: string, path:string}) {
         },
         remove : (node) => {
             node.addEventListener('click', ()=> {
-                if (confirm('Are you sure you want delete this folder?\n\n' + obj.path + obj.name)) {
-                    // TODO remove
+                if (confirm('Delete this folder?\n\n' + obj.path + obj.name)) {
                     tradeWs.request(serverCalls.remove, obj.path + obj.name, (file) => {
                         contextMenuNode.remove();
                         toast.showMessage(`File removed ${file}`);
@@ -123,17 +122,32 @@ function CreateContextMenu(obj:{name: string, path:string}) {
         rename : (node) => {
             node.addEventListener('click', ()=> {
                 let newName = prompt('Enter a new name', obj.name);
-                if (!newName || !validateName(newName)) {
+                if (!newName) return;
+                if (!validateName(newName)) {
                     alert('ERROR!\n\nNew name contains invalid characters:\n\n' + newName);
                     return;
                 }
 
-                if (confirm('Rename file to ' + newName)) {
-                    // TODO send
+                if (confirm(`Confirm:\n\nRename folder to "${newName}"?`)) {
                     tradeWs.request(serverCalls.rename, obj.path + obj.name, obj.path + newName, (from, to) => {
                         contextMenuNode.remove();
-                        // handle toast in separate component
-                        toast.showMessage(`Rename from ${from} to ${to}`);
+                        if (from !== null) {
+                            toast.showMessage(`Rename from ${from} to ${to}`);
+                        } else {
+                            if (to === -39) {
+                                if (confirm('Hups the folder already exists!!\n\n' +
+                                        'Do you want to copy the content into the existing folder ' + newName + '?')) {
+                                    tradeWs.request(serverCalls.copy, obj.path + obj.name, obj.path + newName, (from, to) => {
+                                        toast.showMessage(`Folder merged <a href='${newName}'>${newName}</a>`);
+                                        tradeWs.request(serverCalls.remove, obj.path + obj.name, (file) => console.log('contextMenu:delete old folder', file));
+                                    });
+                                } else {
+                                    toast.showMessage(`Rename failed - Folder already exists!`);
+                                }
+                            } else {
+                                toast.showMessage(`Rename failed - Unknown reason`);
+                            }
+                        }
                     });
                 }
             })
