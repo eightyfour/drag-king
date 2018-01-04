@@ -131,6 +131,12 @@ module.exports = {
     move : function (fileFrom, fileTo) {
         return fsExtra.move(fileFrom, fileTo);
     },
+    copy : function (fileFrom, fileTo) {
+        return fsExtra.copy(fileFrom, fileTo);
+    },
+    rename : function (fileFrom, fileTo) {
+        return fsExtra.rename(fileFrom, fileTo);
+    },
     /**
      * Provides a complete directory tree structure - including all directories and files
      *

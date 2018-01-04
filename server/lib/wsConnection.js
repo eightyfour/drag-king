@@ -106,10 +106,29 @@ const sock = shoe(function (stream) {
 
         },
         copy : (fromFile, toFile, cb) => {
-            cb(fromFile, toFile);
+            // cb(fromFile, toFile);
+
+            fileHandler.copy(config.dirName + fromFile, config.dirName + toFile).then(() => {
+                const fromFileName = fromFile;
+                const toFileName = toFile;
+                cb(fromFile, toFile);
+                changeHistoryLogger.log(
+                    config.dirName,
+                    fromFile.split('/').slice(0, -1).join('/'),
+                    fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName,
+                    'copyTo',
+                    user.authId);
+                changeHistoryLogger.log(
+                    config.dirName,
+                    toFile.split('/').slice(0, -1).join('/'),
+                    fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0],
+                    'copyFrom',
+                    user.authId);
+            }).catch((err) => {
+                cb(null);
+            })
         },
         move : (fromFile, toFile, cb) => {
-            cb(fromFile, toFile);
             fileHandler.move(config.dirName + fromFile, config.dirName + toFile).then(() => {
                 const fromFileName = fromFile;
                 const toFileName = toFile;
@@ -125,6 +144,7 @@ const sock = shoe(function (stream) {
                     fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0],
                     'movedFrom',
                     user.authId);
+                cb(fromFile, toFile);
             }).catch((err) => {
                 cb(null);
             })
@@ -143,13 +163,43 @@ const sock = shoe(function (stream) {
                     cb(null);
                 })
             } else if (user.isMaintainer) {
-            
+                let toFile = (() => {
+                    let fSplit = file.split('/');
+                    // last item will be a hidden file
+                    fSplit[fSplit.length -1] = '.' + fSplit[fSplit.length -1];
+                    return fSplit.join('/');
+                })();
+                fileHandler.rename(config.dirName + file, config.dirName + toFile).then(() => {
+                    const fromFileName = fromFile;
+                    const toFileName = toFile;
+                    changeHistoryLogger.log(
+                        config.dirName,
+                        fromFile.split('/').slice(0, -1).join('/'),
+                        fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
+                        'delete',
+                        user.authId);
+                    cb(file);
+                }).catch((err) => {
+                    cb(null);
+                })
             } else {
                 cb(null);
             }
         },
         rename : (fromFile, toFile, cb) => {
-            cb(fromFile, toFile);
+            fileHandler.rename(config.dirName + fromFile, config.dirName + toFile).then(() => {
+                const fromFileName = fromFile;
+                const toFileName = toFile;
+                changeHistoryLogger.log(
+                    config.dirName,
+                    fromFile.split('/').slice(0, -1).join('/'),
+                    fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
+                    'rename',
+                    user.authId);
+                cb(fromFile, toFile);
+            }).catch((err) => {
+                cb(null);
+            })
         }
     });
     d.pipe(stream).pipe(d);

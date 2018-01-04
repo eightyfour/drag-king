@@ -69,7 +69,7 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                                 return;
                             }
                             if (confirm('Copy to ' + destination)) {
-                                tradeWs.request(serverCalls.move, obj.path + obj.name, res.to.path + res.to.name, (from, to) => {
+                                tradeWs.request(serverCalls.copy, obj.path + obj.name, res.to.path + res.to.name, (from, to) => {
                                     this.close();
                                     // handle toast in separate component
                                     toast.showMessage(`Copy to <a href='${to}'>${to}</a>`);
