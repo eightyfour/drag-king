@@ -69,6 +69,47 @@ module.exports.write = function (rootFolder, file, action, alias) {
         })
     }, 1000);
 };
+
+/**
+ * Write anything into the log file
+ *
+ * @param {string} rootFolder - root file folder
+ * @param {string} path - the path to the history file
+ * @param {string} data - any string (e.g. the file name or folder name)
+ * @param {string} action - the action which will be logged (e.g. delete, remove, moved....)
+ * @param {string} alias - the user identifier name
+ */
+module.exports.log = function (rootFolder, path, data, action, alias) {
+    var obj = {};
+    if (path[path.length -1] !== '/') {
+        path += '/';
+    }
+    if (path[0] !== '/') {
+        path = '/' + path;
+    }
+    obj[(new Date()).getTime()] = {
+        action : {
+            key : action,
+            value : data
+        },
+        alias : alias
+    };
+    if (!logCacheMap.hasOwnProperty(path + LOG_FILE_NAME)) {
+        logCacheMap[path + LOG_FILE_NAME] = obj;
+    } else {
+        // merge it with existing
+        Object.assign(logCacheMap[path + LOG_FILE_NAME], obj);
+    }
+    // reset the previous one
+    clearTimeout(timeCache);
+    timeCache = setTimeout(function () {
+        Object.keys(logCacheMap).forEach(function (key) {
+            fileHandler.saveJSON(rootFolder, key, logCacheMap[key]);
+            delete logCacheMap[key];
+        })
+    }, 1000);
+};
+
 /**
  *
  * @param {string} file

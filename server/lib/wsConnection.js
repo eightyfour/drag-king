@@ -13,12 +13,16 @@
 const shoe = require('shoe'),
     dnode = require('dnode'),
     fileHandler = require('./fileHandler'),
+    changeHistoryLogger = require('./changeHistoryLogger'),
     cookieParser = require('cookie-parser'),
     sessionStore = require('./sessionStore');
 
 let config;
 
 const sock = shoe(function (stream) {
+    let user = {
+        authId : 'anonymous'
+    };
     const d = dnode({
         /**
          * Callback will be called with the complete file structure
@@ -88,10 +92,12 @@ const sock = shoe(function (stream) {
                     }
                     returnObject.user = {
                         name: session.fullName,
+                        authId: session.authId,
                         isAdmin: session.isAdmin,
                         isMaintainer: session.isMaintainer,
                         alias: session.ldapName,
                     };
+                    user = returnObject.user;
                     cb(returnObject)
                 });
             } else {
@@ -104,9 +110,43 @@ const sock = shoe(function (stream) {
         },
         move : (fromFile, toFile, cb) => {
             cb(fromFile, toFile);
+            fileHandler.move(config.dirName + fromFile, config.dirName + toFile).then(() => {
+                const fromFileName = fromFile;
+                const toFileName = toFile;
+                changeHistoryLogger.log(
+                    config.dirName,
+                    fromFile.split('/').slice(0, -1).join('/'),
+                    fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName,
+                    'movedTo',
+                    user.authId);
+                changeHistoryLogger.log(
+                    config.dirName,
+                    toFile.split('/').slice(0, -1).join('/'),
+                    fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0],
+                    'movedFrom',
+                    user.authId);
+            }).catch((err) => {
+                cb(null);
+            })
         },
         remove : (file, cb) => {
-            cb(file);
+            if (user.isAdmin) {
+                fileHandler.remove(config.dirName + file).then(() => {
+                    changeHistoryLogger.log(
+                        config.dirName,
+                        file.split('/').slice(0, -1).join('/'),
+                        file.split('/').splice(-1)[0] + '/',
+                        'delete',
+                        user.authId);
+                    cb(file)
+                }).catch((err) => {
+                    cb(null);
+                })
+            } else if (user.isMaintainer) {
+            
+            } else {
+                cb(null);
+            }
         },
         rename : (fromFile, toFile, cb) => {
             cb(fromFile, toFile);

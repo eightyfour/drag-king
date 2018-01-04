@@ -75,6 +75,7 @@
     "express": "^4.14.0",
     "express-session": "^1.15.2",
     "finalhandler": "*",
+    "fs-extra": "^5.0.0",
     "md5": "^2.2.1",
     "medium-editor": "^5.23.1",
     "message-toast": "github:eightyfour/message-toast",

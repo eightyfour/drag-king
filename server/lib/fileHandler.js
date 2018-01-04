@@ -7,7 +7,8 @@
 
 const fs = require('fs'),
     tree = require('./directoryTree'),
-    folderUtil = require('../../lib/folderUtil');
+    folderUtil = require('../../lib/folderUtil'),
+    fsExtra = require('fs-extra');
 
 /**
  *
@@ -124,6 +125,12 @@ function saveFile(rootFolder, file, fileContent, cb) {
 }
 
 module.exports = {
+    remove : function (file) {
+        return fsExtra.remove(file);
+    },
+    move : function (fileFrom, fileTo) {
+        return fsExtra.move(fileFrom, fileTo);
+    },
     /**
      * Provides a complete directory tree structure - including all directories and files
      *
