@@ -37,6 +37,8 @@ const texts: Page = {
     alias : ''
 };
 
+let readyQueue = [];
+
 let whiskerCbs: Array<(scope: string, obj: Page) => void> = [];
 
 canny.add('pageEnvironment', {
@@ -72,12 +74,22 @@ export const pageEnvironment = {
      * @param {{PageConfig}} config
      */
     set config(config: PageConfig) {
+        let pop;
         Object.assign(pageConfig, config);
+        while(pop = readyQueue.pop()) pop(pageConfig);
+        readyQueue = null;
         Object.keys(texts).forEach(function (key) {
             if (pageConfig.hasOwnProperty(key)) {
                 texts[key] = pageConfig[key];
             }
         });
         whiskerCbs.forEach((whiskerCb) => whiskerCb('page', texts));
+    },
+    getConfig : (fc) => {
+        if (readyQueue) {
+            readyQueue.push(fc);
+        } else {
+            fc(pageConfig);
+        }
     }
 };

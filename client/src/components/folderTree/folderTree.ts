@@ -57,14 +57,16 @@ export const folderTree = function () {
 
                 li.addEventListener('mouseover', (e) => {
                     let children;
+                    if (folders.length === 0) return;
                     // is it home then return all children
                     if (li.dataset.name === '/') {
                         children = folders;
                     }else {
-                        children = folders.find((item) => {
+                        let result = folders.find((item) => {
                             // get correct children item
                             return item.name === li.dataset.name;
-                        }).children;
+                        });
+                        children = result && result.children;
                     }
 
                     if (currentMouseHover.path !== li.dataset.path && currentMouseHover.name !== li.dataset.name) {

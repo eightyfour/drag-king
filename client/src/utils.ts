@@ -30,7 +30,7 @@ function filterChildren(folderItems) {
             folderItem.children = filterChildren(folderItem.children);
         }
         // exclude .json files from gallery
-        //  exclude hidden files started with a dot from view
+        // exclude hidden files started with a dot from view
         return /.*\.json/.test(folderItem.name) || /^\./.test(getFileName(folderItem.name)) ? undefined : folderItem
     });
     return folderItems;

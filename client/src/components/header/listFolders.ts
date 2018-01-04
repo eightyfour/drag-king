@@ -1,6 +1,8 @@
 import { FolderItem } from '../../model/Folder'
+import * as url from 'canny/mod/url.js';
 import * as contextMenu from '../contextMenu/contextMenu'
 import { folderTree }  from '../folderTree/folderTree'
+import { pageEnvironment } from '../../pageEnvironment'
 
 let node;
 const folderTreeInstance = folderTree();
@@ -31,8 +33,19 @@ export const listFoldersCannyMod = function () {
     return {
         add : function (elem, attr) {
             node = elem;
+        },
+        ready : () => {
             fetch('/getFolders', {method: 'POST', body: location.pathname}).then((response) => {
                 return response.json();
+            }).then((folders) => {
+                const allowAll = url.getURLParameter('admin') !== false;
+                return new Promise((res, err) => {
+                    pageEnvironment.getConfig((config) => {
+                        res(folders.filter((folder) => {
+                            return folder[0] !== '.' || (allowAll && (config.isAdmin || config.name === 'anonymous'))
+                        }))
+                    })
+                })
             }).then((folders) => {
                 printFolders(folders);
             }).catch((e) => {

@@ -169,13 +169,11 @@ const sock = shoe(function (stream) {
                     fSplit[fSplit.length -1] = '.' + fSplit[fSplit.length -1];
                     return fSplit.join('/');
                 })();
-                fileHandler.rename(config.dirName + file, config.dirName + toFile).then(() => {
-                    const fromFileName = fromFile;
-                    const toFileName = toFile;
+                fileHandler.rename(config.dirName + file, config.dirName + toFile + '-' + (new Date()).getTime()).then(() => {
                     changeHistoryLogger.log(
                         config.dirName,
-                        fromFile.split('/').slice(0, -1).join('/'),
-                        fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
+                        file.split('/').slice(0, -1).join('/'),
+                        file.split('/').splice(-1)[0] + '/',
                         'delete',
                         user.authId);
                     cb(file);
