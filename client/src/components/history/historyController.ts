@@ -2,6 +2,7 @@ import * as trade from '../../trade';
 import * as stringToColor from 'string-to-color';
 
 import { initHistoryList, HistoryItem } from './historyRenderer'
+import {tradeWs} from "../../tradeWs";
 
 function formatDate(d: Date): string {
     return  ("0" + d.getDate()).slice(-2) + "-" + ("0"+(d.getMonth()+1)).slice(-2) + "-" +
@@ -51,21 +52,24 @@ export const historyController = function () {
         return  fileName ? fileName : fileName = location.pathname + '/.history.json';
     }
 
+    tradeWs.on({
+        copy : (from, to) => {if (from !== null)  setTimeout(() => loadHistoryFromServer(getHistoryFile()), 1500);},
+        move : (from, to) => {if (from !== null)  setTimeout(() => loadHistoryFromServer(getHistoryFile()), 1500);},
+        rename : (from, to) => {if (from !== null)  setTimeout(() => loadHistoryFromServer(getHistoryFile()), 1500);},
+        remove : (file) => {if (file !== null)  setTimeout(() => loadHistoryFromServer(getHistoryFile()), 1500);}
+    })
+
     trade.on({
         deleteFile : function (err) {
             if (!err) {
-                setTimeout(function () {
-                    loadHistoryFromServer(getHistoryFile());
-                }, 1500);
+                setTimeout(() => loadHistoryFromServer(getHistoryFile()), 1500);
             }
         },
         fileSend : function (err) {
             // the delay is required because the history is saved on server side with a delay
             // TODO A better solution would be a push from server
             if (!err) {
-                setTimeout(function () {
-                    loadHistoryFromServer(getHistoryFile());
-                }, 1500);
+                setTimeout(() => loadHistoryFromServer(getHistoryFile()), 1500);
             }
         },
         getFiles : function (files) {
