@@ -29,28 +29,38 @@ function printFolders(folders) {
     });
 }
 
+function renderMenuFolders(cb?) {
+    fetch('/getFolders', {method: 'POST', body: location.pathname}).then((response) => {
+        return response.json();
+    }).then((folders) => {
+        const allowAll = url.getURLParameter('admin') !== false;
+        return new Promise((res, err) => {
+            pageEnvironment.getConfig((config) => {
+                res(folders.filter((folder) => {
+                    return folder[0] !== '.' || (allowAll && (config.isAdmin || config.name === 'anonymous'))
+                }))
+            })
+        })
+    }).then((folders) => {
+        printFolders(folders);
+    }).then(() => {
+        cb && cb();
+    }).catch((e) => {
+        console.error('listFolders:problems to get folders from server', e);
+    });
+}
+
 export const listFoldersCannyMod = function () {
     return {
         add : function (elem, attr) {
             node = elem;
         },
+        render : (cb) => {
+            node.innerHTML = '';
+            renderMenuFolders(cb);
+        },
         ready : () => {
-            fetch('/getFolders', {method: 'POST', body: location.pathname}).then((response) => {
-                return response.json();
-            }).then((folders) => {
-                const allowAll = url.getURLParameter('admin') !== false;
-                return new Promise((res, err) => {
-                    pageEnvironment.getConfig((config) => {
-                        res(folders.filter((folder) => {
-                            return folder[0] !== '.' || (allowAll && (config.isAdmin || config.name === 'anonymous'))
-                        }))
-                    })
-                })
-            }).then((folders) => {
-                printFolders(folders);
-            }).catch((e) => {
-                console.error('listFolders:problems to get folders from server', e);
-            });
+            renderMenuFolders();
         }
     }
 };

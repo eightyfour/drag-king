@@ -21,10 +21,10 @@ interface OnListener {
     loadModuleConfig?: () => void;
     getDirectoryTree?: (folderItems:Array<FolderItem>) => void;
     init?: (config: any) => void;
-    copy?: (config: any) => void;
-    move?: (config: any) => void;
-    remove?: (config: any) => void;
-    rename?: (config: any) => void;
+    copy?: (from:string, to:string) => void;
+    move?: (from:string, to:string) => void;
+    remove?: (file:string) => void;
+    rename?: (from:string, to:string) => void;
 }
 export enum serverCalls {
     loadModuleConfig,
@@ -89,6 +89,28 @@ function request(name: serverCalls, ...args: any[]) {
                         fc(filteredItems);
                     });
                 });
+                break;
+            case 'copy':
+            case 'move':
+            case 'rename':
+                remoteServer[serverCalls[name]].apply(null, [argsList[0], argsList[1], function (...args: any[]) {
+                    argsList[2].apply(null, arguments);
+                    if (eventQueue[serverCalls[name]]) {
+                        eventQueue[serverCalls[name]].forEach((fc) => {
+                            fc.apply(null, arguments);
+                        });
+                    }
+                }]);
+                break;
+            case 'remove':
+                remoteServer[serverCalls[name]].apply(null, [argsList[0], function (...args: any[]) {
+                    argsList[1].apply(null, arguments);
+                    if (eventQueue[serverCalls[name]]) {
+                        eventQueue[serverCalls[name]].forEach((fc) => {
+                            fc.apply(null, arguments);
+                        });
+                    }
+                }]);
                 break;
             default:
                 remoteServer[serverCalls[name]].apply(null, argsList);
