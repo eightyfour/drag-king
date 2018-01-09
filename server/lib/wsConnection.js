@@ -107,50 +107,57 @@ const sock = shoe(function (stream) {
         },
         copy : (fromFile, toFile, cb) => {
             // cb(fromFile, toFile);
-
-            fileHandler.copy(config.dirName + fromFile, config.dirName + toFile).then(() => {
-                const fromFileName = fromFile;
-                const toFileName = toFile;
-                cb(fromFile, toFile);
-                changeHistoryLogger.log(
-                    config.dirName,
-                    fromFile.split('/').slice(0, -1).join('/'),
-                    fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName,
-                    'copyTo',
-                    user.authId);
-                changeHistoryLogger.log(
-                    config.dirName,
-                    toFile.split('/').slice(0, -1).join('/'),
-                    fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
-                    'copyFrom',
-                    user.authId);
-            }).catch((err) => {
-                cb(null);
-            })
+            if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
+                fileHandler.copy(config.dirName + fromFile, config.dirName + toFile).then(() => {
+                    const fromFileName = fromFile;
+                    const toFileName = toFile;
+                    cb(fromFile, toFile);
+                    changeHistoryLogger.log(
+                        config.dirName,
+                        fromFile.split('/').slice(0, -1).join('/'),
+                        fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName,
+                        'copyTo',
+                        user.authId);
+                    changeHistoryLogger.log(
+                        config.dirName,
+                        toFile.split('/').slice(0, -1).join('/'),
+                        fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
+                        'copyFrom',
+                        user.authId);
+                }).catch((err) => {
+                    cb(null);
+                })
+            } else {
+                cb(null, -1);
+            }
         },
         move : (fromFile, toFile, cb) => {
-            fileHandler.move(config.dirName + fromFile, config.dirName + toFile).then(() => {
-                const fromFileName = fromFile;
-                const toFileName = toFile;
-                changeHistoryLogger.log(
-                    config.dirName,
-                    fromFile.split('/').slice(0, -1).join('/'),
-                    fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName,
-                    'movedTo',
-                    user.authId);
-                changeHistoryLogger.log(
-                    config.dirName,
-                    toFile.split('/').slice(0, -1).join('/'),
-                    fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0],
-                    'movedFrom',
-                    user.authId);
-                cb(fromFile, toFile);
-            }).catch((err) => {
-                cb(null);
-            })
+            if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
+                fileHandler.move(config.dirName + fromFile, config.dirName + toFile).then(() => {
+                    const fromFileName = fromFile;
+                    const toFileName = toFile;
+                    changeHistoryLogger.log(
+                        config.dirName,
+                        fromFile.split('/').slice(0, -1).join('/'),
+                        fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName,
+                        'movedTo',
+                        user.authId);
+                    changeHistoryLogger.log(
+                        config.dirName,
+                        toFile.split('/').slice(0, -1).join('/'),
+                        fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0],
+                        'movedFrom',
+                        user.authId);
+                    cb(fromFile, toFile);
+                }).catch((err) => {
+                    cb(null);
+                })
+            } else {
+                cb(null, -1);
+            }
         },
         remove : (file, cb) => {
-            if (user.isAdmin) {
+            if (user.isAdmin || user.authId === 'anonymous') {
                 fileHandler.remove(config.dirName + file).then(() => {
                     changeHistoryLogger.log(
                         config.dirName,
@@ -181,23 +188,27 @@ const sock = shoe(function (stream) {
                     cb(null);
                 })
             } else {
-                cb(null);
+                cb(null, -1);
             }
         },
         rename : (fromFile, toFile, cb) => {
-            fileHandler.rename(config.dirName + fromFile, config.dirName + toFile).then(() => {
-                const fromFileName = fromFile;
-                const toFileName = toFile;
-                changeHistoryLogger.log(
-                    config.dirName,
-                    fromFile.split('/').slice(0, -1).join('/'),
-                    fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
-                    'rename',
-                    user.authId);
-                cb(fromFile, toFile);
-            }).catch((err) => {
-                cb(null, err.errno);
-            })
+            if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
+                fileHandler.rename(config.dirName + fromFile, config.dirName + toFile).then(() => {
+                    const fromFileName = fromFile;
+                    const toFileName = toFile;
+                    changeHistoryLogger.log(
+                        config.dirName,
+                        fromFile.split('/').slice(0, -1).join('/'),
+                        fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
+                        'rename',
+                        user.authId);
+                    cb(fromFile, toFile);
+                }).catch((err) => {
+                    cb(null, err.errno);
+                })
+            } else {
+                cb(null, -1);
+            }
         }
     });
     d.pipe(stream).pipe(d);

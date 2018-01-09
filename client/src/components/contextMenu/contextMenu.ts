@@ -70,9 +70,17 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                             }
                             if (confirm('Copy to ' + destination)) {
                                 tradeWs.request(serverCalls.copy, obj.path + obj.name, destination, (from, to) => {
-                                    this.close();
                                     // handle toast in separate component
-                                    toast.showMessage(`Copy to <a href='${to}'>${to}</a>`);
+                                    if (from === null) {
+                                        if (to === -1) {
+                                            toast.showMessage(`Permission denied`);
+                                        } else {
+                                            toast.showMessage(`Copy failed - Unknown reason`);
+                                        }
+                                    } else {
+                                        toast.showMessage(`Copy to <a href='${to}'>${to}</a>`);
+                                    }
+                                    this.close();
                                 });
                             }
                         }
@@ -99,9 +107,17 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                             }
                             if (confirm('Move to ' + destination)) {
                                 tradeWs.request(serverCalls.move, obj.path + obj.name, destination, (from, to) => {
-                                    this.close();
                                     // handle toast in separate component
-                                    toast.showMessage(`Move to <a href='${to}'>${to}</a>`);
+                                    if (from === null) {
+                                        if (to === -1) {
+                                            toast.showMessage(`Permission denied`);
+                                        } else {
+                                            toast.showMessage(`Move failed - Unknown reason`);
+                                        }
+                                    } else {
+                                        toast.showMessage(`Move to <a href='${to}'>${to}</a>`);
+                                    }
+                                    this.close();
                                 });
                             }
                         }
@@ -112,9 +128,17 @@ function CreateContextMenu(obj:{name: string, path:string}) {
         remove : (node) => {
             node.addEventListener('click', ()=> {
                 if (confirm('Delete this folder?\n\n' + obj.path + obj.name)) {
-                    tradeWs.request(serverCalls.remove, obj.path + obj.name, (file) => {
+                    tradeWs.request(serverCalls.remove, obj.path + obj.name, (file, err) => {
+                        if (file === null) {
+                            if (err === -1) {
+                                toast.showMessage(`Permission denied`);
+                            } else {
+                                toast.showMessage(`Delete failed - Unknown reason`);
+                            }
+                        } else {
+                            toast.showMessage(`File removed ${file}`);
+                        }
                         contextMenuNode.remove();
-                        toast.showMessage(`File removed ${file}`);
                     });
                 }
             })
@@ -144,6 +168,8 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                                 } else {
                                     toast.showMessage(`Rename failed - Folder already exists!`);
                                 }
+                            } else if (to === -1) {
+                                toast.showMessage(`Permission denied`);
                             } else {
                                 toast.showMessage(`Rename failed - Unknown reason`);
                             }
