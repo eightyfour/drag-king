@@ -124,10 +124,11 @@ function main(opts, appLifeCycle) {
             if (req.session && req.session.isMaintainer || req.session.isAdmin) {
                 if (req.session.isAdmin) {
                     next();
-                } else if (!/.json/.test(req.query.filename)) {
+                    // maintainer are not allowed to delete files marked as hidden
+                } else if (!/^\..*/.test(req.query.filename)) {
                     next();
                 } else {
-                    res.status(401).send('Not authorized');
+                    res.status(403).send('Forbidden');
                 }
             } else {
                 res.status(401).send('Not authorized');
@@ -319,7 +320,14 @@ function main(opts, appLifeCycle) {
             if (fileName[0] !== '/') {
                 fileName = '/' + fileName;
             }
-            fs.unlink(opts.fileStorageName + fileName, function () {
+            fs.unlink(opts.fileStorageName + fileName, function (err) {
+                if (err) {
+                    if (err.code === 'EISDIR')
+                        res.status(416).send('Not allowed the file is a folder ' + req.query.filename);
+                    else
+                        res.status(410).send('File not found: ' + req.query.filename);
+                    return
+                }
                 changeHistoryLogger.write(opts.fileStorageName, fileName, 'delete', req.session.authId || 'anonymous');
                 appLifeCycle && appLifeCycle.onDeleteFile && appLifeCycle.onDeleteFile(req, {
                     rootFolder : opts.fileStorageName,
@@ -329,7 +337,7 @@ function main(opts, appLifeCycle) {
             });
             thumbNail.remove(fileName);
         } else {
-            res.status(200).send(false);
+            res.status(204).send('No Content');
         }
     });
 

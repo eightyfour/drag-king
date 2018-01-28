@@ -2,7 +2,8 @@ const passport = require('passport'),
     session = require('express-session'),
     fs = require('fs'),
     md5 = require('md5'),
-    sessionStore = require('./sessionStore');
+    sessionStore = require('./sessionStore'),
+    basicAuth = require('basic-auth')
     // add temporary user roles to this list
 
 let userPermission = {admins : [], maintainers: []};
@@ -14,6 +15,37 @@ try {
     if (err.code === 'MODULE_NOT_FOUND') {
         console.log('auth:user-permission.json NOT FOUND');
     }
+}
+
+function authenticate({authId, pw, authConfig}) {
+    return new  Promise((res, errCb) => {
+        fs.readFile(authConfig.rootDir + '/.allowedUsers.json', (err, data) => {
+            if (err) {
+                console.log('auth:something went wrong with the allowedUsers.json Are you sure that the files exists?', err);
+                // define access groups
+                res({
+                    isAdmin : false,
+                    isMaintainer : false
+                })
+            }
+            let usersMap = JSON.parse(data);
+            if (usersMap[authId].pw === md5(pw)) {
+                // define access groups
+                res({
+                    authId: authId,
+                    fullName: usersMap[authId].fullName || authId,
+                    isAdmin : userPermission.admins.indexOf(authId) !== -1,
+                    isMaintainer : userPermission.maintainers.indexOf(authId) !== -1
+                })
+            } else {
+                res({
+                    isAdmin : false,
+                    isMaintainer : false
+                })
+            }
+        })
+    })
+
 }
 
 /**
@@ -58,39 +90,56 @@ module.exports = function (app, authConfig) {
             backURL += req.body.from;
         }
         if (req.body.username) {
-            authId = req.body.username;
-            fs.readFile(authConfig.rootDir + '/.allowedUsers.json', (err, data) => {
-                if (err) {
-                    console.log('auth:something went wrong with the allowedUsers.json Are you sure that the files exists?', err);
-                    // define access groups
-                    req.session.isAdmin = false;
-                    req.session.isMaintainer = false;
-                    res.redirect(backURL);
-                    return;
-                }
-                try {
-                    let usersMap = JSON.parse(data);
-                    if (usersMap[authId].pw === md5(req.body.password)) {
-                        req.session.authId = authId;
-                        req.session.fullName = usersMap[authId].fullName || req.session.authId;
-                        // define access groups
-                        req.session.isAdmin = userPermission.admins.indexOf(req.session.authId) !== -1;
-                        req.session.isMaintainer = userPermission.maintainers.indexOf(req.session.authId) !== -1;
-                        res.redirect(backURL);
-                    } else {
-                        req.session.isAdmin = false;
-                        req.session.isMaintainer = false;
-                        res.redirect(backURL);
-                    }
-                } catch (e) {
-                    console.log('auth:can\'t read .allowedUsers.json - the format must be a JSON!');
-                    req.session.isAdmin = false;
-                    req.session.isMaintainer = false;
-                    res.redirect(backURL);
-                }
+            authenticate({authId : req.body.username, pw: req.body.password, authConfig})
+            .then((session) => {
+                Object.keys(session).forEach((key) => {
+                    req.session[key] = session[key]
+                })
+                res.redirect(backURL);
+            }).catch((err) => {
+                console.log('auth:can\'t read .allowedUsers.json - the format must be a JSON!')
+                req.session.isAdmin= false
+                req.session.isMaintainer= false
+                res.redirect(backURL)
             })
         }
     });
+
+    app.post('/uploadFile', function (req, res, next) {
+        if (/Basic/.test(req.header('authorization'))) {
+            let user = basicAuth(req)
+            authenticate({authId : user.name, pw: user.pass, authConfig})
+                .then((session) => {
+                    Object.keys(session).forEach((key) => {
+                        req.session[key] = session[key]
+                    })
+                    next()
+                })
+                .catch((err) => {
+                    next()
+                })
+        } else {
+            next()
+        }
+    })
+
+    app.post('/deleteFile', function (req, res, next) {
+        if (/Basic/.test(req.header('authorization'))) {
+            let user = basicAuth(req)
+            authenticate({authId : user.name, pw: user.pass, authConfig})
+                .then((session) => {
+                    Object.keys(session).forEach((key) => {
+                        req.session[key] = session[key]
+                    })
+                    next()
+                })
+                .catch((err) => {
+                    next()
+                })
+        } else {
+            next()
+        }
+    })
 
     // logout - page reload is handled on client side
     app.post('/logout', function(req, res) {
