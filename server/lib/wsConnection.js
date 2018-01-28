@@ -31,7 +31,7 @@ const sock = shoe(function (stream) {
          * @param cb
          */
         getDirectoryTree : function (path, cb) {
-            setTimeout(() => fileHandler.getDirectoryTree(config.dirName, path, cb), 2000)
+            fileHandler.getDirectoryTree(config.dirName, path, cb)
         },
         /**
          *
