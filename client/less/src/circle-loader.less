@@ -1,0 +1,65 @@
+.circle-loader {
+  display: inline-block;
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 1.25em;
+  height: 1.25em;
+  background-size: 1.25em 1.25em;
+  background-repeat: no-repeat;
+  -webkit-animation-name: circle-loader-rotate;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -moz-animation-name: circle-loader-rotate;
+  -moz-animation-duration: 1s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  -o-animation-name: circle-loader-rotate;
+  -o-animation-duration: 1s;
+  -o-animation-iteration-count: infinite;
+  -o-animation-timing-function: linear;
+
+  background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#9DA6AB;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#9DA6AB"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+
+  &.gray {
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#9DA6AB;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#9DA6AB"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.yellow {
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#FFAF02;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#FFAF02"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.orange {
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#ED7600;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#ED7600"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.red {
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#CE2830;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#CE2830"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.purple {
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#7963BA;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#7963BA"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.midBlue {
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#246DB5;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#246DB5"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.lightBlue {
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#0999E1;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#0999E1"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.turquoise {
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#08CCC5;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#08CCC5"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.midGreen{
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#46B324;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#46B324"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+  &.lightGreen{
+    background-image: url('data:image/svg+xml;utf8,<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 34 34" enable-background="new 0 0 34 34" xml:space="preserve"><radialGradient id="SVGID_1_" cx="28.5834" cy="23.0625" r="21.1462" gradientTransform="matrix(0.7862 0.618 -0.3572 0.4545 14.3496 -5.0826)" gradientUnits="userSpaceOnUse"><stop id="#fade-stop-0" offset="0.2567" style="stop-color:#92C219;stop-opacity:0"/><stop id="#fade-stop-1" offset="1" style="stop-color:#92C219"/></radialGradient><path fill="url(#SVGID_1_)" d="M28,21.7C26.2,26,21.9,29,17,29c-6.6,0-12-5.4-12-12c0-6.6,5.4-12,12-12c3,0,5.7,1.1,7.8,2.9l2.5-3.1C24.6,2.4,21,1,17,1C8.2,1,1,8.2,1,17s7.2,16,16,16c6.7,0,12.4-4.1,14.8-9.8L28,21.7z"/></svg>');
+  }
+}
+
+
+@-webkit-keyframes circle-loader-rotate {
+  0% {
+    transform: translateX(0) translateY(0) rotateZ(0deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotateZ(360deg);
+  }
+}

@@ -4,7 +4,7 @@
 		<p>from <strong>{{item.original}}</strong> to <span class="changePathLink" wk-bind='item.clickPath'><strong>{{item.path}}</strong>{{item.name}}</span></p>
 		<fieldset>
 			<legend>Hover to select a existing folder:</legend>
-			<ul wk-bind='item.content'></ul>
+			<ul class="circle-loader" wk-bind='item.content'></ul>
 		</fieldset>
 	</section>
 	<section class="action">

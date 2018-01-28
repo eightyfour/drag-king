@@ -7,7 +7,7 @@ let folders,
     whiskerFc;
 
 const renderFolderTree = folderTree();
-const templateCopy = require('./showFolderTree.html');
+const templateCopy = require('./fileSelectView.html');
 let actualSelected = '/';
 
 function minimizeSlashes(s) {
@@ -30,7 +30,15 @@ renderFolderTree.onItemHover((path, name) => {
     })
 });
 
-function listFolders(folders:Array<FolderItem>, config:{name:string, path:string, mode:string, success : (result:(null|{from:{path:string,name:string}, to:{path:string,name:string}})) => void}) {
+function renderContent(ul) {
+    ul.classList.remove('circle-loader')
+    ul.appendChild(renderFolderTree.createLiItem('/', '/'));
+    renderFolderTree.render(ul, folders.filter((item) => {
+        return item.type === 'directory' ? item : undefined
+    }));
+}
+
+function listFolders(folders:Array<FolderItem>|null, config:{name:string, path:string, mode:string, success : (result:(null|{from:{path:string,name:string}, to:{path:string,name:string}})) => void}) {
     const node = document.createElement('div');
     node.style.position= 'fixed';
     node.style.zIndex= '99999';
@@ -51,10 +59,9 @@ function listFolders(folders:Array<FolderItem>, config:{name:string, path:string
             path : actualSelected,
             name : config.name,
             content : function (ul) {
-                ul.appendChild(renderFolderTree.createLiItem('/', '/'));
-                renderFolderTree.render(ul, folders.filter((item) => {
-                    return item.type === 'directory' ? item : undefined
-                }));
+                if (folders) {
+                    return renderContent(ul)
+                }
             },
             clickPath : (node) => {
                 node.addEventListener('click', () => {
@@ -100,10 +107,17 @@ function listFolders(folders:Array<FolderItem>, config:{name:string, path:string
 export function getFolderTree(cb, config:{name:string, path:string, mode:string, success : (result:(null|{from:{path:string,name:string}, to:{path:string,name:string}})) => void}) {
 
     if (!folders) {
+        cb(listFolders(null, config));
         tradeWs.request(serverCalls.getDirectoryTree, '/', function (result) {
             if (result) {
                 folders = result;
-                cb(listFolders(folders, config));
+                if (whiskerFc) {
+                    whiskerFc({
+                        content : (ul) => {
+                            return renderContent(ul)
+                        }
+                    })
+                }
             } else {
                 console.log('headerController:there are no sub folders :(');
             }
