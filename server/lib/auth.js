@@ -27,6 +27,7 @@ function authenticate({authId, pw, authConfig}) {
                     isAdmin : false,
                     isMaintainer : false
                 })
+                return
             }
             let usersMap = JSON.parse(data);
             if (usersMap[authId].pw === md5(pw)) {
@@ -104,8 +105,8 @@ module.exports = function (app, authConfig) {
             })
         }
     });
-
-    app.post('/uploadFile', function (req, res, next) {
+    
+    function handlePostAuth(req, res, next) {
         if (/Basic/.test(req.header('authorization'))) {
             let user = basicAuth(req)
             authenticate({authId : user.name, pw: user.pass, authConfig})
@@ -121,25 +122,11 @@ module.exports = function (app, authConfig) {
         } else {
             next()
         }
-    })
+    }
 
-    app.post('/deleteFile', function (req, res, next) {
-        if (/Basic/.test(req.header('authorization'))) {
-            let user = basicAuth(req)
-            authenticate({authId : user.name, pw: user.pass, authConfig})
-                .then((session) => {
-                    Object.keys(session).forEach((key) => {
-                        req.session[key] = session[key]
-                    })
-                    next()
-                })
-                .catch((err) => {
-                    next()
-                })
-        } else {
-            next()
-        }
-    })
+    app.post('/uploadFile', handlePostAuth)
+
+    app.post('/deleteFile', handlePostAuth)
 
     // logout - page reload is handled on client side
     app.post('/logout', function(req, res) {
