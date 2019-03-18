@@ -1,4 +1,3 @@
-
 /**
  * Saves the JSON files to the server via a websocket connection to the client
  *
@@ -11,6 +10,7 @@
  */
 
 const shoe = require('shoe'),
+    fs = require('fs'),
     dnode = require('dnode'),
     fileHandler = require('./fileHandler'),
     changeHistoryLogger = require('./changeHistoryLogger'),
@@ -21,7 +21,7 @@ let config;
 
 const sock = shoe(function (stream) {
     let user = {
-        authId : 'anonymous'
+        authId: 'anonymous'
     };
     const d = dnode({
         /**
@@ -30,7 +30,7 @@ const sock = shoe(function (stream) {
          * @param path
          * @param cb
          */
-        getDirectoryTree : function (path, cb) {
+        getDirectoryTree: function (path, cb) {
             fileHandler.getDirectoryTree(config.dirName, path, cb)
         },
         /**
@@ -38,7 +38,7 @@ const sock = shoe(function (stream) {
          * @param {string} file
          * @param {function} cb
          */
-        loadModuleConfig : function (file, cb) {
+        loadModuleConfig: function (file, cb) {
             fileHandler.getModuleConfigFromJSON(config.dirName, file, function (data) {
                 cb(data); // 1492083845980 - 1492083863075
             })
@@ -50,12 +50,12 @@ const sock = shoe(function (stream) {
          * @param content
          * @param cb
          */
-        saveFile : function (fileName, content, cb) {
+        saveFile: function (fileName, content, cb) {
             if (!fileName) {
                 cb(false);
                 return;
             }
-            fileHandler.saveFile(config.dirName, fileName[0] === '/' ? fileName : '/' + fileName , content, cb);
+            fileHandler.saveFile(config.dirName, fileName[0] === '/' ? fileName : '/' + fileName, content, cb);
         },
         /**
          *
@@ -65,7 +65,7 @@ const sock = shoe(function (stream) {
          * @param {{timeStamp:number,styleguideId:string,approved:boolean, comments:Array<object>, dysis:string,labels:Array<object>,specs:Array<string>}} obj
          * @param {function} cb
          */
-        saveModuleConfig : function (file, obj, cb) {
+        saveModuleConfig: function (file, obj, cb) {
             fileHandler.getModuleConfigFromJSON(config.dirName, file, function (data) {
                 if (data === false || data.timeStamp === obj.timeStamp) {
                     // file does not exists - but this is no problem
@@ -76,36 +76,61 @@ const sock = shoe(function (stream) {
                 } else {
                     cb(false, 'timeStamp');
                 }
-                
+
             })
         },
-        init : function (path, cb) {
+        init: function (path, cb) {
             const returnObject = {
-                    path : path.path
+                    path: path.path
                 },
                 sid = cookieParser.signedCookie(path.session, config.secret);
 
+            function setupUserSession(session) {
+                if (!session) {
+                    session = {};
+                }
+                
+                returnObject.user = {
+                    name: session.fullName,
+                    authId: session.authId,
+                    isAdmin: session.isAdmin,
+                    isMaintainer: session.isMaintainer,
+                    alias: session.ldapName,
+                };
+                user = returnObject.user;
+                cb(returnObject)
+            }
+
             if (sid) {
-                sessionStore.get(sid, function(err, session) {
-                    if (!session) {
-                        session = {};
-                    }
-                    returnObject.user = {
-                        name: session.fullName,
-                        authId: session.authId,
-                        isAdmin: session.isAdmin,
-                        isMaintainer: session.isMaintainer,
-                        alias: session.ldapName,
-                    };
-                    user = returnObject.user;
-                    cb(returnObject)
-                });
+                if (config.sessionStoragePath) {
+                    // session are stored in JSON files
+                    fs.readFile(`${config.sessionStoragePath}/${sid}.json`, (err, data) => {
+                        if (err) {
+                            // there is no session
+                            console.error('NO session found for ', sid)
+                            return
+                        }
+                        console.log('readFile', data)
+                        
+                        setupUserSession(JSON.parse(data))
+                    })
+                } else {
+                    sessionStore.get(sid, (err, session) => {
+                        if (err) {
+                            // there is no session
+                            console.error('No session found for ', sid)
+                            return
+                        }
+                        console.log('sessionStore.get', session)
+                        setupUserSession(session)
+                    });
+                }
             } else {
                 cb(returnObject)
             }
 
         },
-        copy : (fromFile, toFile, cb) => {
+        copy: (fromFile, toFile, cb) => {
             // cb(fromFile, toFile);
             if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
                 fileHandler.copy(config.dirName + fromFile, config.dirName + toFile).then(() => {
@@ -131,7 +156,7 @@ const sock = shoe(function (stream) {
                 cb(null, -1);
             }
         },
-        move : (fromFile, toFile, cb) => {
+        move: (fromFile, toFile, cb) => {
             if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
                 fileHandler.move(config.dirName + fromFile, config.dirName + toFile).then(() => {
                     const fromFileName = fromFile;
@@ -156,7 +181,7 @@ const sock = shoe(function (stream) {
                 cb(null, -1);
             }
         },
-        remove : (file, cb) => {
+        remove: (file, cb) => {
             if (user.isAdmin || user.authId === 'anonymous') {
                 fileHandler.remove(config.dirName + file).then(() => {
                     changeHistoryLogger.log(
@@ -173,7 +198,7 @@ const sock = shoe(function (stream) {
                 let toFile = (() => {
                     let fSplit = file.split('/');
                     // last item will be a hidden file
-                    fSplit[fSplit.length -1] = '.' + fSplit[fSplit.length -1];
+                    fSplit[fSplit.length - 1] = '.' + fSplit[fSplit.length - 1];
                     return fSplit.join('/');
                 })();
                 fileHandler.rename(config.dirName + file, config.dirName + toFile + '-' + (new Date()).getTime()).then(() => {
@@ -191,7 +216,7 @@ const sock = shoe(function (stream) {
                 cb(null, -1);
             }
         },
-        rename : (fromFile, toFile, cb) => {
+        rename: (fromFile, toFile, cb) => {
             if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
                 fileHandler.rename(config.dirName + fromFile, config.dirName + toFile).then(() => {
                     const fromFileName = fromFile;

@@ -1,6 +1,6 @@
 {
   "name": "drag-king",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Drag and drop to upload to server",
   "main": "main.js",
   "watch": {
@@ -78,7 +78,7 @@
     "finalhandler": "*",
     "fs-extra": "^5.0.0",
     "md5": "^2.2.1",
-    "medium-editor": "^5.23.1",
+    "medium-editor": "^5.23.3",
     "message-toast": "github:eightyfour/message-toast",
     "node-thumbnail": "^0.8.1",
     "octicons": "^5.0.1",
@@ -88,15 +88,15 @@
     "serve-static": "*",
     "shoe": "0.0.15",
     "string-to-color": "github:eightyfour/string-to-color",
-    "stringify": "^5.1.0"
+    "stringify": "^5.2.0"
   },
   "devDependencies": {
-    "@types/node": "^7.0.13",
+    "@types/node": "^7.0.52",
     "browserify": "^13.1.1",
     "less": "^2.7.1",
     "less-plugin-npm-import": "^2.1.0",
     "npm-run-all": "^3.1.2",
     "npm-watch": "^0.1.7",
-    "typescript": "^2.2.2"
+    "typescript": "^2.6.2"
   }
 }

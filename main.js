@@ -9,6 +9,7 @@
  * @param {string} secret - the cookie secret name for cookie access
  * @param {number} port - the cookie secret name for cookie access
  * @param {string} fileStorageName - path to store the files
+ * @param {strring} sessionStoragePath - path where to find the session storage files
  * @param {string} fourOFourFile - path of the 404.html which will be shown if the file is not available (default is the dragKing own file)
  * @param {function} appLifeCycle.phase1 - executed before the files listener is attached
  * @param {function} appLifeCycle.fileFilter - filter for files and folders which will not be send to client (return file name or undefined to filter out)
@@ -247,6 +248,7 @@ function main(opts, appLifeCycle) {
                     length = files.length;
                     files.forEach(function (file) {
                         fs.stat(opts.fileStorageName + folder + file, function (err, stats) {
+                            // TODO: handle error: if a 'none existing symbolic link exists the application fails here 
                             if (stats.isFile()) {
                                 // TODO add correct type
                                 var extension = file.split('.').pop();
@@ -351,7 +353,8 @@ function main(opts, appLifeCycle) {
     // initialize the json persist via websocket
     wsConnection(server, {
         secret : opts.secret,
-        dirName : opts.fileStorageName
+        dirName : opts.fileStorageName,
+        sessionStoragePath: opts.sessionStoragePath
     });
 
     return app;
