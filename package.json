@@ -1,6 +1,6 @@
 {
   "name": "drag-king",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Drag and drop to upload to server",
   "main": "main.js",
   "watch": {
@@ -66,16 +66,16 @@
     "url": "https://github.com/alextrastero/drag-king/issues"
   },
   "dependencies": {
-    "basic-auth": "^2.0.0",
-    "body-parser": "^1.17.1",
+    "basic-auth": "^2.0.1",
+    "body-parser": "^1.18.3",
     "canny": "^0.2.1",
     "connect-busboy": "0.0.2",
-    "cookie-parser": "^1.4.3",
-    "directory-tree": "^2.0.0",
+    "cookie-parser": "^1.4.4",
+    "directory-tree": "^2.2.1",
     "dnode": "^1.2.2",
-    "express": "^4.14.0",
+    "express": "^4.16.4",
     "express-session": "^1.15.2",
-    "finalhandler": "*",
+    "finalhandler": "^1.1.1",
     "fs-extra": "^5.0.0",
     "md5": "^2.2.1",
     "medium-editor": "^5.23.3",
@@ -85,18 +85,18 @@
     "passport": "^0.3.2",
     "passport-ldapauth": "^1.0.0",
     "serve-index": "*",
-    "serve-static": "*",
+    "serve-static": "^1.13.2",
     "shoe": "0.0.15",
     "string-to-color": "github:eightyfour/string-to-color",
     "stringify": "^5.2.0"
   },
   "devDependencies": {
-    "@types/node": "^7.0.52",
+    "@types/node": "^7.10.5",
     "browserify": "^13.1.1",
     "less": "^2.7.1",
     "less-plugin-npm-import": "^2.1.0",
     "npm-run-all": "^3.1.2",
     "npm-watch": "^0.1.7",
-    "typescript": "^2.6.2"
+    "typescript": "^2.9.2"
   }
 }
