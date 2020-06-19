@@ -29,7 +29,7 @@ function addNodes(content) {
 }
 
 function getImagesWgetFormat() {
-    let retString = "wget -P .",
+    let retString = "wget --no-check-certificate -P .",
         host = location.host;
     imageFiles.forEach(function (name) {
         retString += ' http://' + host + name;
@@ -38,7 +38,7 @@ function getImagesWgetFormat() {
 }
 
 function getSVGWgetFormat() {
-    let retString = "wget -P .",
+    let retString = "wget --no-check-certificate -P .",
         host = location.host;
     svgFiles.forEach(function (name) {
         retString += ' http://' + host + name;

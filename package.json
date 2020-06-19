@@ -1,8 +1,9 @@
 {
-  "name": "drag-king",
-  "version": "0.2.5",
+  "name": "@eightyfour/drag-king",
+  "version": "1.0.0",
   "description": "Drag and drop to upload to server",
   "main": "main.js",
+  "files": ["*", "!files"],
   "watch": {
     "less": {
       "patterns": [
@@ -39,7 +40,7 @@
     "auth": true
   },
   "scripts": {
-    "dist": "npm-run-all ts js less* images*",
+    "build": "npm-run-all ts js less* images*",
     "watch": "npm-watch",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prejs": "mkdir -p dist",
@@ -58,12 +59,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/alextrastero/drag-king.git"
+    "url": "https://github.com/eightyfour/drag-king.git"
   },
   "author": "aode & phen",
   "license": "BSD-2-Clause",
   "bugs": {
-    "url": "https://github.com/alextrastero/drag-king/issues"
+    "url": "https://github.com/eightyfour/drag-king/issues"
   },
   "dependencies": {
     "basic-auth": "^2.0.1",
@@ -98,5 +99,8 @@
     "npm-run-all": "^3.1.2",
     "npm-watch": "^0.1.7",
     "typescript": "^2.9.2"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
   }
 }
