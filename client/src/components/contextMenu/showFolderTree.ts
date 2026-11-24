@@ -108,7 +108,7 @@ export function getFolderTree(cb, config:{name:string, path:string, mode:string,
 
     if (!folders) {
         cb(listFolders(null, config));
-        tradeWs.request(serverCalls.getDirectoryTree, '/', function (result) {
+        tradeWs.request<FolderItem[]>(serverCalls.getDirectoryTree, '/').then((result) => {
             if (result) {
                 folders = result;
                 if (whiskerFc) {
@@ -121,7 +121,7 @@ export function getFolderTree(cb, config:{name:string, path:string, mode:string,
             } else {
                 console.log('headerController:there are no sub folders :(');
             }
-        });
+        }).catch((error) => console.error('Unable to load folder tree:', error));
     } else {
         cb(listFolders(folders, config));
     }

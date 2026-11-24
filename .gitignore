@@ -29,11 +29,10 @@ build/Release
 node_modules
 .idea
 dist
+.build/
 files
 !files/common-styles-lib/.history.json
 !files/common-styles-lib/styleguide.*
 
 .vscode/
-client/**/*.js
-client/**/*.map
 *.iml

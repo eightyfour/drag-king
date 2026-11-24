@@ -2,9 +2,12 @@
   "compilerOptions": {
     "module": "commonjs",
     "target" : "ES2015",
+    "lib": ["ES2022", "DOM"],
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
+    "rootDir": "client",
+    "outDir": ".build/client",
     "allowJs" : true,
     "types": ["node"]
   },

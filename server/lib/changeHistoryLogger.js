@@ -1,121 +1,32 @@
-/**
- * Creates an log file and logs and persists all changes to the file system.
- *
- * @module module:changeHistoryLogger
- */
-var LOG_FILE_NAME = '.history.json',
-    fileHandler = require('./fileHandler'),
-    logCacheMap = {},
-    timeCache;
+const path = require('node:path');
+const fileHandler = require('./fileHandler');
 
-/**
- *
- * @param {string} path
- */
-function getFolderName(path) {
-    if (path.indexOf('.') !== -1) {
-        // contains a dot - maybe a file?
-        // remove last item and return folder with '/' at the end
-        return path.split('/').slice(0, -1).join('/') + '/';
-    }
-    return path;
+const pending = new Map();
+const LOG_FILE_NAME = '.history.json';
+
+function record(root, folder, data, action, alias) {
+    const key = path.posix.join(folder, LOG_FILE_NAME);
+    const entry = pending.get(key) || { entries: {}, timer: null };
+    entry.entries[Date.now()] = { action: { key: action, value: data }, alias };
+    clearTimeout(entry.timer);
+    entry.timer = setTimeout(async () => {
+        pending.delete(key);
+        try {
+            await fileHandler.saveJSON(root, key, entry.entries);
+        } catch (error) {
+            console.error('Failed to write change history:', error);
+        }
+    }, 1000);
+    pending.set(key, entry);
 }
 
-/**
- *
- * @type {{logFileName: string}}
- */
 module.exports = {
-    /**
-     *
-     * @returns {string}
-     */
-    get logFileName() {
-        return LOG_FILE_NAME;
+    get logFileName() { return LOG_FILE_NAME; },
+    write(root, file, action, alias) {
+        record(root, path.posix.dirname(file), file, action, alias);
+    },
+    log: record,
+    read(root, folder) {
+        return fileHandler.getModuleConfigFromJSON(root, path.posix.join(folder, LOG_FILE_NAME));
     }
-};
-/**
- * Write the history to a log file
- *
- * Note: Saves a history data with a delay to avoid file write crashes
- *
- * @param {string} rootFolder - root file folder
- * @param {string} file - the path to the file from root folder
- * @param {string} action - the action which will be logged
- * @param {string} alias - the user identifier name
- */
-module.exports.write = function (rootFolder, file, action, alias) {
-    var folder = getFolderName(file),
-        obj = {};
-    obj[(new Date()).getTime()] = {
-        action : {
-            key : action,
-            value : file
-        },
-        alias : alias
-    };
-    if (!logCacheMap.hasOwnProperty(folder + LOG_FILE_NAME)) {
-        logCacheMap[folder + LOG_FILE_NAME] = obj;
-    } else {
-        // merge it with existing
-        Object.assign(logCacheMap[folder + LOG_FILE_NAME], obj);
-    }
-    // reset the previous one
-    clearTimeout(timeCache);
-    timeCache = setTimeout(function () {
-        Object.keys(logCacheMap).forEach(function (key) {
-            fileHandler.saveJSON(rootFolder, key, logCacheMap[key]);
-            delete logCacheMap[key];
-        })
-    }, 1000);
-};
-
-/**
- * Write anything into the log file
- *
- * @param {string} rootFolder - root file folder
- * @param {string} path - the path to the history file
- * @param {string} data - any string (e.g. the file name or folder name)
- * @param {string} action - the action which will be logged (e.g. delete, remove, moved....)
- * @param {string} alias - the user identifier name
- */
-module.exports.log = function (rootFolder, path, data, action, alias) {
-    var obj = {};
-    if (path[path.length -1] !== '/') {
-        path += '/';
-    }
-    if (path[0] !== '/') {
-        path = '/' + path;
-    }
-    obj[(new Date()).getTime()] = {
-        action : {
-            key : action,
-            value : data
-        },
-        alias : alias
-    };
-    if (!logCacheMap.hasOwnProperty(path + LOG_FILE_NAME)) {
-        logCacheMap[path + LOG_FILE_NAME] = obj;
-    } else {
-        // merge it with existing
-        Object.assign(logCacheMap[path + LOG_FILE_NAME], obj);
-    }
-    // reset the previous one
-    clearTimeout(timeCache);
-    timeCache = setTimeout(function () {
-        Object.keys(logCacheMap).forEach(function (key) {
-            fileHandler.saveJSON(rootFolder, key, logCacheMap[key]);
-            delete logCacheMap[key];
-        })
-    }, 1000);
-};
-
-/**
- *
- * @param {string} file
- * @param {function} cb
- */
-module.exports.read = function (file, cb) {
-    var folder = getFolderName(file);
-    fileHandler.getModuleConfigFromJSON(folder + LOG_FILE_NAME, cb);
 };

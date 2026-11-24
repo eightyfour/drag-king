@@ -1,17 +1,34 @@
 # drag-king
 
-Web application with to upload images to a server.
+Web application for uploading and managing files on a server.
 
 ### Installation
 
+Requires Node.js 26 (tested with 26.5.0) and npm.
+
 ```sh
-git clone https://github.com/alextrastero/drag-king.git
+git clone https://github.com/eightyfour/drag-king.git
 cd drag-king
-npm install
+npm ci
+npm run build
 npm start
 ```
 
-Navigate to http://YOUR_IP:8000 to see the action.
+Navigate to http://localhost:8001 in development (`config.port.development` in
+`package.json`). Production uses port 80 by default. The build generates the
+JavaScript and CSS assets referenced by `index.html` and `auth.html` under
+`dist/`; it must run before starting the server.
+TypeScript's intermediate JavaScript and source maps are emitted into
+`.build/client/`, not alongside files in `client/src/`. Run `npm run rebuild`
+to recompile and rebundle the browser client after a source or template change.
+
+Run `npm test` for the Node.js built-in test runner. The browser uses its native
+WebSocket API to communicate with the server at `/ws`, which uses `ws`. File
+uploads and downloads continue to use HTTP; thumbnails are generated with
+`sharp` and do not require ImageMagick. Thumbnails honor image EXIF orientation;
+older cached thumbnails are replaced when their images are next requested.
+Sessions are held in memory by default,
+so restarting the server logs users out.
 
 ### permissions
 
@@ -27,6 +44,12 @@ The server supports also permission for user.
   }
 }
 ```
+
+`pw` is the MD5 digest of the password (in this example, `ente`). Place these
+files in the `files/` directory. Create it before logging in, and use
+`config.auth` in `package.json` to configure authentication. Set
+`DRAG_KING_SESSION_SECRET` to a unique secret in production; without it the
+standalone entry point uses a fixed development secret.
 
 **.user-permission.json**
 It exists three roles default, maintainers and admins. All users which are allowed to login
@@ -102,5 +125,3 @@ complete refactoring of the application
 **0.2.0**
  * allow and support basic auth for REST deleteFiles and uploadFiles
  * improve error handling for POST calls
-
-TODO: server side code needs to be refactored ...comming soon

@@ -1,63 +1,22 @@
 const directoryTree = require('directory-tree');
+const { resolveFile } = require('./fileHandler');
+const path = require('node:path');
 
-/**
- * @typedef {object} treeObject
- * @property {string} path
- * @property {string} name
- * @property {string} extension
- * @property {string} type - "directory"|"file"
- * @property {[{treeObject}]} children
- *
- */
-
-
-/**
- * Filter function for the directory-tree module:
- *  * remove property size (not needed)
- *  * modifier the path to a ready to use URL (for client)
- *  * TODO modifier type property and add json, image/jpg and so on (or create new one)
- *
- * @param rootFolder
- * @param treeObjectList
- * @returns {NodeModule[]|*|{treeObject}[]|Array|HTMLElement[]}
- */
-function treeFilter(rootFolder, treeObjectList) {
-    if (!treeObjectList) return [];
-
-    const rec = (treeObjectList) => {
-        treeObjectList.forEach((treeObject) => {
-            delete treeObject.size;
-            treeObject.path = treeObject.path.replace(rootFolder, '');
-            if (treeObject.children) {
-                rec(treeObject.children);
-            }
-        });
-    };
-    rec(treeObjectList.children);
-
-    treeObjectList.children = filterChildren(treeObjectList.children);
-
-    return treeObjectList.children;
+function filterChildren(children, root) {
+    return children.filter((item) => !item.name.startsWith('tmb_')).map((item) => {
+        const result = {
+            name: item.name,
+            path: '/' + path.relative(root, item.path).split(path.sep).join('/'),
+            type: item.type
+        };
+        if (item.extension) result.extension = item.extension;
+        if (item.children) result.children = filterChildren(item.children, root);
+        return result;
+    });
 }
 
-function filterChildren(folderItems) {
-    folderItems = folderItems.filter((folderItem) => {
-        if (folderItem.hasOwnProperty('children') && folderItem.children.length > 0) {
-            folderItem.children = filterChildren(folderItem.children);
-        }
-        // exclude tmb_ files
-        return /^tmb_/.test(folderItem.name) ? undefined : folderItem
-    });
-    return folderItems;
-}
-/**
- *
- * @param rootFolder
- * @param path
- * @returns {Promise}
- */
-module.exports = function (rootFolder, path) {
-    return new Promise((res) => {
-        res(treeFilter(rootFolder, directoryTree(rootFolder + path)));
-    });
+module.exports = function getDirectoryTree(root, folder) {
+    const fullPath = resolveFile(root, folder);
+    const result = directoryTree(fullPath);
+    return result ? filterChildren(result.children || [], path.resolve(root)) : [];
 };
