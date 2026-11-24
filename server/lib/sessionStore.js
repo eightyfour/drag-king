@@ -4,7 +4,7 @@
  * @module sessionStore
  * @requires express-session
  */
-var MemoryStore = new require('express-session').MemoryStore;
+const { MemoryStore } = require('express-session');
 
 /**
  * Returns a memoryStore instance created from express-session

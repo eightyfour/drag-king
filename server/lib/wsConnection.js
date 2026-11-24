@@ -1,251 +1,141 @@
-/**
- * Saves the JSON files to the server via a websocket connection to the client
- *
- * @module persist
- * @requires module:cookie-parser
- * @requires module:sessionStore
- * @requires module:shoe
- * @requires module:dnode
- * @requires module:fileHandler
- */
+const { WebSocketServer } = require('ws');
+const fs = require('node:fs/promises');
+const path = require('node:path');
+const cookie = require('cookie-parser');
+const sessionStore = require('./sessionStore');
+const fileHandler = require('./fileHandler');
+const history = require('./changeHistoryLogger');
 
-const shoe = require('shoe'),
-    fs = require('fs'),
-    dnode = require('dnode'),
-    fileHandler = require('./fileHandler'),
-    changeHistoryLogger = require('./changeHistoryLogger'),
-    cookieParser = require('cookie-parser'),
-    sessionStore = require('./sessionStore');
+function within(root, requested) {
+    if (typeof requested !== 'string' || !requested.startsWith('/')) {
+        throw Object.assign(new Error('Invalid path'), { code: 'INVALID_PATH' });
+    }
+    const resolved = path.resolve(root, '.' + requested);
+    if (resolved !== path.resolve(root) && !resolved.startsWith(path.resolve(root) + path.sep)) {
+        throw Object.assign(new Error('Invalid path'), { code: 'INVALID_PATH' });
+    }
+    return resolved;
+}
 
-let config;
+function forbidden() {
+    throw Object.assign(new Error('Permission denied'), { code: 'FORBIDDEN' });
+}
 
-const sock = shoe(function (stream) {
-    let user = {
-        authId: 'anonymous'
-    };
-    const d = dnode({
-        /**
-         * Callback will be called with the complete file structure
-         *
-         * @param path
-         * @param cb
-         */
-        getDirectoryTree: function (path, cb) {
-            fileHandler.getDirectoryTree(config.dirName, path, cb)
-        },
-        /**
-         *
-         * @param {string} file
-         * @param {function} cb
-         */
-        loadModuleConfig: function (file, cb) {
-            fileHandler.getModuleConfigFromJSON(config.dirName, file, function (data) {
-                cb(data); // 1492083845980 - 1492083863075
-            })
-        },
-        /**
-         * Save any content in the given file name. It overwrites the existing file.
-         *
-         * @param fileName
-         * @param content
-         * @param cb
-         */
-        saveFile: function (fileName, content, cb) {
-            if (!fileName) {
-                cb(false);
-                return;
-            }
-            fileHandler.saveFile(config.dirName, fileName[0] === '/' ? fileName : '/' + fileName, content, cb);
-        },
-        /**
-         *
-         * If the timestamp from the obj is older as the timestamp from the file then the save call will be rejected
-         *
-         * @param {string} file
-         * @param {{timeStamp:number,styleguideId:string,approved:boolean, comments:Array<object>, dysis:string,labels:Array<object>,specs:Array<string>}} obj
-         * @param {function} cb
-         */
-        saveModuleConfig: function (file, obj, cb) {
-            fileHandler.getModuleConfigFromJSON(config.dirName, file, function (data) {
-                if (data === false || data.timeStamp === obj.timeStamp) {
-                    // file does not exists - but this is no problem
-                    obj.timeStamp = (new Date()).getTime();
-                    fileHandler.saveJSON(config.dirName, file, obj, function (data) {
-                        cb(data);
-                    })
-                } else {
-                    cb(false, 'timeStamp');
-                }
-
-            })
-        },
-        init: function (path, cb) {
-            const returnObject = {
-                    path: path.path
-                },
-                sid = cookieParser.signedCookie(path.session, config.secret);
-
-            function setupUserSession(session) {
-                if (!session) {
-                    session = {};
-                }
-                
-                returnObject.user = {
-                    name: session.fullName,
-                    authId: session.authId,
-                    isAdmin: session.isAdmin,
-                    isMaintainer: session.isMaintainer,
-                    alias: session.ldapName,
-                };
-                user = returnObject.user;
-                cb(returnObject)
-            }
-
-            if (sid) {
-                if (config.sessionStoragePath) {
-                    // session are stored in JSON files
-                    fs.readFile(`${config.sessionStoragePath}/${sid}.json`, (err, data) => {
-                        if (err) {
-                            // there is no session
-                            console.error('NO session found for ', sid)
-                            return
-                        }
-                        console.log('readFile', data)
-                        
-                        setupUserSession(JSON.parse(data))
-                    })
-                } else {
-                    sessionStore.get(sid, (err, session) => {
-                        if (err) {
-                            // there is no session
-                            console.error('No session found for ', sid)
-                            return
-                        }
-                        console.log('sessionStore.get', session)
-                        setupUserSession(session)
-                    });
-                }
-            } else {
-                cb(returnObject)
-            }
-
-        },
-        copy: (fromFile, toFile, cb) => {
-            // cb(fromFile, toFile);
-            if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
-                fileHandler.copy(config.dirName + fromFile, config.dirName + toFile).then(() => {
-                    const fromFileName = fromFile;
-                    const toFileName = toFile;
-                    cb(fromFile, toFile);
-                    changeHistoryLogger.log(
-                        config.dirName,
-                        fromFile.split('/').slice(0, -1).join('/'),
-                        fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName,
-                        'copyTo',
-                        user.authId);
-                    changeHistoryLogger.log(
-                        config.dirName,
-                        toFile.split('/').slice(0, -1).join('/'),
-                        fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
-                        'copyFrom',
-                        user.authId);
-                }).catch((err) => {
-                    cb(null);
-                })
-            } else {
-                cb(null, -1);
-            }
-        },
-        move: (fromFile, toFile, cb) => {
-            if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
-                fileHandler.move(config.dirName + fromFile, config.dirName + toFile).then(() => {
-                    const fromFileName = fromFile;
-                    const toFileName = toFile;
-                    changeHistoryLogger.log(
-                        config.dirName,
-                        fromFile.split('/').slice(0, -1).join('/'),
-                        fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName,
-                        'movedTo',
-                        user.authId);
-                    changeHistoryLogger.log(
-                        config.dirName,
-                        toFile.split('/').slice(0, -1).join('/'),
-                        fromFileName + '/ -> ' + toFileName.split('/').splice(-1)[0],
-                        'movedFrom',
-                        user.authId);
-                    cb(fromFile, toFile);
-                }).catch((err) => {
-                    cb(null);
-                })
-            } else {
-                cb(null, -1);
-            }
-        },
-        remove: (file, cb) => {
-            if (user.isAdmin || user.authId === 'anonymous') {
-                fileHandler.remove(config.dirName + file).then(() => {
-                    changeHistoryLogger.log(
-                        config.dirName,
-                        file.split('/').slice(0, -1).join('/'),
-                        file.split('/').splice(-1)[0] + '/',
-                        'delete',
-                        user.authId);
-                    cb(file)
-                }).catch((err) => {
-                    cb(null);
-                })
-            } else if (user.isMaintainer) {
-                let toFile = (() => {
-                    let fSplit = file.split('/');
-                    // last item will be a hidden file
-                    fSplit[fSplit.length - 1] = '.' + fSplit[fSplit.length - 1];
-                    return fSplit.join('/');
-                })();
-                fileHandler.rename(config.dirName + file, config.dirName + toFile + '-' + (new Date()).getTime()).then(() => {
-                    changeHistoryLogger.log(
-                        config.dirName,
-                        file.split('/').slice(0, -1).join('/'),
-                        file.split('/').splice(-1)[0] + '/',
-                        'delete',
-                        user.authId);
-                    cb(file);
-                }).catch((err) => {
-                    cb(null);
-                })
-            } else {
-                cb(null, -1);
-            }
-        },
-        rename: (fromFile, toFile, cb) => {
-            if (user.isAdmin || user.isMaintainer || user.authId === 'anonymous') {
-                fileHandler.rename(config.dirName + fromFile, config.dirName + toFile).then(() => {
-                    const fromFileName = fromFile;
-                    const toFileName = toFile;
-                    changeHistoryLogger.log(
-                        config.dirName,
-                        fromFile.split('/').slice(0, -1).join('/'),
-                        fromFileName.split('/').splice(-1)[0] + '/ -> ' + toFileName.split('/').splice(-1)[0] + '/',
-                        'rename',
-                        user.authId);
-                    cb(fromFile, toFile);
-                }).catch((err) => {
-                    cb(null, err.errno);
-                })
-            } else {
-                cb(null, -1);
-            }
+async function getSession(request, config) {
+    const raw = (request.headers.cookie || '').split(';')
+        .map((part) => part.trim())
+        .find((part) => part.startsWith('translatron_session='));
+    if (!raw) return {};
+    const signedValue = decodeURIComponent(raw.slice('translatron_session='.length));
+    const sid = cookie.signedCookie(signedValue, config.secret);
+    if (!sid || sid === signedValue) return {};
+    if (config.sessionStoragePath) {
+        try {
+            return JSON.parse(await fs.readFile(path.join(config.sessionStoragePath, sid + '.json'), 'utf8'));
+        } catch (error) {
+            if (error.code === 'ENOENT') return {};
+            throw error;
         }
+    }
+    return new Promise((resolve, reject) => {
+        sessionStore.get(sid, (error, session) => error ? reject(error) : resolve(session || {}));
     });
-    d.pipe(stream).pipe(d);
-});
+}
 
-/**
- * Create a persist instance
- *
- * @param {object} server - the server instance from app.listen...
- * @param {{dirName:string, secret:string}} moduleConfig - application root folder where to save the files
- */
-module.exports = function (server, moduleConfig) {
-    config = moduleConfig;
-    sock.install(server, '/dnode');
+function createHandler(config, session) {
+    const user = {
+        name: session.fullName || 'anonymous',
+        authId: session.authId || 'anonymous',
+        isAdmin: Boolean(session.isAdmin),
+        isMaintainer: Boolean(session.isMaintainer),
+        alias: session.ldapName || 'goat'
+    };
+    const alias = user.authId || 'anonymous';
+    const writable = !config.auth || user.isAdmin || user.isMaintainer;
+    const deletable = !config.auth || user.isAdmin;
+    const root = config.dirName;
+
+    return async function handle(method, args) {
+        if (!Array.isArray(args)) throw new TypeError('Invalid arguments');
+        const [file, target] = args;
+        switch (method) {
+            case 'init':
+                return { path: args[0], user };
+            case 'getDirectoryTree':
+                return fileHandler.getDirectoryTree(root, file);
+            case 'loadModuleConfig':
+                return fileHandler.getModuleConfigFromJSON(root, file);
+            case 'saveFile':
+                if (!writable || (config.auth && !user.isAdmin && /\.json$/i.test(file))) forbidden();
+                return fileHandler.saveFile(root, file, target);
+            case 'saveModuleConfig': {
+                if (!writable || (config.auth && !user.isAdmin && /\.json$/i.test(file))) forbidden();
+                const current = await fileHandler.getModuleConfigFromJSON(root, file);
+                if (current && current.timeStamp !== target.timeStamp) {
+                    throw Object.assign(new Error('File changed since loading'), { code: 'STALE' });
+                }
+                return fileHandler.saveJSON(root, file, { ...target, timeStamp: Date.now() });
+            }
+            case 'copy':
+            case 'move':
+            case 'rename': {
+                if (!writable) forbidden();
+                const source = within(root, file);
+                const destination = within(root, target);
+                await fileHandler[method](source, destination);
+                history.log(root, path.posix.dirname(file), `${file} -> ${target}`, method, alias);
+                return { from: file, to: target };
+            }
+            case 'remove':
+                if (!writable) forbidden();
+                within(root, file);
+                if (config.auth && !deletable) {
+                    const hidden = path.posix.join(path.posix.dirname(file), '.' + path.posix.basename(file) + '-' + Date.now());
+                    await fileHandler.rename(within(root, file), within(root, hidden));
+                } else {
+                    await fileHandler.remove(within(root, file));
+                }
+                history.log(root, path.posix.dirname(file), path.posix.basename(file), 'delete', alias);
+                return { file };
+            default:
+                throw Object.assign(new Error('Unknown operation'), { code: 'UNKNOWN_OPERATION' });
+        }
+    };
+}
+
+module.exports = function wsConnection(server, config) {
+    const sockets = new WebSocketServer({ server, path: '/ws' });
+    sockets.on('connection', (socket, request) => {
+        socket.on('message', async (data) => {
+            let id;
+            try {
+                const message = JSON.parse(data.toString());
+                id = message.id;
+                if (!Number.isSafeInteger(id) || id < 1 || typeof message.method !== 'string') {
+                    throw Object.assign(new Error('Invalid request'), { code: 'INVALID_REQUEST' });
+                }
+                const handle = createHandler(config, await getSession(request, config));
+                const result = await handle(message.method, message.args);
+                socket.send(JSON.stringify({ id, result }));
+            } catch (error) {
+                if (error.code === 'FORBIDDEN') {
+                    console.warn('WebSocket request denied:', error.message);
+                } else {
+                    console.error('WebSocket request failed:', error);
+                }
+                if (socket.readyState === socket.OPEN) {
+                    const publicError = ['FORBIDDEN', 'INVALID_PATH', 'INVALID_REQUEST',
+                        'UNKNOWN_OPERATION', 'STALE'].includes(error.code);
+                    socket.send(JSON.stringify({ id, error: {
+                        code: error.code || 'INTERNAL_ERROR',
+                        message: publicError ? error.message : 'Operation failed'
+                    } }));
+                }
+            }
+        });
+        socket.on('error', (error) => console.error('WebSocket error:', error));
+    });
+    return sockets;
 };
+
+module.exports.createHandler = createHandler;

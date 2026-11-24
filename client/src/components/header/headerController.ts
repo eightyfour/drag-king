@@ -5,27 +5,26 @@ import { eventHandler } from '../../eventHandler';
 import { auth } from "../auth/auth";
 import { folderNav } from "./folderNav";
 import { newFolder } from "./newFolder";
+import { FolderItem } from '../../model/Folder';
 
 const listFoldersCannyModInstance = listFoldersCannyMod();
 let loading = false;
 
-function initializeHoverMenu(cb?) {
-    tradeWs.request(serverCalls.getDirectoryTree, location.pathname, function (result) {
-        if (result) {
-            listFolders(result);
-        } else {
-            console.log('headerController:there are no sub folders :(');
-        }
-        cb && cb();
-    });
+async function initializeHoverMenu() {
+    try {
+        const result = await tradeWs.request<FolderItem[]>(serverCalls.getDirectoryTree, location.pathname);
+        listFolders(result);
+    } catch (error) {
+        console.error('Unable to load folders:', error);
+    }
 }
 
 function reeInit() {
     if (!loading) {
         loading = true;
-        listFoldersCannyModInstance.render(() => initializeHoverMenu(() => {
-            loading = false;
-        }))
+        listFoldersCannyModInstance.render(() => {
+            initializeHoverMenu().finally(() => { loading = false; });
+        });
     }
 }
 

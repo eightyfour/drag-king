@@ -1,110 +1,84 @@
-import { ProgressToast } from './ProgressToast'
-/**
- * These file handles the REST calls to the server
- */
-const events = {
-        getFiles : [],
-        deleteFile : [],
-        fileSend : []
-    },
-    doCalls = {
-        getFiles : getFiles,
-        sendFile : sendFile,
-        deleteFile : deleteFile
-    };
+import { ProgressToast } from './ProgressToast';
 
-/**
- * Call the given function queue with arguments
- * @param queue
- * @param any - some arguments which will be passed through the function call
- */
-function callEventsQueue(queue:Array<()=>{}>, ...any) {
-    const args = [].slice.call(arguments, 1, arguments.length);
-    queue.forEach(function(fc) {
-        fc.apply(null, args);
+const events = {
+    getFiles: [],
+    deleteFile: [],
+    fileSend: []
+};
+
+function emit(name: keyof typeof events, ...args: unknown[]) {
+    events[name].forEach((listener) => listener(...args));
+}
+
+function uploadRequest(file: File): Promise<{ file: string; name: string; type: string }> {
+    return new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        const progress = ProgressToast(file.name);
+        xhr.upload.onprogress = (event) => progress.update(event.loaded / 1000, event.total / 1000);
+        xhr.onloadend = () => progress.destroy();
+        xhr.onload = () => {
+            if (xhr.status !== 200) {
+                reject(new Error(`Upload failed (${xhr.status}): ${xhr.responseText}`));
+                return;
+            }
+            try {
+                resolve(JSON.parse(xhr.responseText));
+            } catch (error) {
+                reject(error);
+            }
+        };
+        xhr.onerror = () => reject(new Error('Upload network error'));
+        xhr.onabort = () => reject(new Error('Upload cancelled'));
+        xhr.open('POST', `/uploadFile?folder=${encodeURIComponent(location.pathname)}&filename=${encodeURIComponent(file.name)}`);
+        const body = new FormData();
+        body.append('myFile', file);
+        xhr.send(body);
     });
 }
 
-/**
- * Call this for each file - will call a call back with the server answer
- * @param file
- */
-function sendFile(file, directCallback) {
-    const uri = "/uploadFile?folder=" + location.pathname + '&filename=' + file.name,
-        xhr = new XMLHttpRequest(),
-        fd = new FormData(),
-        progressBar = ProgressToast(file.name);
-
-    xhr.upload.onprogress = function (e) {
-        progressBar.update(e.loaded / 1000, e.total / 1000)
-    };
-    xhr.upload.onloadend = function (e) {
-        progressBar.destroy()
-    };
-
-    xhr.open("POST", uri, true);
-    xhr.onreadystatechange = function() {
-        let data;
-        if (xhr.readyState == 4) {
-            // Handle response.
-            data = xhr.status == 200 ? JSON.parse(xhr.responseText) : xhr.responseText;
-            directCallback && directCallback(xhr.status == 200 ? null : xhr, data); // handle response.
-            callEventsQueue(events.fileSend, xhr.status == 200 ? null : xhr, data);
-        }
-    };
-    fd.append('myFile', file);
-    // Initiate a multipart/form-data upload
-    xhr.send(fd);
-}
-
-function deleteFile(path, directCallback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/deleteFile?filename=" + path, true);
-    xhr.onload = function (e) {
-        if (xhr.readyState === 4) {
-            directCallback && directCallback(xhr.status == 200 ? null : xhr, path);
-            callEventsQueue(events.deleteFile, xhr.status == 200 ? null : xhr, path);
-        }
-    };
-    xhr.send(null);
-}
-
-function getFiles(pathName) {
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/getFiles", true);
-    xhr.onload = function (e) {
-        if (xhr.readyState === 4) {
-            if (xhr.status === 200) {
-                callEventsQueue(events.getFiles, JSON.parse(xhr.responseText));
-            } else {
-                console.error(xhr.statusText);
-            }
-        }
-    };
-    xhr.onerror = function (e) {
-        console.error(xhr.statusText);
-    };
-    xhr.send(pathName || location.pathname);
-}
-
-/**
- * register a on listener object
- * @param eventObj
- */
-export function on(eventObj) {
-        Object.keys(eventObj).forEach(function (eventName) {
-            if (events.hasOwnProperty(eventName)) {
-                events[eventName].push(eventObj[eventName]);
-            } else {
-                console.log('trade:event not exists', eventName);
-            }
-        })
+async function sendFile(file: File) {
+    try {
+        emit('fileSend', null, await uploadRequest(file));
+    } catch (error) {
+        console.error('Upload failed:', error);
+        emit('fileSend', error, null);
     }
-/**
- * returns a function
- * @param name
- * @returns {*}
- */
-export function doCall(name) {
-    return doCalls[name];
+}
+
+async function deleteFile(file: string, callback?: (error: Error | null, file: string) => void) {
+    try {
+        const response = await fetch(`/deleteFile?filename=${encodeURIComponent(file)}`, { method: 'POST' });
+        if (!response.ok) throw new Error(`Delete failed (${response.status}): ${await response.text()}`);
+        callback?.(null, file);
+        emit('deleteFile', null, file);
+    } catch (error) {
+        console.error('Delete failed:', error);
+        callback?.(error, file);
+        emit('deleteFile', error, file);
+    }
+}
+
+async function getFiles(pathName?: string) {
+    try {
+        const response = await fetch('/getFiles', { method: 'POST', body: pathName || location.pathname });
+        if (!response.ok) throw new Error(`File list failed (${response.status}): ${await response.text()}`);
+        emit('getFiles', await response.json());
+    } catch (error) {
+        console.error('Unable to load files:', error);
+    }
+}
+
+export function on(eventObj) {
+    Object.keys(eventObj).forEach((name) => {
+        if (!Object.hasOwn(events, name)) throw new Error(`Unknown event: ${name}`);
+        events[name].push(eventObj[name]);
+    });
+}
+
+const calls = { getFiles, sendFile, deleteFile };
+export function doCall(name: 'getFiles'): typeof getFiles;
+export function doCall(name: 'sendFile'): typeof sendFile;
+export function doCall(name: 'deleteFile'): typeof deleteFile;
+export function doCall(name: keyof typeof calls) {
+    return calls[name];
 }

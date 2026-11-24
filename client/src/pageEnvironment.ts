@@ -73,11 +73,13 @@ export const pageEnvironment = {
      *
      * @param {{PageConfig}} config
      */
-    set config(config: PageConfig) {
+    set config(config: Partial<PageConfig>) {
         let pop;
         Object.assign(pageConfig, config);
-        while(pop = readyQueue.pop()) pop(pageConfig);
-        readyQueue = null;
+        if (readyQueue) {
+            while(pop = readyQueue.pop()) pop(pageConfig);
+            readyQueue = null;
+        }
         Object.keys(texts).forEach(function (key) {
             if (pageConfig.hasOwnProperty(key)) {
                 texts[key] = pageConfig[key];

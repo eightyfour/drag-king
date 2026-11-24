@@ -29,10 +29,11 @@ trade.on({
 
 export function folderDescriptionController (config) {
     console.log('folderDescriptionController:folderDescriptionController', config);
-    onInputChange(function (htmlContent:string) {
-        console.log('folderDescriptionController: TODO send the changes to server', htmlContent);
-        tradeWs.request(serverCalls.saveFile, currentDescriptionFileURL, htmlContent, function (result) {
-            console.log('folderDescriptionController:save done', result);
-        });
+    onInputChange(async function (htmlContent:string) {
+        try {
+            await tradeWs.request(serverCalls.saveFile, currentDescriptionFileURL, htmlContent);
+        } catch (error) {
+            console.error('Unable to save folder description:', error);
+        }
     })
 }

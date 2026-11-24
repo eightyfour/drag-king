@@ -69,19 +69,15 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                                 return;
                             }
                             if (confirm('Copy to ' + destination)) {
-                                tradeWs.request(serverCalls.copy, obj.path + obj.name, destination, (from, to) => {
-                                    // handle toast in separate component
-                                    if (from === null) {
-                                        if (to === -1) {
-                                            toast.showMessage(`Permission denied`);
-                                        } else {
-                                            toast.showMessage(`Copy failed - Unknown reason`);
-                                        }
-                                    } else {
+                                tradeWs.request<{ from: string; to: string }>(serverCalls.copy, obj.path + obj.name, destination)
+                                    .then(({ to }) => {
                                         toast.showMessage(`Copy to <a href='${to}'>${to}</a>`);
-                                    }
-                                    this.close();
-                                });
+                                        this.close();
+                                    })
+                                    .catch((error) => {
+                                        console.error('Copy failed:', error);
+                                        toast.showMessage(`Copy failed: ${error.message}`);
+                                    });
                             }
                         }
                     }
@@ -106,19 +102,15 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                                 return;
                             }
                             if (confirm('Move to ' + destination)) {
-                                tradeWs.request(serverCalls.move, obj.path + obj.name, destination, (from, to) => {
-                                    // handle toast in separate component
-                                    if (from === null) {
-                                        if (to === -1) {
-                                            toast.showMessage(`Permission denied`);
-                                        } else {
-                                            toast.showMessage(`Move failed - Unknown reason`);
-                                        }
-                                    } else {
+                                tradeWs.request<{ from: string; to: string }>(serverCalls.move, obj.path + obj.name, destination)
+                                    .then(({ to }) => {
                                         toast.showMessage(`Move to <a href='${to}'>${to}</a>`);
-                                    }
-                                    this.close();
-                                });
+                                        this.close();
+                                    })
+                                    .catch((error) => {
+                                        console.error('Move failed:', error);
+                                        toast.showMessage(`Move failed: ${error.message}`);
+                                    });
                             }
                         }
                     }
@@ -128,18 +120,15 @@ function CreateContextMenu(obj:{name: string, path:string}) {
         remove : (node) => {
             node.addEventListener('click', ()=> {
                 if (confirm('Delete this folder?\n\n' + obj.path + obj.name)) {
-                    tradeWs.request(serverCalls.remove, obj.path + obj.name, (file, err) => {
-                        if (file === null) {
-                            if (err === -1) {
-                                toast.showMessage(`Permission denied`);
-                            } else {
-                                toast.showMessage(`Delete failed - Unknown reason`);
-                            }
-                        } else {
+                    tradeWs.request<{ file: string }>(serverCalls.remove, obj.path + obj.name)
+                        .then(({ file }) => {
                             toast.showMessage(`File removed ${file}`);
-                        }
-                        contextMenuNode.remove();
-                    });
+                            contextMenuNode.remove();
+                        })
+                        .catch((error) => {
+                            console.error('Delete failed:', error);
+                            toast.showMessage(`Delete failed: ${error.message}`);
+                        });
                 }
             })
         },
@@ -153,26 +142,26 @@ function CreateContextMenu(obj:{name: string, path:string}) {
                 }
 
                 if (confirm(`Confirm:\n\nRename folder to "${newName}"?`)) {
-                    tradeWs.request(serverCalls.rename, obj.path + obj.name, obj.path + newName, (from, to) => {
+                    tradeWs.request<{ from: string; to: string }>(serverCalls.rename, obj.path + obj.name, obj.path + newName).then(({ from, to }) => {
                         contextMenuNode.remove();
-                        if (from !== null) {
-                            toast.showMessage(`Rename from ${from} to ${to}`);
-                        } else {
-                            if (to === -39) {
+                        toast.showMessage(`Rename from ${from} to ${to}`);
+                    }).catch((error) => {
+                        if (error.name === 'EEXIST' || error.name === 'ENOTEMPTY') {
                                 if (confirm('Hups the folder already exists!!\n\n' +
                                         'Do you want to copy the content into the existing folder ' + newName + '?')) {
-                                    tradeWs.request(serverCalls.copy, obj.path + obj.name, obj.path + newName, (from, to) => {
+                                    tradeWs.request(serverCalls.copy, obj.path + obj.name, obj.path + newName).then(() => {
                                         toast.showMessage(`Folder merged <a href='${newName}'>${newName}</a>`);
-                                        tradeWs.request(serverCalls.remove, obj.path + obj.name, (file) => console.log('contextMenu:delete old folder', file));
+                                        return tradeWs.request(serverCalls.remove, obj.path + obj.name);
+                                    }).catch((error) => {
+                                        console.error('Folder merge failed:', error);
+                                        toast.showMessage(`Folder merge failed: ${error.message}`);
                                     });
                                 } else {
                                     toast.showMessage(`Rename failed - Folder already exists!`);
                                 }
-                            } else if (to === -1) {
-                                toast.showMessage(`Permission denied`);
-                            } else {
-                                toast.showMessage(`Rename failed - Unknown reason`);
-                            }
+                        } else {
+                            console.error('Rename failed:', error);
+                            toast.showMessage(`Rename failed: ${error.message}`);
                         }
                     });
                 }
