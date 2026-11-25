@@ -1,6 +1,6 @@
 {
   "name": "@eightyfour/drag-king",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Drag and drop to upload to server",
   "main": "main.js",
   "files": [
