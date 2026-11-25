@@ -83,4 +83,7 @@ module.exports = function auth(app, config) {
             next(error);
         }
     });
+
+    // Allows the embedding style `app.use(auth(app, config))`.
+    return (req, res, next) => next();
 };

@@ -62,6 +62,19 @@ and not in the following group have default permissions.
 }
 ```
 
+### Use as a dependency with external authentication
+`require('@eightyfour/drag-king')(opts, lifecycle)` starts the server. Register
+the bundled `server/lib/auth` or your own authentication (e.g. LDAP) in
+`lifecycle.phase1`, either as `auth(app, config)` or `app.use(auth(app, config))`.
+External authentication must set `req.session.authId`, `isAdmin` and
+`isMaintainer`, and use the `translatron_session` cookie signed with
+`opts.secret`. If sessions are stored as `<sid>.json` files, pass their folder
+as `opts.sessionStoragePath` so WebSocket requests see the same user.
+
+Login and permissions are enforced by default (`config.auth`). `opts.auth: false`
+only signals that authentication is handled externally; pass
+`opts.requireAuth: false` to disable access control.
+
 
 ### REST interface
 For some console tools the dragKing support also a REST interface with

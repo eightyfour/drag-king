@@ -17,7 +17,6 @@ const main = require('./main'),
 main({
         dirName: __dirname + '/',
         fileStorageName: fileStorageName,
-        auth : packageJSON.config.auth,
         secret : cookieSecretName,
         port
     }, {

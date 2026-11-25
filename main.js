@@ -25,10 +25,33 @@ function route(handler) {
     return (req, res, next) => Promise.resolve().then(() => handler(req, res)).catch(next);
 }
 
+/**
+ * Creates and starts the dragKing server.
+ *
+ * Authentication is provided in `lifecycle.phase1`, either with the bundled
+ * `server/lib/auth` module or an external middleware that populates `req.session`
+ * (`authId`, `isAdmin`, `isMaintainer`) and uses the `translatron_session` cookie.
+ *
+ * @param {object} opts
+ * @param {string} opts.dirName - application directory containing index.html, auth.html and dist/
+ * @param {string} opts.fileStorageName - path to store the files
+ * @param {number} opts.port
+ * @param {string} opts.secret - cookie secret used to read the session cookie
+ * @param {string} [opts.sessionStoragePath] - folder of `<sid>.json` session files written by an external session store
+ * @param {string} [opts.fourOFourFile] - custom 404 page
+ * @param {boolean} [opts.requireAuth] - enforce login and permissions (default: `config.auth` from package.json)
+ * @param {boolean} [opts.auth] - legacy flag for external auth handling; it does not disable access control
+ * @param {object} [lifecycle]
+ * @param {function} [lifecycle.phase1] - called with the express app before the file routes are attached
+ * @param {function} [lifecycle.fileFilter]
+ * @param {function} [lifecycle.onUploadFile]
+ * @param {function} [lifecycle.onDeleteFile]
+ * @returns {import('express').Express}
+ */
 function main(opts, lifecycle = {}) {
     const app = express();
     const root = path.resolve(opts.fileStorageName);
-    const authenticationEnabled = opts.auth ?? config.auth;
+    const authenticationEnabled = opts.requireAuth ?? config.auth;
     const thumbnails = thumbnail();
     const serve = (file, res) => res.sendFile(file, { dotfiles: 'allow' });
     app.use(busboy());
@@ -112,7 +135,7 @@ function main(opts, lifecycle = {}) {
                     resolve();
                 }, reject);
             });
-            req.busboy.on('finish', () => {
+            req.busboy.on('close', () => {
                 if (!upload) reject(Object.assign(new Error('No file provided'), { status: 400 }));
             });
             req.busboy.on('error', reject);

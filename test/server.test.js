@@ -133,10 +133,11 @@ test('HTTP login, file API and authenticated WebSocket work together', async (t)
         dirName: path.join(__dirname, '..'),
         fileStorageName: root,
         port: 0,
+        auth: false,
         secret: 'integration-secret'
     }, {
         phase1(app) {
-            auth(app, { rootDir: root, secret: 'integration-secret', sessionTimeout: 3600000 });
+            app.use(auth(app, { rootDir: root, secret: 'integration-secret', sessionTimeout: 3600000 }));
         }
     });
     const server = app.locals.server;
@@ -150,6 +151,11 @@ test('HTTP login, file API and authenticated WebSocket work together', async (t)
     const page = await fetch(base + '/');
     assert.match(await page.text(), /please authenticate first/);
     assert.equal((await fetch(base + '/.allowedUsers.json')).status, 404);
+    const anonymousUpload = new FormData();
+    anonymousUpload.append('myFile', new Blob(['content']), 'anonymous.txt');
+    assert.equal((await fetch(base + '/uploadFile?folder=%2F', {
+        method: 'POST', body: anonymousUpload
+    })).status, 401);
     const login = await fetch(base + '/login', {
         method: 'POST',
         redirect: 'manual',
@@ -180,5 +186,57 @@ test('HTTP login, file API and authenticated WebSocket work together', async (t)
     const logout = await fetch(base + '/logout', { method: 'POST', headers: { cookie } });
     assert.equal(logout.status, 200);
     client.send(JSON.stringify({ id: 2, method: 'saveFile', args: ['/after-logout.txt', 'no'] }));
+    assert.equal(JSON.parse((await once(client, 'message'))[0]).error.code, 'FORBIDDEN');
+});
+
+test('external authentication middleware and file session storage are honored', async (t) => {
+    const root = await fixture(t);
+    const sessions = await fixture(t);
+    const secret = 'external-secret';
+    const sid = 'external-session';
+    const signature = require('node:crypto').createHmac('sha256', secret).update(sid).digest('base64')
+        .replace(/=+$/, '');
+    const cookie = 'translatron_session=' + encodeURIComponent(`s:${sid}.${signature}`);
+    await fs.writeFile(path.join(sessions, sid + '.json'), JSON.stringify({ authId: 'ldap-user', isMaintainer: true }));
+    const app = main({
+        dirName: path.join(__dirname, '..'),
+        fileStorageName: root,
+        sessionStoragePath: sessions,
+        port: 0,
+        auth: false,
+        secret
+    }, {
+        phase1(app) {
+            app.use((req, res, next) => {
+                req.session = req.headers.cookie === cookie ? { authId: 'ldap-user', isMaintainer: true } : {};
+                next();
+            });
+        }
+    });
+    const server = app.locals.server;
+    await once(server, 'listening');
+    let client;
+    t.after(async () => {
+        client?.close();
+        await new Promise((resolve) => server.close(resolve));
+    });
+    const base = `http://127.0.0.1:${server.address().port}`;
+    assert.match(await (await fetch(base + '/')).text(), /please authenticate first/);
+    assert.doesNotMatch(await (await fetch(base + '/', { headers: { cookie } })).text(), /please authenticate first/);
+    const upload = () => {
+        const body = new FormData();
+        body.append('myFile', new Blob(['content']), 'file.txt');
+        return body;
+    };
+    assert.equal((await fetch(base + '/uploadFile?folder=%2F', { method: 'POST', body: upload() })).status, 401);
+    assert.equal((await fetch(base + '/uploadFile?folder=%2F', {
+        method: 'POST', headers: { cookie }, body: upload()
+    })).status, 200);
+
+    client = new WebSocket(base.replace('http:', 'ws:') + '/ws', { headers: { cookie } });
+    await once(client, 'open');
+    client.send(JSON.stringify({ id: 1, method: 'saveFile', args: ['/notes.txt', 'hello'] }));
+    assert.equal(JSON.parse((await once(client, 'message'))[0]).result, 'hello');
+    client.send(JSON.stringify({ id: 2, method: 'saveFile', args: ['/config.json', '{}'] }));
     assert.equal(JSON.parse((await once(client, 'message'))[0]).error.code, 'FORBIDDEN');
 });
